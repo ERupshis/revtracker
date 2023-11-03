@@ -17,7 +17,7 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjsonB109ec67DecodeGithubComErupshisRevtrackerGitDbModels(in *jlexer.Lexer, out *User) {
+func easyjsonB109ec67DecodeGithubComErupshisRevtrackerDbModels(in *jlexer.Lexer, out *User) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -50,7 +50,7 @@ func easyjsonB109ec67DecodeGithubComErupshisRevtrackerGitDbModels(in *jlexer.Lex
 		in.Consumed()
 	}
 }
-func easyjsonB109ec67EncodeGithubComErupshisRevtrackerGitDbModels(out *jwriter.Writer, in User) {
+func easyjsonB109ec67EncodeGithubComErupshisRevtrackerDbModels(out *jwriter.Writer, in User) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -70,27 +70,27 @@ func easyjsonB109ec67EncodeGithubComErupshisRevtrackerGitDbModels(out *jwriter.W
 // MarshalJSON supports json.Marshaler interface
 func (v User) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonB109ec67EncodeGithubComErupshisRevtrackerGitDbModels(&w, v)
+	easyjsonB109ec67EncodeGithubComErupshisRevtrackerDbModels(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v User) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonB109ec67EncodeGithubComErupshisRevtrackerGitDbModels(w, v)
+	easyjsonB109ec67EncodeGithubComErupshisRevtrackerDbModels(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *User) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonB109ec67DecodeGithubComErupshisRevtrackerGitDbModels(&r, v)
+	easyjsonB109ec67DecodeGithubComErupshisRevtrackerDbModels(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *User) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonB109ec67DecodeGithubComErupshisRevtrackerGitDbModels(l, v)
+	easyjsonB109ec67DecodeGithubComErupshisRevtrackerDbModels(l, v)
 }
-func easyjsonB109ec67DecodeGithubComErupshisRevtrackerGitDbModels1(in *jlexer.Lexer, out *Question) {
+func easyjsonB109ec67DecodeGithubComErupshisRevtrackerDbModels1(in *jlexer.Lexer, out *Question) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -125,7 +125,7 @@ func easyjsonB109ec67DecodeGithubComErupshisRevtrackerGitDbModels1(in *jlexer.Le
 		in.Consumed()
 	}
 }
-func easyjsonB109ec67EncodeGithubComErupshisRevtrackerGitDbModels1(out *jwriter.Writer, in Question) {
+func easyjsonB109ec67EncodeGithubComErupshisRevtrackerDbModels1(out *jwriter.Writer, in Question) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -150,27 +150,27 @@ func easyjsonB109ec67EncodeGithubComErupshisRevtrackerGitDbModels1(out *jwriter.
 // MarshalJSON supports json.Marshaler interface
 func (v Question) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonB109ec67EncodeGithubComErupshisRevtrackerGitDbModels1(&w, v)
+	easyjsonB109ec67EncodeGithubComErupshisRevtrackerDbModels1(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Question) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonB109ec67EncodeGithubComErupshisRevtrackerGitDbModels1(w, v)
+	easyjsonB109ec67EncodeGithubComErupshisRevtrackerDbModels1(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Question) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonB109ec67DecodeGithubComErupshisRevtrackerGitDbModels1(&r, v)
+	easyjsonB109ec67DecodeGithubComErupshisRevtrackerDbModels1(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Question) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonB109ec67DecodeGithubComErupshisRevtrackerGitDbModels1(l, v)
+	easyjsonB109ec67DecodeGithubComErupshisRevtrackerDbModels1(l, v)
 }
-func easyjsonB109ec67DecodeGithubComErupshisRevtrackerGitDbModels2(in *jlexer.Lexer, out *HomeworkQuestion) {
+func easyjsonB109ec67DecodeGithubComErupshisRevtrackerDbModels2(in *jlexer.Lexer, out *HomeworkQuestion) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -207,7 +207,7 @@ func easyjsonB109ec67DecodeGithubComErupshisRevtrackerGitDbModels2(in *jlexer.Le
 		in.Consumed()
 	}
 }
-func easyjsonB109ec67EncodeGithubComErupshisRevtrackerGitDbModels2(out *jwriter.Writer, in HomeworkQuestion) {
+func easyjsonB109ec67EncodeGithubComErupshisRevtrackerDbModels2(out *jwriter.Writer, in HomeworkQuestion) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -237,27 +237,27 @@ func easyjsonB109ec67EncodeGithubComErupshisRevtrackerGitDbModels2(out *jwriter.
 // MarshalJSON supports json.Marshaler interface
 func (v HomeworkQuestion) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonB109ec67EncodeGithubComErupshisRevtrackerGitDbModels2(&w, v)
+	easyjsonB109ec67EncodeGithubComErupshisRevtrackerDbModels2(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v HomeworkQuestion) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonB109ec67EncodeGithubComErupshisRevtrackerGitDbModels2(w, v)
+	easyjsonB109ec67EncodeGithubComErupshisRevtrackerDbModels2(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *HomeworkQuestion) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonB109ec67DecodeGithubComErupshisRevtrackerGitDbModels2(&r, v)
+	easyjsonB109ec67DecodeGithubComErupshisRevtrackerDbModels2(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *HomeworkQuestion) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonB109ec67DecodeGithubComErupshisRevtrackerGitDbModels2(l, v)
+	easyjsonB109ec67DecodeGithubComErupshisRevtrackerDbModels2(l, v)
 }
-func easyjsonB109ec67DecodeGithubComErupshisRevtrackerGitDbModels3(in *jlexer.Lexer, out *Homework) {
+func easyjsonB109ec67DecodeGithubComErupshisRevtrackerDbModels3(in *jlexer.Lexer, out *Homework) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -290,7 +290,7 @@ func easyjsonB109ec67DecodeGithubComErupshisRevtrackerGitDbModels3(in *jlexer.Le
 		in.Consumed()
 	}
 }
-func easyjsonB109ec67EncodeGithubComErupshisRevtrackerGitDbModels3(out *jwriter.Writer, in Homework) {
+func easyjsonB109ec67EncodeGithubComErupshisRevtrackerDbModels3(out *jwriter.Writer, in Homework) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -310,27 +310,27 @@ func easyjsonB109ec67EncodeGithubComErupshisRevtrackerGitDbModels3(out *jwriter.
 // MarshalJSON supports json.Marshaler interface
 func (v Homework) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonB109ec67EncodeGithubComErupshisRevtrackerGitDbModels3(&w, v)
+	easyjsonB109ec67EncodeGithubComErupshisRevtrackerDbModels3(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Homework) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonB109ec67EncodeGithubComErupshisRevtrackerGitDbModels3(w, v)
+	easyjsonB109ec67EncodeGithubComErupshisRevtrackerDbModels3(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Homework) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonB109ec67DecodeGithubComErupshisRevtrackerGitDbModels3(&r, v)
+	easyjsonB109ec67DecodeGithubComErupshisRevtrackerDbModels3(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Homework) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonB109ec67DecodeGithubComErupshisRevtrackerGitDbModels3(l, v)
+	easyjsonB109ec67DecodeGithubComErupshisRevtrackerDbModels3(l, v)
 }
-func easyjsonB109ec67DecodeGithubComErupshisRevtrackerGitDbModels4(in *jlexer.Lexer, out *Content) {
+func easyjsonB109ec67DecodeGithubComErupshisRevtrackerDbModels4(in *jlexer.Lexer, out *Content) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -391,7 +391,7 @@ func easyjsonB109ec67DecodeGithubComErupshisRevtrackerGitDbModels4(in *jlexer.Le
 		in.Consumed()
 	}
 }
-func easyjsonB109ec67EncodeGithubComErupshisRevtrackerGitDbModels4(out *jwriter.Writer, in Content) {
+func easyjsonB109ec67EncodeGithubComErupshisRevtrackerDbModels4(out *jwriter.Writer, in Content) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -433,23 +433,23 @@ func easyjsonB109ec67EncodeGithubComErupshisRevtrackerGitDbModels4(out *jwriter.
 // MarshalJSON supports json.Marshaler interface
 func (v Content) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonB109ec67EncodeGithubComErupshisRevtrackerGitDbModels4(&w, v)
+	easyjsonB109ec67EncodeGithubComErupshisRevtrackerDbModels4(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Content) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonB109ec67EncodeGithubComErupshisRevtrackerGitDbModels4(w, v)
+	easyjsonB109ec67EncodeGithubComErupshisRevtrackerDbModels4(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Content) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonB109ec67DecodeGithubComErupshisRevtrackerGitDbModels4(&r, v)
+	easyjsonB109ec67DecodeGithubComErupshisRevtrackerDbModels4(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Content) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonB109ec67DecodeGithubComErupshisRevtrackerGitDbModels4(l, v)
+	easyjsonB109ec67DecodeGithubComErupshisRevtrackerDbModels4(l, v)
 }

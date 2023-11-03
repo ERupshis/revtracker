@@ -4,7 +4,7 @@ package data
 
 import (
 	json "encoding/json"
-	models "github.com/erupshis/revtracker.git/db/models"
+	models "github.com/erupshis/revtracker/db/models"
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"
 	jwriter "github.com/mailru/easyjson/jwriter"
@@ -18,7 +18,7 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjson794297d0DecodeGithubComErupshisRevtrackerGitInternalData(in *jlexer.Lexer, out *FrontMessage) {
+func easyjson794297d0DecodeGithubComErupshisRevtrackerInternalData(in *jlexer.Lexer, out *FrontMessage) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -49,7 +49,7 @@ func easyjson794297d0DecodeGithubComErupshisRevtrackerGitInternalData(in *jlexer
 		in.Consumed()
 	}
 }
-func easyjson794297d0EncodeGithubComErupshisRevtrackerGitInternalData(out *jwriter.Writer, in FrontMessage) {
+func easyjson794297d0EncodeGithubComErupshisRevtrackerInternalData(out *jwriter.Writer, in FrontMessage) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -64,27 +64,27 @@ func easyjson794297d0EncodeGithubComErupshisRevtrackerGitInternalData(out *jwrit
 // MarshalJSON supports json.Marshaler interface
 func (v FrontMessage) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson794297d0EncodeGithubComErupshisRevtrackerGitInternalData(&w, v)
+	easyjson794297d0EncodeGithubComErupshisRevtrackerInternalData(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v FrontMessage) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson794297d0EncodeGithubComErupshisRevtrackerGitInternalData(w, v)
+	easyjson794297d0EncodeGithubComErupshisRevtrackerInternalData(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *FrontMessage) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson794297d0DecodeGithubComErupshisRevtrackerGitInternalData(&r, v)
+	easyjson794297d0DecodeGithubComErupshisRevtrackerInternalData(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *FrontMessage) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson794297d0DecodeGithubComErupshisRevtrackerGitInternalData(l, v)
+	easyjson794297d0DecodeGithubComErupshisRevtrackerInternalData(l, v)
 }
-func easyjson794297d0DecodeGithubComErupshisRevtrackerGitInternalData1(in *jlexer.Lexer, out *Data) {
+func easyjson794297d0DecodeGithubComErupshisRevtrackerInternalData1(in *jlexer.Lexer, out *Data) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -138,7 +138,7 @@ func easyjson794297d0DecodeGithubComErupshisRevtrackerGitInternalData1(in *jlexe
 		in.Consumed()
 	}
 }
-func easyjson794297d0EncodeGithubComErupshisRevtrackerGitInternalData1(out *jwriter.Writer, in Data) {
+func easyjson794297d0EncodeGithubComErupshisRevtrackerInternalData1(out *jwriter.Writer, in Data) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -169,23 +169,23 @@ func easyjson794297d0EncodeGithubComErupshisRevtrackerGitInternalData1(out *jwri
 // MarshalJSON supports json.Marshaler interface
 func (v Data) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson794297d0EncodeGithubComErupshisRevtrackerGitInternalData1(&w, v)
+	easyjson794297d0EncodeGithubComErupshisRevtrackerInternalData1(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Data) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson794297d0EncodeGithubComErupshisRevtrackerGitInternalData1(w, v)
+	easyjson794297d0EncodeGithubComErupshisRevtrackerInternalData1(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Data) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson794297d0DecodeGithubComErupshisRevtrackerGitInternalData1(&r, v)
+	easyjson794297d0DecodeGithubComErupshisRevtrackerInternalData1(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Data) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson794297d0DecodeGithubComErupshisRevtrackerGitInternalData1(l, v)
+	easyjson794297d0DecodeGithubComErupshisRevtrackerInternalData1(l, v)
 }
