@@ -5,7 +5,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/erupshis/bonusbridge/internal/logger"
+	"github.com/erupshis/revtracker/internal/logger"
 )
 
 // defIntervals default intervals for repeats.

@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/erupshis/bonusbridge/internal/logger"
+	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/jackc/pgerrcode"
 	"github.com/stretchr/testify/assert"
 )
