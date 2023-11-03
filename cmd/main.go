@@ -12,8 +12,10 @@ import (
 	"github.com/erupshis/revtracker/internal/db"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
-	"github.com/erupshis/revtracker/internal/storage/manager/reform"
+	reformManager "github.com/erupshis/revtracker/internal/storage/manager/reform"
 	"github.com/gofiber/fiber/v2"
+	"gopkg.in/reform.v1"
+	"gopkg.in/reform.v1/dialects/postgresql"
 )
 
 func main() {
@@ -35,7 +37,9 @@ func main() {
 		log.Info("failed to connect to users database: %v", err)
 	}
 
-	storageManager := reform.CreateReform(databaseConn, log)
+	reformConn := reform.NewDB(databaseConn.DB, postgresql.Dialect, reform.NewPrintfLogger(log.Printf))
+
+	storageManager := reformManager.CreateReform(reformConn, log)
 	dataStorage := storage.Create(storageManager, log)
 	mainController := controller.Create(dataStorage, log)
 

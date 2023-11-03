@@ -54,6 +54,9 @@ func CreateConnection(ctx context.Context, cfg config.Config, log logger.BaseLog
 		return nil, fmt.Errorf(errMsg, err)
 	}
 
+	manager.SetMaxIdleConns(cfg.DatabaseIdleConn)
+	manager.SetMaxOpenConns(cfg.DatabaseOpenConn)
+
 	log.Info("[dbconn:CreateConnection] successful")
 	return manager, nil
 }

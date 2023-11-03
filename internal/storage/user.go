@@ -7,9 +7,9 @@ import (
 )
 
 func (s *Storage) InsertUser(ctx context.Context, user *data.User) (int64, error) {
-	return -1, nil
+	return s.mngr.InsertUser(ctx, user)
 }
 
 func (s *Storage) SelectUser(ctx context.Context, filters map[string]interface{}) (*data.User, error) {
-	return nil, nil
+	return s.mngr.SelectUser(ctx, filters)
 }

@@ -1,20 +1,20 @@
 package reform
 
 import (
-	"github.com/erupshis/revtracker/internal/db"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage/manager"
+	"gopkg.in/reform.v1"
 )
 
 type Reform struct {
 	log logger.BaseLogger
 
-	db *db.Conn
+	db *reform.DB
 }
 
-func CreateReform(dbConn *db.Conn, baseLogger logger.BaseLogger) manager.BaseStorageManager {
+func CreateReform(reformConn *reform.DB, baseLogger logger.BaseLogger) manager.BaseStorageManager {
 	return &Reform{
 		log: baseLogger,
-		db:  dbConn,
+		db:  reformConn,
 	}
 }
