@@ -7,21 +7,19 @@ import (
 )
 
 func CreateTailAndParams(db *reform.DB, filters map[string]interface{}) (string, []interface{}) {
-	tail := "WHERE "
-	var keys []string
+	tail := "WHERE"
 	var values []interface{}
-	i := 1
+	i := 0
 	for key, value := range filters {
-		keys = append(keys, key)
 		values = append(values, value)
 
-		if i != 1 {
+		if i != 0 {
 			tail += " AND"
 		}
 
-		tail += fmt.Sprintf("%s = %s", key, db.Placeholder(i))
-
 		i++
+
+		tail += fmt.Sprintf(" %s = %s", key, db.Placeholder(i))
 	}
 
 	return tail, values
