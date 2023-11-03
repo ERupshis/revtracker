@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"github.com/go-chi/chi/v5"
+	"github.com/gofiber/fiber/v2"
 )
 
 type BaseController interface {
-	Route() *chi.Mux
+	Route() *fiber.App
 }
