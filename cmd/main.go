@@ -13,7 +13,7 @@ import (
 	"github.com/erupshis/revtracker/internal/db"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
-	"github.com/erupshis/revtracker/internal/storage/manager"
+	"github.com/erupshis/revtracker/internal/storage/manager/reform"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -36,7 +36,7 @@ func main() {
 		log.Info("failed to connect to users database: %v", err)
 	}
 
-	storageManager := manager.CreateReform(databaseConn, log)
+	storageManager := reform.CreateReform(databaseConn, log)
 	dataStorage := storage.Create(storageManager, log)
 	mainController := controller.Create(dataStorage, log)
 
