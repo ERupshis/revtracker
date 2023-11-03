@@ -1,7 +1,7 @@
 package data
 
 import (
-	"github.com/erupshis/revtracker.git/db/models"
+	"github.com/erupshis/revtracker/db/models"
 )
 
 //go:generate easyjson -all data.go

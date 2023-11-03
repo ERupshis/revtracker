@@ -18,10 +18,10 @@ type Homework struct {
 
 //reform:contents
 type Content struct {
-	ID       int64  `json:"Id" reform:"id,pk"`
-	Task     string `json:"Task" reform:"task"`
-	Answer   string `json:"Answer" reform:"answer"`
-	Solution string `json:"Solution" reform:"solution"`
+	ID       int64   `json:"Id" reform:"id,pk"`
+	Task     *string `json:"Task" reform:"task"`
+	Answer   *string `json:"Answer" reform:"answer"`
+	Solution *string `json:"Solution" reform:"solution"`
 }
 
 //reform:questions
