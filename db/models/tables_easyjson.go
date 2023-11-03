@@ -352,11 +352,35 @@ func easyjsonB109ec67DecodeGithubComErupshisRevtrackerGitDbModels4(in *jlexer.Le
 		case "Id":
 			out.ID = int64(in.Int64())
 		case "Task":
-			out.Task = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+				out.Task = nil
+			} else {
+				if out.Task == nil {
+					out.Task = new(string)
+				}
+				*out.Task = string(in.String())
+			}
 		case "Answer":
-			out.Answer = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+				out.Answer = nil
+			} else {
+				if out.Answer == nil {
+					out.Answer = new(string)
+				}
+				*out.Answer = string(in.String())
+			}
 		case "Solution":
-			out.Solution = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+				out.Solution = nil
+			} else {
+				if out.Solution == nil {
+					out.Solution = new(string)
+				}
+				*out.Solution = string(in.String())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -379,17 +403,29 @@ func easyjsonB109ec67EncodeGithubComErupshisRevtrackerGitDbModels4(out *jwriter.
 	{
 		const prefix string = ",\"Task\":"
 		out.RawString(prefix)
-		out.String(string(in.Task))
+		if in.Task == nil {
+			out.RawString("null")
+		} else {
+			out.String(string(*in.Task))
+		}
 	}
 	{
 		const prefix string = ",\"Answer\":"
 		out.RawString(prefix)
-		out.String(string(in.Answer))
+		if in.Answer == nil {
+			out.RawString("null")
+		} else {
+			out.String(string(*in.Answer))
+		}
 	}
 	{
 		const prefix string = ",\"Solution\":"
 		out.RawString(prefix)
-		out.String(string(in.Solution))
+		if in.Solution == nil {
+			out.RawString("null")
+		} else {
+			out.String(string(*in.Solution))
+		}
 	}
 	out.RawByte('}')
 }

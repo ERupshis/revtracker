@@ -299,9 +299,9 @@ var ContentTable = &contentTableType{
 		SQLName: "contents",
 		Fields: []parse.FieldInfo{
 			{Name: "ID", Type: "int64", Column: "id"},
-			{Name: "Task", Type: "string", Column: "task"},
-			{Name: "Answer", Type: "string", Column: "answer"},
-			{Name: "Solution", Type: "string", Column: "solution"},
+			{Name: "Task", Type: "*string", Column: "task"},
+			{Name: "Answer", Type: "*string", Column: "answer"},
+			{Name: "Solution", Type: "*string", Column: "solution"},
 		},
 		PKFieldIndex: 0,
 	},
