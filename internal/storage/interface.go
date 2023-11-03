@@ -6,9 +6,10 @@ import (
 	"github.com/erupshis/revtracker/internal/data"
 )
 
+//go:generate mockgen -destination=../../mocks/mock_BaseStorage.go -package=mocks github.com/erupshis/revtracker/internal/storage BaseStorage
 type BaseStorage interface {
-	InsertUser(ctx context.Context, user *data.User) error
-	SelectUser(ctx context.Context) (*data.User, error)
+	InsertUser(ctx context.Context, user *data.User) (int64, error)
+	SelectUser(ctx context.Context, filters map[string]interface{}) (*data.User, error)
 
 	InsertHomework(ctx context.Context, homework *data.Homework) error
 	UpdateHomeworkByID(ctx context.Context, ID int64, newName string) error

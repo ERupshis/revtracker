@@ -43,7 +43,7 @@ func main() {
 	server := fiber.New()
 	server.Use(log.LogHandler)
 	//server.Use(authController.Authorize(userdata.RoleUser))
-	server.Mount("/", mainController.Route())
+	server.Mount("/api", mainController.Route())
 
 	//server launch.
 	go func(log logger.BaseLogger) {
