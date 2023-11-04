@@ -11,6 +11,11 @@ type BaseStorage interface {
 	InsertUser(ctx context.Context, user *data.User) (int64, error)
 	SelectUser(ctx context.Context, filters map[string]interface{}) (*data.User, error)
 
+	InsertData(ctx context.Context, data *data.Data) error
+	UpdateDataByHomeworkID(ctx context.Context, data *data.Data) error
+	SelectDataByHomeworkID(ctx context.Context) (*data.Data, error)
+	DeleteDataByHomeworkID(ctx context.Context, ID int64) error
+
 	InsertHomework(ctx context.Context, homework *data.Homework) error
 	UpdateHomeworkByID(ctx context.Context, ID int64, newName string) error
 	SelectHomeworkByID(ctx context.Context, ID int64) (*data.Homework, error)

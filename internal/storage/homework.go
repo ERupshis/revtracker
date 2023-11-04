@@ -7,6 +7,7 @@ import (
 )
 
 func (s *Storage) InsertHomework(ctx context.Context, homework *data.Homework) error {
+
 	return nil
 }
 
