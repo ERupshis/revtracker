@@ -12,11 +12,11 @@ import (
 )
 
 func (r *Reform) InsertHomework(ctx context.Context, homework *data.Homework) error {
-	return r.insertOrUpdateHomework(ctx, homework)
+	return r.insertOrUpdateHomework(ctx, nil, homework)
 }
 
 func (r *Reform) UpdateHomework(ctx context.Context, homework *data.Homework) error {
-	return r.insertOrUpdateHomework(ctx, homework)
+	return r.insertOrUpdateHomework(ctx, nil, homework)
 }
 
 func (r *Reform) SelectHomeworkByID(ctx context.Context, ID int64) (*data.Homework, error) {
@@ -34,7 +34,28 @@ func (r *Reform) SelectHomeworkByID(ctx context.Context, ID int64) (*data.Homewo
 }
 
 func (r *Reform) DeleteHomeworkByID(ctx context.Context, ID int64) error {
-	return r.db.InTransactionContext(ctx, nil, func(tx *reform.TX) error {
+	return r.deleteHomeworkByID(ctx, nil, ID)
+}
+
+func (r *Reform) insertOrUpdateHomework(ctx context.Context, tx *reform.TX, homework *data.Homework) error {
+	var err error
+	if tx != nil {
+		err = tx.Save(homework)
+	} else {
+		err = r.db.InTransactionContext(ctx, nil, func(tx *reform.TX) error {
+			return tx.Save(homework)
+		})
+	}
+
+	if err != nil {
+		return fmt.Errorf("failed insert/update homework: %w", err)
+	}
+
+	return nil
+}
+
+func (r *Reform) deleteHomeworkByID(ctx context.Context, tx *reform.TX, ID int64) error {
+	deleteFunc := func(tx *reform.TX) error {
 		tail, values := utils.CreateTailAndParams(r.db, map[string]interface{}{"id": ID})
 		deletedCount, err := tx.DeleteFrom(data.ContentTable, tail, values...)
 		if err != nil {
@@ -48,17 +69,11 @@ func (r *Reform) DeleteHomeworkByID(ctx context.Context, ID int64) error {
 		}
 
 		return nil
-	})
-}
-
-func (r *Reform) insertOrUpdateHomework(ctx context.Context, homework *data.Homework) error {
-	err := r.db.InTransactionContext(ctx, nil, func(tx *reform.TX) error {
-		return tx.Save(homework)
-	})
-
-	if err != nil {
-		return fmt.Errorf("failed insert/update homework: %w", err)
 	}
 
-	return nil
+	if tx != nil {
+		return deleteFunc(tx)
+	} else {
+		return r.db.InTransactionContext(ctx, nil, deleteFunc)
+	}
 }
