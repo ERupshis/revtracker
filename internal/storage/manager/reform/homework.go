@@ -8,45 +8,15 @@ import (
 
 	"github.com/erupshis/revtracker/internal/data"
 	"github.com/erupshis/revtracker/internal/storage/manager/reform/utils"
+	"gopkg.in/reform.v1"
 )
 
 func (r *Reform) InsertHomework(ctx context.Context, homework *data.Homework) error {
-	tx, err := r.db.BeginTx(ctx, nil)
-	if err != nil {
-		return fmt.Errorf("create transaction for homework insert: %w", err)
-	}
-
-	if err = r.db.Save(homework); err != nil {
-		_ = tx.Rollback()
-		return fmt.Errorf("insert homework: %w", err)
-	}
-
-	if err = tx.Commit(); err != nil {
-		_ = tx.Rollback()
-		return fmt.Errorf("commit transaction: %w", err)
-	}
-
-	return nil
+	return r.insertOrUpdateHomework(ctx, homework)
 }
 
 func (r *Reform) UpdateHomework(ctx context.Context, homework *data.Homework) error {
-	tx, err := r.db.BeginTx(ctx, nil)
-	if err != nil {
-		return fmt.Errorf("create transaction for homework update: %w", err)
-	}
-
-	err = tx.Update(homework)
-	if err != nil {
-		_ = tx.Rollback()
-		return fmt.Errorf("update homework name by ID: %w", err)
-	}
-
-	if err = tx.Commit(); err != nil {
-		_ = tx.Rollback()
-		return fmt.Errorf("commit transaction: %w", err)
-	}
-
-	return nil
+	return r.insertOrUpdateHomework(ctx, homework)
 }
 
 func (r *Reform) SelectHomeworkByID(ctx context.Context, ID int64) (*data.Homework, error) {
@@ -64,26 +34,30 @@ func (r *Reform) SelectHomeworkByID(ctx context.Context, ID int64) (*data.Homewo
 }
 
 func (r *Reform) DeleteHomeworkByID(ctx context.Context, ID int64) error {
-	tx, err := r.db.BeginTx(ctx, nil)
+	return r.db.InTransactionContext(ctx, nil, func(tx *reform.TX) error {
+		tail, values := utils.CreateTailAndParams(r.db, map[string]interface{}{"id": ID})
+		deletedCount, err := tx.DeleteFrom(data.ContentTable, tail, values...)
+		if err != nil {
+			_ = tx.Rollback()
+			return fmt.Errorf("delete homework by ID: %w", err)
+		}
+
+		if deletedCount != 1 {
+			_ = tx.Rollback()
+			return fmt.Errorf("delete homework by ID wrong deletions count: %d", deletedCount)
+		}
+
+		return nil
+	})
+}
+
+func (r *Reform) insertOrUpdateHomework(ctx context.Context, homework *data.Homework) error {
+	err := r.db.InTransactionContext(ctx, nil, func(tx *reform.TX) error {
+		return tx.Save(homework)
+	})
+
 	if err != nil {
-		return fmt.Errorf("create transaction for homework delete: %w", err)
-	}
-
-	tail, values := utils.CreateTailAndParams(r.db, map[string]interface{}{"id": ID})
-	deletedCount, err := tx.DeleteFrom(data.HomeworkTable, tail, values...)
-	if err != nil {
-		_ = tx.Rollback()
-		return fmt.Errorf("delete homework by ID: %w", err)
-	}
-
-	if deletedCount != 1 {
-		_ = tx.Rollback()
-		return fmt.Errorf("delete homework by ID wrong deletions count: %d", deletedCount)
-	}
-
-	if err = tx.Commit(); err != nil {
-		_ = tx.Rollback()
-		return fmt.Errorf("commit transaction: %w", err)
+		return fmt.Errorf("failed insert/update homework: %w", err)
 	}
 
 	return nil

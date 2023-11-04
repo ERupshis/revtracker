@@ -8,46 +8,15 @@ import (
 
 	"github.com/erupshis/revtracker/internal/data"
 	"github.com/erupshis/revtracker/internal/storage/manager/reform/utils"
+	"gopkg.in/reform.v1"
 )
 
 func (r *Reform) InsertQuestion(ctx context.Context, question *data.Question) error {
-	tx, err := r.db.BeginTx(ctx, nil)
-	if err != nil {
-		return fmt.Errorf("create transaction for question insert: %w", err)
-	}
-
-	err = tx.Save(question)
-	if err != nil {
-		_ = tx.Rollback()
-		return fmt.Errorf("update question name by ID: %w", err)
-	}
-
-	if err = tx.Commit(); err != nil {
-		_ = tx.Rollback()
-		return fmt.Errorf("commit transaction: %w", err)
-	}
-
-	return nil
+	return r.insertOrUpdateQuestion(ctx, question)
 }
 
 func (r *Reform) UpdateQuestion(ctx context.Context, question *data.Question) error {
-	tx, err := r.db.BeginTx(ctx, nil)
-	if err != nil {
-		return fmt.Errorf("create transaction for question update: %w", err)
-	}
-
-	err = tx.Update(question)
-	if err != nil {
-		_ = tx.Rollback()
-		return fmt.Errorf("update question: %w", err)
-	}
-
-	if err = tx.Commit(); err != nil {
-		_ = tx.Rollback()
-		return fmt.Errorf("commit transaction: %w", err)
-	}
-
-	return nil
+	return r.insertOrUpdateQuestion(ctx, question)
 }
 
 func (r *Reform) SelectQuestionByID(ctx context.Context, ID int64) (*data.Question, error) {
@@ -65,26 +34,30 @@ func (r *Reform) SelectQuestionByID(ctx context.Context, ID int64) (*data.Questi
 }
 
 func (r *Reform) DeleteQuestionByID(ctx context.Context, ID int64) error {
-	tx, err := r.db.BeginTx(ctx, nil)
+	return r.db.InTransactionContext(ctx, nil, func(tx *reform.TX) error {
+		tail, values := utils.CreateTailAndParams(r.db, map[string]interface{}{"id": ID})
+		deletedCount, err := tx.DeleteFrom(data.ContentTable, tail, values...)
+		if err != nil {
+			_ = tx.Rollback()
+			return fmt.Errorf("delete question by ID: %w", err)
+		}
+
+		if deletedCount != 1 {
+			_ = tx.Rollback()
+			return fmt.Errorf("delete question by ID wrong deletions count: %d", deletedCount)
+		}
+
+		return nil
+	})
+}
+
+func (r *Reform) insertOrUpdateQuestion(ctx context.Context, question *data.Question) error {
+	err := r.db.InTransactionContext(ctx, nil, func(tx *reform.TX) error {
+		return tx.Save(question)
+	})
+
 	if err != nil {
-		return fmt.Errorf("create transaction for question delete: %w", err)
-	}
-
-	tail, values := utils.CreateTailAndParams(r.db, map[string]interface{}{"id": ID})
-	deletedCount, err := tx.DeleteFrom(data.ContentTable, tail, values...)
-	if err != nil {
-		_ = tx.Rollback()
-		return fmt.Errorf("delete question by ID: %w", err)
-	}
-
-	if deletedCount != 1 {
-		_ = tx.Rollback()
-		return fmt.Errorf("delete content by ID wrong deletions count: %d", deletedCount)
-	}
-
-	if err = tx.Commit(); err != nil {
-		_ = tx.Rollback()
-		return fmt.Errorf("commit transaction: %w", err)
+		return fmt.Errorf("failed insert/update question: %w", err)
 	}
 
 	return nil

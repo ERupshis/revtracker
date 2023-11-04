@@ -94,7 +94,7 @@ func (mr *MockBaseStorageMockRecorder) DeleteQuestionByID(arg0, arg1 interface{}
 // InsertContent mocks base method.
 func (m *MockBaseStorage) InsertContent(arg0 context.Context, arg1 *data.Content) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InsertContent", arg0, arg1)
+	ret := m.ctrl.Call(m, "InsertOrUpdateContent", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
@@ -102,13 +102,13 @@ func (m *MockBaseStorage) InsertContent(arg0 context.Context, arg1 *data.Content
 // InsertContent indicates an expected call of InsertContent.
 func (mr *MockBaseStorageMockRecorder) InsertContent(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertContent", reflect.TypeOf((*MockBaseStorage)(nil).InsertContent), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertOrUpdateContent", reflect.TypeOf((*MockBaseStorage)(nil).InsertContent), arg0, arg1)
 }
 
 // InsertHomework mocks base method.
 func (m *MockBaseStorage) InsertHomework(arg0 context.Context, arg1 *data.Homework) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InsertHomework", arg0, arg1)
+	ret := m.ctrl.Call(m, "InsertOrUpdateHomework", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
@@ -116,7 +116,7 @@ func (m *MockBaseStorage) InsertHomework(arg0 context.Context, arg1 *data.Homewo
 // InsertHomework indicates an expected call of InsertHomework.
 func (mr *MockBaseStorageMockRecorder) InsertHomework(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertHomework", reflect.TypeOf((*MockBaseStorage)(nil).InsertHomework), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertOrUpdateHomework", reflect.TypeOf((*MockBaseStorage)(nil).InsertHomework), arg0, arg1)
 }
 
 // InsertHomeworkQuestion mocks base method.
