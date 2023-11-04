@@ -11,7 +11,7 @@ func (s *Storage) InsertData(ctx context.Context, data *data.Data) error {
 	return nil
 }
 
-func (s *Storage) UpdateDataByHomeworkID(ctx context.Context, data *data.Data) error {
+func (s *Storage) UpdateData(ctx context.Context, data *data.Data) error {
 
 	return nil
 }

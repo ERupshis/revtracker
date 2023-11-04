@@ -10,7 +10,7 @@ func (s *Storage) InsertQuestion(ctx context.Context, question *data.Question) e
 	return nil
 }
 
-func (s *Storage) UpdateQuestionByID(ctx context.Context, ID int64, values map[string]interface{}) error {
+func (s *Storage) UpdateQuestion(ctx context.Context, question *data.Question) error {
 	return nil
 }
 

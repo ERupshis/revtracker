@@ -7,17 +7,17 @@ import (
 )
 
 func (s *Storage) InsertContent(ctx context.Context, content *data.Content) error {
-	return nil
+	return s.mngr.InsertContent(ctx, content)
 }
 
-func (s *Storage) UpdateContentByID(ctx context.Context, ID int64, values map[string]interface{}) error {
-	return nil
+func (s *Storage) UpdateContent(ctx context.Context, content *data.Content) error {
+	return s.mngr.UpdateContent(ctx, content)
 }
 
 func (s *Storage) SelectContentByID(ctx context.Context, ID int64) (*data.Content, error) {
-	return nil, nil
+	return s.mngr.SelectContentByID(ctx, ID)
 }
 
 func (s *Storage) DeleteContentByID(ctx context.Context, ID int64) error {
-	return nil
+	return s.mngr.DeleteContentByID(ctx, ID)
 }
