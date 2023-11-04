@@ -20,17 +20,7 @@ func (r *Reform) UpdateQuestion(ctx context.Context, question *data.Question) er
 }
 
 func (r *Reform) SelectQuestionByID(ctx context.Context, ID int64) (*data.Question, error) {
-	tail, values := utils.CreateTailAndParams(r.db, map[string]interface{}{"id": ID})
-	content, err := r.db.WithContext(ctx).SelectOneFrom(data.UserTable, tail, values...)
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return nil, fmt.Errorf("select question by ID: %w", err)
-	}
-
-	if content == nil {
-		return nil, nil
-	}
-
-	return content.(*data.Question), nil
+	return r.selectQuestionByID(ctx, nil, ID)
 }
 
 func (r *Reform) DeleteQuestionByID(ctx context.Context, ID int64) error {
@@ -54,10 +44,32 @@ func (r *Reform) insertOrUpdateQuestion(ctx context.Context, tx *reform.TX, ques
 	return nil
 }
 
+func (r *Reform) selectQuestionByID(ctx context.Context, tx *reform.TX, ID int64) (*data.Question, error) {
+	tail, values := utils.CreateTailAndParams(r.db, map[string]interface{}{"id": ID})
+
+	var content reform.Struct
+	var err error
+	if tx != nil {
+		content, err = tx.SelectOneFrom(data.QuestionTable, tail, values...)
+	} else {
+		content, err = r.db.WithContext(ctx).SelectOneFrom(data.QuestionTable, tail, values...)
+	}
+
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return nil, fmt.Errorf("select question by ID: %w", err)
+	}
+
+	if content == nil {
+		return nil, nil
+	}
+
+	return content.(*data.Question), nil
+}
+
 func (r *Reform) deleteQuestionByID(ctx context.Context, tx *reform.TX, ID int64) error {
 	deleteFunc := func(tx *reform.TX) error {
 		tail, values := utils.CreateTailAndParams(r.db, map[string]interface{}{"id": ID})
-		deletedCount, err := tx.DeleteFrom(data.ContentTable, tail, values...)
+		deletedCount, err := tx.DeleteFrom(data.QuestionTable, tail, values...)
 		if err != nil {
 			_ = tx.Rollback()
 			return fmt.Errorf("delete question by ID: %w", err)

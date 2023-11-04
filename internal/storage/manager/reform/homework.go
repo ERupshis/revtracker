@@ -20,17 +20,7 @@ func (r *Reform) UpdateHomework(ctx context.Context, homework *data.Homework) er
 }
 
 func (r *Reform) SelectHomeworkByID(ctx context.Context, ID int64) (*data.Homework, error) {
-	tail, values := utils.CreateTailAndParams(r.db, map[string]interface{}{"id": ID})
-	homework, err := r.db.WithContext(ctx).SelectOneFrom(data.UserTable, tail, values...)
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return nil, fmt.Errorf("select homework by ID: %w", err)
-	}
-
-	if homework == nil {
-		return nil, nil
-	}
-
-	return homework.(*data.Homework), nil
+	return r.selectHomeworkByID(ctx, nil, ID)
 }
 
 func (r *Reform) DeleteHomeworkByID(ctx context.Context, ID int64) error {
@@ -52,6 +42,28 @@ func (r *Reform) insertOrUpdateHomework(ctx context.Context, tx *reform.TX, home
 	}
 
 	return nil
+}
+
+func (r *Reform) selectHomeworkByID(ctx context.Context, tx *reform.TX, ID int64) (*data.Homework, error) {
+	tail, values := utils.CreateTailAndParams(r.db, map[string]interface{}{"id": ID})
+
+	var content reform.Struct
+	var err error
+	if tx != nil {
+		content, err = tx.SelectOneFrom(data.HomeworkTable, tail, values...)
+	} else {
+		content, err = r.db.WithContext(ctx).SelectOneFrom(data.HomeworkTable, tail, values...)
+	}
+
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return nil, fmt.Errorf("select homework by ID: %w", err)
+	}
+
+	if content == nil {
+		return nil, nil
+	}
+
+	return content.(*data.Homework), nil
 }
 
 func (r *Reform) deleteHomeworkByID(ctx context.Context, tx *reform.TX, ID int64) error {

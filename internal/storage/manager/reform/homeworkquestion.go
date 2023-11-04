@@ -20,17 +20,7 @@ func (r *Reform) UpdateHomeworkQuestion(ctx context.Context, homeworkQuestion *d
 }
 
 func (r *Reform) SelectHomeworkQuestionByID(ctx context.Context, ID int64) (*data.HomeworkQuestion, error) {
-	tail, values := utils.CreateTailAndParams(r.db, map[string]interface{}{"id": ID})
-	homework, err := r.db.WithContext(ctx).SelectOneFrom(data.UserTable, tail, values...)
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return nil, fmt.Errorf("select homeworkQuestion by ID: %w", err)
-	}
-
-	if homework == nil {
-		return nil, nil
-	}
-
-	return homework.(*data.HomeworkQuestion), nil
+	return r.selectHomeworkQuestionByID(ctx, nil, ID)
 }
 
 func (r *Reform) DeleteHomeworkQuestionByID(ctx context.Context, ID int64) error {
@@ -54,10 +44,32 @@ func (r *Reform) insertOrUpdateHomeworkQuestion(ctx context.Context, tx *reform.
 	return nil
 }
 
+func (r *Reform) selectHomeworkQuestionByID(ctx context.Context, tx *reform.TX, ID int64) (*data.HomeworkQuestion, error) {
+	tail, values := utils.CreateTailAndParams(r.db, map[string]interface{}{"id": ID})
+
+	var content reform.Struct
+	var err error
+	if tx != nil {
+		content, err = tx.SelectOneFrom(data.HomeworkQuestionTable, tail, values...)
+	} else {
+		content, err = r.db.WithContext(ctx).SelectOneFrom(data.HomeworkQuestionTable, tail, values...)
+	}
+
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return nil, fmt.Errorf("select homeworkQuestion by ID: %w", err)
+	}
+
+	if content == nil {
+		return nil, nil
+	}
+
+	return content.(*data.HomeworkQuestion), nil
+}
+
 func (r *Reform) deleteHomeworkQuestionByID(ctx context.Context, tx *reform.TX, ID int64) error {
 	deleteFunc := func(tx *reform.TX) error {
 		tail, values := utils.CreateTailAndParams(r.db, map[string]interface{}{"id": ID})
-		deletedCount, err := tx.DeleteFrom(data.ContentTable, tail, values...)
+		deletedCount, err := tx.DeleteFrom(data.HomeworkQuestionTable, tail, values...)
 		if err != nil {
 			_ = tx.Rollback()
 			return fmt.Errorf("delete homeworkQuestion by ID: %w", err)

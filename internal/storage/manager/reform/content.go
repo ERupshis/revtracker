@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/erupshis/revtracker/internal/data"
+	data "github.com/erupshis/revtracker/internal/data"
 	"github.com/erupshis/revtracker/internal/storage/manager/reform/utils"
 	"gopkg.in/reform.v1"
 )
@@ -20,24 +20,13 @@ func (r *Reform) UpdateContent(ctx context.Context, content *data.Content) error
 }
 
 func (r *Reform) SelectContentByID(ctx context.Context, ID int64) (*data.Content, error) {
-	tail, values := utils.CreateTailAndParams(r.db, map[string]interface{}{"id": ID})
-	content, err := r.db.WithContext(ctx).SelectOneFrom(data.UserTable, tail, values...)
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return nil, fmt.Errorf("select content by ID: %w", err)
-	}
-
-	if content == nil {
-		return nil, nil
-	}
-
-	return content.(*data.Content), nil
+	return r.selectContentByID(ctx, nil, ID)
 }
 
 func (r *Reform) DeleteContentByID(ctx context.Context, ID int64) error {
 	return r.deleteContentByID(ctx, nil, ID)
 }
 
-// Need to optimise and use any type
 func (r *Reform) insertOrUpdateContent(ctx context.Context, tx *reform.TX, content *data.Content) error {
 	var err error
 	if tx != nil {
@@ -53,6 +42,28 @@ func (r *Reform) insertOrUpdateContent(ctx context.Context, tx *reform.TX, conte
 	}
 
 	return nil
+}
+
+func (r *Reform) selectContentByID(ctx context.Context, tx *reform.TX, ID int64) (*data.Content, error) {
+	tail, values := utils.CreateTailAndParams(r.db, map[string]interface{}{"id": ID})
+
+	var content reform.Struct
+	var err error
+	if tx != nil {
+		content, err = tx.SelectOneFrom(data.ContentTable, tail, values...)
+	} else {
+		content, err = r.db.WithContext(ctx).SelectOneFrom(data.ContentTable, tail, values...)
+	}
+
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return nil, fmt.Errorf("select content by ID: %w", err)
+	}
+
+	if content == nil {
+		return nil, nil
+	}
+
+	return content.(*data.Content), nil
 }
 
 func (r *Reform) deleteContentByID(ctx context.Context, tx *reform.TX, ID int64) error {
