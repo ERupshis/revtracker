@@ -7,17 +7,17 @@ import (
 )
 
 func (s *Storage) InsertHomeworkQuestion(ctx context.Context, homeworkQuestion *data.HomeworkQuestion) error {
-	return nil
+	return s.mngr.InsertHomeworkQuestion(ctx, homeworkQuestion)
 }
 
 func (s *Storage) UpdateHomeworkQuestion(ctx context.Context, homeworkQuestion *data.HomeworkQuestion) error {
-	return nil
+	return s.mngr.UpdateHomeworkQuestion(ctx, homeworkQuestion)
 }
 
 func (s *Storage) SelectHomeworkQuestionByID(ctx context.Context, ID int64) (*data.HomeworkQuestion, error) {
-	return nil, nil
+	return s.mngr.SelectHomeworkQuestionByID(ctx, ID)
 }
 
 func (s *Storage) DeleteHomeworkQuestionByID(ctx context.Context, ID int64) error {
-	return nil
+	return s.mngr.DeleteHomeworkQuestionByID(ctx, ID)
 }

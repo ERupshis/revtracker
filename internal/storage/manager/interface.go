@@ -24,4 +24,9 @@ type BaseStorageManager interface {
 	UpdateQuestion(ctx context.Context, question *data.Question) error
 	SelectQuestionByID(ctx context.Context, ID int64) (*data.Question, error)
 	DeleteQuestionByID(ctx context.Context, ID int64) error
+
+	InsertHomeworkQuestion(ctx context.Context, homeworkQuestion *data.HomeworkQuestion) error
+	UpdateHomeworkQuestion(ctx context.Context, homeworkQuestion *data.HomeworkQuestion) error
+	SelectHomeworkQuestionByID(ctx context.Context, ID int64) (*data.HomeworkQuestion, error)
+	DeleteHomeworkQuestionByID(ctx context.Context, ID int64) error
 }
