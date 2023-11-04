@@ -17,7 +17,7 @@ type BaseStorage interface {
 	DeleteDataByHomeworkID(ctx context.Context, ID int64) error
 
 	InsertHomework(ctx context.Context, homework *data.Homework) error
-	UpdateHomeworkByID(ctx context.Context, ID int64, newName string) error
+	UpdateHomeworkNameByID(ctx context.Context, ID int64, newName string) error
 	SelectHomeworkByID(ctx context.Context, ID int64) (*data.Homework, error)
 	DeleteHomeworkByID(ctx context.Context, ID int64) error
 
