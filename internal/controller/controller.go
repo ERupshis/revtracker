@@ -29,6 +29,8 @@ func (c *Controller) Route() *fiber.App {
 	appHomework := app.Group("/homework")
 	appHomework.Post("/", homework.Insert(c.strg, c.log))
 	appHomework.Get("/:ID", homework.Select(c.strg, c.log))
+	appHomework.Put("/:ID", homework.Update(c.strg, c.log))
+	appHomework.Delete("/:ID", homework.Delete(c.strg, c.log))
 
 	app.Route("/user", func(app fiber.Router) {
 		app.Post("/:name", handlers.AddUser(c.strg, c.log))

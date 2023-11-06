@@ -38,7 +38,7 @@ func Select(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 				return nil
 			}
 
-			log.Info("%s failed to add: %v", fmt.Sprintf(packagePath, constants.Select), err)
+			log.Info("%s failed to find: %v", fmt.Sprintf(packagePath, constants.Select), err)
 			c.Status(fiber.StatusInternalServerError)
 			return nil
 		}

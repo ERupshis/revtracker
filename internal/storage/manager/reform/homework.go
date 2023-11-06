@@ -85,14 +85,12 @@ func (r *Reform) selectHomework(ctx context.Context, tx *reform.TX, filters map[
 func (r *Reform) deleteHomeworkByID(ctx context.Context, tx *reform.TX, ID int64) error {
 	deleteFunc := func(tx *reform.TX) error {
 		tail, values := utils.CreateTailAndParams(r.db, map[string]interface{}{"id": ID})
-		deletedCount, err := tx.DeleteFrom(data.ContentTable, tail, values...)
+		deletedCount, err := tx.DeleteFrom(data.HomeworkTable, tail, values...)
 		if err != nil {
-			_ = tx.Rollback()
 			return fmt.Errorf("delete homework by ID: %w", err)
 		}
 
 		if deletedCount != 1 {
-			_ = tx.Rollback()
 			return fmt.Errorf("delete homework by ID wrong deletions count: %d", deletedCount)
 		}
 
