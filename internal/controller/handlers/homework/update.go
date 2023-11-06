@@ -1,9 +1,7 @@
 package homework
 
 import (
-	"database/sql"
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	"github.com/erupshis/revtracker/internal/constants"
@@ -41,12 +39,6 @@ func Update(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 		}
 
 		if err := storage.UpdateHomework(c.Context(), homework); err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				log.Info("%s couldn't update: %v", fmt.Sprintf(packagePath, constants.Update), err)
-				c.Status(fiber.StatusBadRequest)
-				return nil
-			}
-
 			log.Info("%s failed to update: %v", fmt.Sprintf(packagePath, constants.Update), err)
 			c.Status(fiber.StatusInternalServerError)
 			return nil
@@ -65,6 +57,7 @@ func Update(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 			return nil
 		}
 
+		c.Set("Content-Type", "application/json")
 		c.Status(fiber.StatusOK)
 		return nil
 	}

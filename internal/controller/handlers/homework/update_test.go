@@ -18,23 +18,26 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestInsert(t *testing.T) {
-	testLog, _ := logger.CreateTestPLug()
+func TestUpdate(t *testing.T) {
+	testLog, _ := logger.CreateZapLogger("info")
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	mockStorage := mocks.NewMockBaseStorage(ctrl)
 	gomock.InOrder(
-		mockStorage.EXPECT().InsertHomework(gomock.Any(), gomock.Any()).Return(nil),
-		mockStorage.EXPECT().InsertHomework(gomock.Any(), gomock.Any()).Return(fmt.Errorf("test err")),
+		mockStorage.EXPECT().UpdateHomework(gomock.Any(), gomock.Any()).Return(nil),
+		mockStorage.EXPECT().UpdateHomework(gomock.Any(), gomock.Any()).Return(nil),
+		mockStorage.EXPECT().UpdateHomework(gomock.Any(), gomock.Any()).Return(nil),
+		mockStorage.EXPECT().UpdateHomework(gomock.Any(), gomock.Any()).Return(fmt.Errorf("test err")),
 	)
 
 	testApp := fiber.New()
-	testApp.Post("/:ID", Insert(mockStorage, testLog))
+	testApp.Put("/:ID", Update(mockStorage, testLog))
+	testApp.Put("/", Update(mockStorage, testLog))
 	defer utils.ExecuteWithLogError(testApp.Shutdown, testLog)
 
-	port := 3004
+	port := 3005
 	go func() {
 		err := testApp.Listen(":" + fmt.Sprintf("%d", port))
 		if err != nil {
@@ -67,20 +70,7 @@ func TestInsert(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				body:       []byte("Id: 1"),
-			},
-		},
-		{
-			name: "incorrect json in body",
-			args: args{
-				storage:  nil,
-				log:      testLog,
-				paramURI: "/1",
-				body:     []byte(`{"Id":1"Name":"hw1"}`),
-			},
-			want: want{
-				statusCode: fiber.StatusBadRequest,
-				body:       []byte(""),
+				body:       []byte(`{"Id":1,"Name":"hw1"}`),
 			},
 		},
 		{
@@ -94,6 +84,58 @@ func TestInsert(t *testing.T) {
 			want: want{
 				statusCode: fiber.StatusBadRequest,
 				body:       []byte(""),
+			},
+		},
+		{
+			name: "incorrect json body",
+			args: args{
+				storage:  nil,
+				log:      testLog,
+				paramURI: "/1",
+				body:     []byte(`{"Id":1"Name":"hw1"}`),
+			},
+			want: want{
+				statusCode: fiber.StatusBadRequest,
+				body:       []byte(""),
+			},
+		},
+		{
+			name: "missing ID in URI and in body",
+			args: args{
+				storage:  nil,
+				log:      testLog,
+				paramURI: "/",
+				body:     []byte(`{"Name":"hw1"}`),
+			},
+			want: want{
+				statusCode: fiber.StatusBadRequest,
+				body:       []byte(""),
+			},
+		},
+		{
+			name: "ID in URI only",
+			args: args{
+				storage:  nil,
+				log:      testLog,
+				paramURI: "/1",
+				body:     []byte(`{"Name":"hw1"}`),
+			},
+			want: want{
+				statusCode: fiber.StatusOK,
+				body:       []byte(`{"Id":1,"Name":"hw1"}`),
+			},
+		},
+		{
+			name: "ID in body only",
+			args: args{
+				storage:  nil,
+				log:      testLog,
+				paramURI: "/",
+				body:     []byte(`{"Id":1,"Name":"hw1"}`),
+			},
+			want: want{
+				statusCode: fiber.StatusOK,
+				body:       []byte(`{"Id":1,"Name":"hw1"}`),
 			},
 		},
 		{
@@ -126,7 +168,7 @@ func TestInsert(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			request, errReq := http.NewRequest(
-				http.MethodPost,
+				http.MethodPut,
 				utilsReform.HostTest+fmt.Sprintf("%d", port)+tt.args.paramURI,
 				bytes.NewBuffer(tt.args.body),
 			)
