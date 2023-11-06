@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strconv"
 
 	"github.com/erupshis/revtracker/internal/constants"
+	"github.com/erupshis/revtracker/internal/controller/handlers/utils"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
 	"github.com/gofiber/fiber/v2"
@@ -15,22 +15,14 @@ import (
 
 func Select(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		rawID := c.Params("ID")
-		if rawID == "" {
-			log.Info("%s missing name in request", fmt.Sprintf(packagePath, constants.Select))
-			c.Status(fiber.StatusBadRequest)
-			return nil
-		}
-		c.Queries()
-
-		ID, err := strconv.Atoi(rawID)
+		ID, err := utils.GetIDFromParams(c)
 		if err != nil {
-			log.Info("%s parse ID from param: %v", fmt.Sprintf(packagePath, constants.Select), err)
+			log.Info("%s get ID from params: %v", fmt.Sprintf(packagePath, constants.Select), err)
 			c.Status(fiber.StatusBadRequest)
 			return nil
 		}
 
-		homework, err := storage.SelectHomeworkByID(c.Context(), int64(ID))
+		homework, err := storage.SelectHomeworkByID(c.Context(), ID)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				log.Info("%s couldn't find: %v", fmt.Sprintf(packagePath, constants.Select), err)
