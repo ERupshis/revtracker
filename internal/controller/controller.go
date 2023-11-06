@@ -51,6 +51,14 @@ func (c *Controller) Route() *fiber.App {
 		app.Delete("/:ID", question.Delete(c.strg, c.log))
 	})
 
+	app.Route("/homework_question", func(app fiber.Router) {
+		app.Post("/", question.Insert(c.strg, c.log))
+		app.Put("/", question.Update(c.strg, c.log))
+		app.Put("/:ID", question.Update(c.strg, c.log))
+		app.Get("/:ID", question.Select(c.strg, c.log))
+		app.Delete("/:ID", question.Delete(c.strg, c.log))
+	})
+
 	app.Route("/user", func(app fiber.Router) {
 		app.Post("/:name", handlers.AddUser(c.strg, c.log))
 	})
