@@ -6,6 +6,8 @@ import (
 	"gopkg.in/reform.v1"
 )
 
+const HostTest = "http://localhost:"
+
 func CreateTailAndParams(db *reform.DB, filters map[string]interface{}) (string, []interface{}) {
 	tail := "WHERE"
 	var values []interface{}

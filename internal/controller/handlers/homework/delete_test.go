@@ -1,4 +1,4 @@
-package handlers
+package homework
 
 import (
 	"fmt"
@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/erupshis/revtracker/internal/data"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
 	utilsReform "github.com/erupshis/revtracker/internal/storage/manager/reform/utils"
@@ -18,33 +17,23 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestAddUser(t *testing.T) {
-	testLog, _ := logger.CreateTestPLug()
+func TestDelete(t *testing.T) {
+	testLog, _ := logger.CreateZapLogger("info")
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	mockStorage := mocks.NewMockBaseStorage(ctrl)
 	gomock.InOrder(
-		mockStorage.EXPECT().SelectUser(gomock.Any(), gomock.Any()).Return(nil, nil),
-		mockStorage.EXPECT().InsertUser(gomock.Any(), gomock.Any()).Return(int64(1), nil),
-
-		mockStorage.EXPECT().SelectUser(gomock.Any(), gomock.Any()).Return(nil, fmt.Errorf("err")),
-
-		mockStorage.EXPECT().SelectUser(gomock.Any(), gomock.Any()).Return(&data.User{}, nil),
-
-		mockStorage.EXPECT().SelectUser(gomock.Any(), gomock.Any()).Return(nil, nil),
-		mockStorage.EXPECT().InsertUser(gomock.Any(), gomock.Any()).Return(int64(-1), fmt.Errorf("err")),
-
-		mockStorage.EXPECT().SelectUser(gomock.Any(), gomock.Any()).Return(nil, nil),
-		mockStorage.EXPECT().InsertUser(gomock.Any(), gomock.Any()).Return(int64(-1), nil),
+		mockStorage.EXPECT().DeleteHomeworkByID(gomock.Any(), gomock.Any()).Return(nil),
+		mockStorage.EXPECT().DeleteHomeworkByID(gomock.Any(), gomock.Any()).Return(fmt.Errorf("error")),
 	)
 
 	testApp := fiber.New()
-	testApp.Post("/:name", AddUser(mockStorage, testLog))
+	testApp.Delete("/:ID", Delete(mockStorage, testLog))
 	defer utils.ExecuteWithLogError(testApp.Shutdown, testLog)
 
-	port := 3001
+	port := 3002
 	go func() {
 		err := testApp.Listen(":" + fmt.Sprintf("%d", port))
 		if err != nil {
@@ -71,67 +60,31 @@ func TestAddUser(t *testing.T) {
 			args: args{
 				storage:  nil,
 				log:      testLog,
-				paramURI: "/any_name",
+				paramURI: "/1",
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				body:       []byte("1"),
-			},
-		},
-		{
-			name: "without name",
-			args: args{
-				storage:  nil,
-				log:      testLog,
-				paramURI: "/",
-			},
-			want: want{
-				statusCode: fiber.StatusNotFound,
-				body:       []byte("Cannot POST /"),
-			},
-		},
-		{
-			name: "error from bd on Select",
-			args: args{
-				storage:  nil,
-				log:      testLog,
-				paramURI: "/any_name",
-			},
-			want: want{
-				statusCode: fiber.StatusInternalServerError,
 				body:       []byte(""),
 			},
 		},
 		{
-			name: "user already exists",
+			name: "incorrect ID",
 			args: args{
 				storage:  nil,
 				log:      testLog,
-				paramURI: "/any_name",
+				paramURI: "/asd1",
 			},
 			want: want{
-				statusCode: fiber.StatusConflict,
+				statusCode: fiber.StatusBadRequest,
 				body:       []byte(""),
 			},
 		},
 		{
-			name: "error from bd on Insert",
+			name: "error from DB",
 			args: args{
 				storage:  nil,
 				log:      testLog,
-				paramURI: "/any_name",
-			},
-			want: want{
-				statusCode: fiber.StatusInternalServerError,
-				body:       []byte(""),
-			},
-		},
-		{
-			name: "negative id on Insert in bd",
-			args: args{
-				storage:  nil,
-				log:      testLog,
-				paramURI: "/any_name",
+				paramURI: "/1",
 			},
 			want: want{
 				statusCode: fiber.StatusInternalServerError,
@@ -141,7 +94,7 @@ func TestAddUser(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			request, errReq := http.NewRequest(http.MethodPost, utilsReform.HostTest+fmt.Sprintf("%d", port)+tt.args.paramURI, nil)
+			request, errReq := http.NewRequest(http.MethodDelete, utilsReform.HostTest+fmt.Sprintf("%d", port)+tt.args.paramURI, nil)
 			require.NoError(t, errReq)
 
 			client := http.Client{}
