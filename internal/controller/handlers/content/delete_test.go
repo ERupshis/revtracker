@@ -1,7 +1,6 @@
 package content
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"net/http"
@@ -18,7 +17,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestInsert(t *testing.T) {
+func TestDelete(t *testing.T) {
 	testLog, _ := logger.CreateMock()
 
 	ctrl := gomock.NewController(t)
@@ -26,15 +25,15 @@ func TestInsert(t *testing.T) {
 
 	mockStorage := mocks.NewMockBaseStorage(ctrl)
 	gomock.InOrder(
-		mockStorage.EXPECT().InsertContent(gomock.Any(), gomock.Any()).Return(nil),
-		mockStorage.EXPECT().InsertContent(gomock.Any(), gomock.Any()).Return(fmt.Errorf("test err")),
+		mockStorage.EXPECT().DeleteContentByID(gomock.Any(), gomock.Any()).Return(nil),
+		mockStorage.EXPECT().DeleteContentByID(gomock.Any(), gomock.Any()).Return(fmt.Errorf("error")),
 	)
 
 	testApp := fiber.New()
-	testApp.Post("/", Insert(mockStorage, testLog))
+	testApp.Delete("/:ID", Delete(mockStorage, testLog))
 	defer utils.ExecuteWithLogError(testApp.Shutdown, testLog)
 
-	port := 3010
+	port := 3011
 	go func() {
 		err := testApp.Listen(":" + fmt.Sprintf("%d", port))
 		if err != nil {
@@ -46,7 +45,6 @@ func TestInsert(t *testing.T) {
 		storage  storage.BaseStorage
 		log      logger.BaseLogger
 		paramURI string
-		body     []byte
 	}
 	type want struct {
 		statusCode int
@@ -62,21 +60,19 @@ func TestInsert(t *testing.T) {
 			args: args{
 				storage:  nil,
 				log:      testLog,
-				paramURI: "",
-				body:     []byte(`{"Id":1,"Task":"task1", "Answer":"answer1", "Solution":"solution1"}`),
+				paramURI: "/1",
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				body:       []byte("Id: 1"),
+				body:       []byte(""),
 			},
 		},
 		{
-			name: "incorrect json in body",
+			name: "incorrect ID",
 			args: args{
 				storage:  nil,
 				log:      testLog,
-				paramURI: "",
-				body:     []byte(`{"Id":1"Task":"task1", "Answer":"answer1", "Solution":"solution1"}`),
+				paramURI: "/asd1",
 			},
 			want: want{
 				statusCode: fiber.StatusBadRequest,
@@ -84,64 +80,11 @@ func TestInsert(t *testing.T) {
 			},
 		},
 		{
-			name: "missing task in json",
+			name: "error from DB",
 			args: args{
 				storage:  nil,
 				log:      testLog,
-				paramURI: "",
-				body:     []byte(`{"Id":1, "Task":"task1", "Solution":"solution1"}`),
-			},
-			want: want{
-				statusCode: fiber.StatusBadRequest,
-				body:       []byte(""),
-			},
-		},
-		{
-			name: "missing answer in json",
-			args: args{
-				storage:  nil,
-				log:      testLog,
-				paramURI: "",
-				body:     []byte(`{"Id":1, "Task":"task1", "Answer":"answer1"}`),
-			},
-			want: want{
-				statusCode: fiber.StatusBadRequest,
-				body:       []byte(""),
-			},
-		},
-		{
-			name: "missing solution in json",
-			args: args{
-				storage:  nil,
-				log:      testLog,
-				paramURI: "",
-				body:     []byte(`{"Id":1, "Answer":"answer1", "Solution":"solution1"}`),
-			},
-			want: want{
-				statusCode: fiber.StatusBadRequest,
-				body:       []byte(""),
-			},
-		},
-		{
-			name: "missing data in body",
-			args: args{
-				storage:  nil,
-				log:      testLog,
-				paramURI: "",
-				body:     []byte(``),
-			},
-			want: want{
-				statusCode: fiber.StatusBadRequest,
-				body:       []byte(""),
-			},
-		},
-		{
-			name: "error from db",
-			args: args{
-				storage:  nil,
-				log:      testLog,
-				paramURI: "",
-				body:     []byte(`{"Id":1,"Task":"task1", "Answer":"answer1", "Solution":"solution1"}`),
+				paramURI: "/1",
 			},
 			want: want{
 				statusCode: fiber.StatusInternalServerError,
@@ -151,11 +94,7 @@ func TestInsert(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			request, errReq := http.NewRequest(
-				http.MethodPost,
-				utilsReform.HostTest+fmt.Sprintf("%d", port)+tt.args.paramURI,
-				bytes.NewBuffer(tt.args.body),
-			)
+			request, errReq := http.NewRequest(http.MethodDelete, utilsReform.HostTest+fmt.Sprintf("%d", port)+tt.args.paramURI, nil)
 			require.NoError(t, errReq)
 
 			client := http.Client{}
@@ -172,4 +111,5 @@ func TestInsert(t *testing.T) {
 			assert.Equal(t, string(tt.want.body), string(respBody))
 		})
 	}
+
 }
