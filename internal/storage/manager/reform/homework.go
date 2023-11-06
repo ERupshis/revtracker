@@ -40,7 +40,7 @@ func (r *Reform) SelectHomeworkByID(ctx context.Context, ID int64) (*data.Homewo
 }
 
 func (r *Reform) DeleteHomeworkByID(ctx context.Context, ID int64) error {
-	return r.deleteHomeworkByID(ctx, nil, ID)
+	return r.deleteHomework(ctx, nil, map[string]interface{}{"id": ID})
 }
 
 func (r *Reform) insertOrUpdateHomework(ctx context.Context, tx *reform.TX, homework *data.Homework) error {
@@ -82,9 +82,9 @@ func (r *Reform) selectHomework(ctx context.Context, tx *reform.TX, filters map[
 	return content.(*data.Homework), nil
 }
 
-func (r *Reform) deleteHomeworkByID(ctx context.Context, tx *reform.TX, ID int64) error {
+func (r *Reform) deleteHomework(ctx context.Context, tx *reform.TX, filters map[string]interface{}) error {
 	deleteFunc := func(tx *reform.TX) error {
-		tail, values := utils.CreateTailAndParams(r.db, map[string]interface{}{"id": ID})
+		tail, values := utils.CreateTailAndParams(r.db, filters)
 		deletedCount, err := tx.DeleteFrom(data.HomeworkTable, tail, values...)
 		if err != nil {
 			return fmt.Errorf("delete homework by ID: %w", err)
