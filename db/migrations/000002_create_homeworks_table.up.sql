@@ -1,4 +1,4 @@
 CREATE TABLE IF NOT EXISTS homeworks (
     id BIGSERIAL PRIMARY KEY,
-    name TEXT NOT NULL
+    name TEXT UNIQUE NOT NULL
 );

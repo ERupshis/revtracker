@@ -23,12 +23,12 @@ func Create(baseStorage storage.BaseStorage, baseLogger logger.BaseLogger) BaseC
 func (c *Controller) Route() *fiber.App {
 	app := fiber.New()
 
-	app.Put("/:userID", handlers.UpdateData(c.strg, c.log))
 	app.Get("/changes", handlers.SelectChanges(c.strg, c.log))
 
 	appHomework := app.Group("/homework")
 	appHomework.Post("/", homework.Insert(c.strg, c.log))
 	appHomework.Get("/:ID", homework.Select(c.strg, c.log))
+	appHomework.Put("/", homework.Update(c.strg, c.log))
 	appHomework.Put("/:ID", homework.Update(c.strg, c.log))
 	appHomework.Delete("/:ID", homework.Delete(c.strg, c.log))
 

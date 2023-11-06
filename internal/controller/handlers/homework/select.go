@@ -45,7 +45,7 @@ func Select(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 
 		response, err := json.Marshal(homework)
 		if err != nil {
-			log.Info("%s failed to marshal json in response body", fmt.Sprintf(packagePath, constants.Insert))
+			log.Info("%s failed to marshal json for response body", fmt.Sprintf(packagePath, constants.Select))
 			c.Status(fiber.StatusInternalServerError)
 			return nil
 		}

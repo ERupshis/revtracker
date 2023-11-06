@@ -23,7 +23,7 @@ func Insert(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 		homework := &data.Homework{}
 
 		if err := json.Unmarshal(c.Body(), homework); err != nil {
-			log.Info("%s failed to parse request body", fmt.Sprintf(packagePath, constants.Insert))
+			log.Info("%s failed to parse request body: %v", fmt.Sprintf(packagePath, constants.Insert), err)
 			c.Status(fiber.StatusBadRequest)
 			return nil
 		}
