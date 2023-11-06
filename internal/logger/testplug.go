@@ -4,22 +4,22 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type testPlug struct {
+type logMock struct {
 }
 
 func CreateMock() (BaseLogger, error) {
-	return &testPlug{}, nil
+	return &logMock{}, nil
 }
 
-func (t *testPlug) Info(msg string, fields ...interface{}) {
+func (t *logMock) Info(_ string, _ ...interface{}) {
 }
 
-func (t *testPlug) Printf(msg string, fields ...interface{}) {
+func (t *logMock) Printf(_ string, _ ...interface{}) {
 }
 
-func (t *testPlug) Sync() {
+func (t *logMock) Sync() {
 }
 
-func (t *testPlug) LogHandler(c *fiber.Ctx) error {
+func (t *logMock) LogHandler(_ *fiber.Ctx) error {
 	return nil
 }
