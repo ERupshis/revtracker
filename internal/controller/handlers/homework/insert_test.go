@@ -31,7 +31,7 @@ func TestInsert(t *testing.T) {
 	)
 
 	testApp := fiber.New()
-	testApp.Post("/:ID", Insert(mockStorage, testLog))
+	testApp.Post("/", Insert(mockStorage, testLog))
 	defer utils.ExecuteWithLogError(testApp.Shutdown, testLog)
 
 	port := 3004
@@ -62,7 +62,7 @@ func TestInsert(t *testing.T) {
 			args: args{
 				storage:  nil,
 				log:      testLog,
-				paramURI: "/1",
+				paramURI: "",
 				body:     []byte(`{"Id":1,"Name":"hw1"}`),
 			},
 			want: want{
@@ -75,7 +75,7 @@ func TestInsert(t *testing.T) {
 			args: args{
 				storage:  nil,
 				log:      testLog,
-				paramURI: "/1",
+				paramURI: "",
 				body:     []byte(`{"Id":1"Name":"hw1"}`),
 			},
 			want: want{
@@ -88,7 +88,7 @@ func TestInsert(t *testing.T) {
 			args: args{
 				storage:  nil,
 				log:      testLog,
-				paramURI: "/1",
+				paramURI: "",
 				body:     []byte(``),
 			},
 			want: want{
@@ -101,7 +101,7 @@ func TestInsert(t *testing.T) {
 			args: args{
 				storage:  nil,
 				log:      testLog,
-				paramURI: "/1",
+				paramURI: "",
 				body:     []byte(`{"Id":1}`),
 			},
 			want: want{
@@ -114,7 +114,7 @@ func TestInsert(t *testing.T) {
 			args: args{
 				storage:  nil,
 				log:      testLog,
-				paramURI: "/1",
+				paramURI: "",
 				body:     []byte(`{"Id":1,"Name":"hw1"}`),
 			},
 			want: want{

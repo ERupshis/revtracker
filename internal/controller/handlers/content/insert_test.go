@@ -1,4 +1,4 @@
-package homework
+package content
 
 import (
 	"bytes"
@@ -18,26 +18,23 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestUpdate(t *testing.T) {
-	testLog, _ := logger.CreateMock()
+func TestInsert(t *testing.T) {
+	testLog, _ := logger.CreateZapLogger("info")
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	mockStorage := mocks.NewMockBaseStorage(ctrl)
 	gomock.InOrder(
-		mockStorage.EXPECT().UpdateHomework(gomock.Any(), gomock.Any()).Return(nil),
-		mockStorage.EXPECT().UpdateHomework(gomock.Any(), gomock.Any()).Return(nil),
-		mockStorage.EXPECT().UpdateHomework(gomock.Any(), gomock.Any()).Return(nil),
-		mockStorage.EXPECT().UpdateHomework(gomock.Any(), gomock.Any()).Return(fmt.Errorf("test err")),
+		mockStorage.EXPECT().InsertContent(gomock.Any(), gomock.Any()).Return(nil),
+		mockStorage.EXPECT().InsertContent(gomock.Any(), gomock.Any()).Return(fmt.Errorf("test err")),
 	)
 
 	testApp := fiber.New()
-	testApp.Put("/:ID", Update(mockStorage, testLog))
-	testApp.Put("/", Update(mockStorage, testLog))
+	testApp.Post("/", Insert(mockStorage, testLog))
 	defer utils.ExecuteWithLogError(testApp.Shutdown, testLog)
 
-	port := 3005
+	port := 3006
 	go func() {
 		err := testApp.Listen(":" + fmt.Sprintf("%d", port))
 		if err != nil {
@@ -65,12 +62,64 @@ func TestUpdate(t *testing.T) {
 			args: args{
 				storage:  nil,
 				log:      testLog,
-				paramURI: "/1",
-				body:     []byte(`{"Id":1,"Name":"hw1"}`),
+				paramURI: "",
+				body:     []byte(`{"Id":1,"Task":"task1", "Answer":"answer1", "Solution":"solution1"}`),
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				body:       []byte(`{"Id":1,"Name":"hw1"}`),
+				body:       []byte("Id: 1"),
+			},
+		},
+		{
+			name: "incorrect json in body",
+			args: args{
+				storage:  nil,
+				log:      testLog,
+				paramURI: "",
+				body:     []byte(`{"Id":1"Task":"task1", "Answer":"answer1", "Solution":"solution1"}`),
+			},
+			want: want{
+				statusCode: fiber.StatusBadRequest,
+				body:       []byte(""),
+			},
+		},
+		{
+			name: "missing task in json",
+			args: args{
+				storage:  nil,
+				log:      testLog,
+				paramURI: "",
+				body:     []byte(`{"Id":1, "Task":"task1", "Solution":"solution1"}`),
+			},
+			want: want{
+				statusCode: fiber.StatusBadRequest,
+				body:       []byte(""),
+			},
+		},
+		{
+			name: "missing answer in json",
+			args: args{
+				storage:  nil,
+				log:      testLog,
+				paramURI: "",
+				body:     []byte(`{"Id":1, "Task":"task1", "Answer":"answer1"}`),
+			},
+			want: want{
+				statusCode: fiber.StatusBadRequest,
+				body:       []byte(""),
+			},
+		},
+		{
+			name: "missing solution in json",
+			args: args{
+				storage:  nil,
+				log:      testLog,
+				paramURI: "",
+				body:     []byte(`{"Id":1, "Answer":"answer1", "Solution":"solution1"}`),
+			},
+			want: want{
+				statusCode: fiber.StatusBadRequest,
+				body:       []byte(""),
 			},
 		},
 		{
@@ -78,73 +127,8 @@ func TestUpdate(t *testing.T) {
 			args: args{
 				storage:  nil,
 				log:      testLog,
-				paramURI: "/1",
+				paramURI: "",
 				body:     []byte(``),
-			},
-			want: want{
-				statusCode: fiber.StatusBadRequest,
-				body:       []byte(""),
-			},
-		},
-		{
-			name: "incorrect json body",
-			args: args{
-				storage:  nil,
-				log:      testLog,
-				paramURI: "/1",
-				body:     []byte(`{"Id":1"Name":"hw1"}`),
-			},
-			want: want{
-				statusCode: fiber.StatusBadRequest,
-				body:       []byte(""),
-			},
-		},
-		{
-			name: "missing ID in URI and in body",
-			args: args{
-				storage:  nil,
-				log:      testLog,
-				paramURI: "/",
-				body:     []byte(`{"Name":"hw1"}`),
-			},
-			want: want{
-				statusCode: fiber.StatusBadRequest,
-				body:       []byte(""),
-			},
-		},
-		{
-			name: "ID in URI only",
-			args: args{
-				storage:  nil,
-				log:      testLog,
-				paramURI: "/1",
-				body:     []byte(`{"Name":"hw1"}`),
-			},
-			want: want{
-				statusCode: fiber.StatusOK,
-				body:       []byte(`{"Id":1,"Name":"hw1"}`),
-			},
-		},
-		{
-			name: "ID in body only",
-			args: args{
-				storage:  nil,
-				log:      testLog,
-				paramURI: "/",
-				body:     []byte(`{"Id":1,"Name":"hw1"}`),
-			},
-			want: want{
-				statusCode: fiber.StatusOK,
-				body:       []byte(`{"Id":1,"Name":"hw1"}`),
-			},
-		},
-		{
-			name: "incorrect json in body (missing or empty name)",
-			args: args{
-				storage:  nil,
-				log:      testLog,
-				paramURI: "/1",
-				body:     []byte(`{"Id":1}`),
 			},
 			want: want{
 				statusCode: fiber.StatusBadRequest,
@@ -156,8 +140,8 @@ func TestUpdate(t *testing.T) {
 			args: args{
 				storage:  nil,
 				log:      testLog,
-				paramURI: "/1",
-				body:     []byte(`{"Id":1,"Name":"hw1"}`),
+				paramURI: "",
+				body:     []byte(`{"Id":1,"Task":"task1", "Answer":"answer1", "Solution":"solution1"}`),
 			},
 			want: want{
 				statusCode: fiber.StatusInternalServerError,
@@ -168,7 +152,7 @@ func TestUpdate(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			request, errReq := http.NewRequest(
-				http.MethodPut,
+				http.MethodPost,
 				utilsReform.HostTest+fmt.Sprintf("%d", port)+tt.args.paramURI,
 				bytes.NewBuffer(tt.args.body),
 			)
