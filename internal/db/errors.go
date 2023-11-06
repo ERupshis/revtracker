@@ -2,6 +2,7 @@ package db
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/jackc/pgerrcode"
 )
@@ -17,3 +18,7 @@ var DatabaseErrorsToRetry = []error{
 	errors.New(pgerrcode.TransactionResolutionUnknown),
 	errors.New(pgerrcode.ProtocolViolation),
 }
+
+var (
+	ErrEntityExists = fmt.Errorf("entity already exists in database")
+)

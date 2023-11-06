@@ -7,12 +7,28 @@ import (
 	"fmt"
 
 	"github.com/erupshis/revtracker/internal/data"
+	"github.com/erupshis/revtracker/internal/db"
 	"github.com/erupshis/revtracker/internal/storage/manager/reform/utils"
 	"gopkg.in/reform.v1"
 )
 
 func (r *Reform) InsertHomework(ctx context.Context, homework *data.Homework) error {
-	return r.insertOrUpdateHomework(ctx, nil, homework)
+	return r.db.InTransactionContext(ctx, nil, func(tx *reform.TX) error {
+		homeworkInDB, err := r.selectHomework(ctx, tx, map[string]interface{}{"name": homework.Name})
+		if err != nil {
+			return fmt.Errorf("failed to find existing homework: %w", err)
+		}
+
+		if homeworkInDB != nil {
+			return fmt.Errorf("insert homework: %w", db.ErrEntityExists)
+		}
+
+		if err = r.insertOrUpdateHomework(ctx, nil, homework); err != nil {
+			return fmt.Errorf("insert homework: %w", err)
+		}
+
+		return nil
+	})
 }
 
 func (r *Reform) UpdateHomework(ctx context.Context, homework *data.Homework) error {
@@ -20,7 +36,7 @@ func (r *Reform) UpdateHomework(ctx context.Context, homework *data.Homework) er
 }
 
 func (r *Reform) SelectHomeworkByID(ctx context.Context, ID int64) (*data.Homework, error) {
-	return r.selectHomeworkByID(ctx, nil, ID)
+	return r.selectHomework(ctx, nil, map[string]interface{}{"id": ID})
 }
 
 func (r *Reform) DeleteHomeworkByID(ctx context.Context, ID int64) error {
@@ -44,8 +60,8 @@ func (r *Reform) insertOrUpdateHomework(ctx context.Context, tx *reform.TX, home
 	return nil
 }
 
-func (r *Reform) selectHomeworkByID(ctx context.Context, tx *reform.TX, ID int64) (*data.Homework, error) {
-	tail, values := utils.CreateTailAndParams(r.db, map[string]interface{}{"id": ID})
+func (r *Reform) selectHomework(ctx context.Context, tx *reform.TX, filters map[string]interface{}) (*data.Homework, error) {
+	tail, values := utils.CreateTailAndParams(r.db, filters)
 
 	var content reform.Struct
 	var err error
