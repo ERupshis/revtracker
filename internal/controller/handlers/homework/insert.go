@@ -1,14 +1,11 @@
 package homework
 
 import (
-	"database/sql"
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	"github.com/erupshis/revtracker/internal/constants"
 	"github.com/erupshis/revtracker/internal/data"
-	"github.com/erupshis/revtracker/internal/db"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
 	"github.com/gofiber/fiber/v2"
@@ -35,18 +32,6 @@ func Insert(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 		}
 
 		if err := storage.InsertHomework(c.Context(), homework); err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				log.Info("%s couldn't add: %v", fmt.Sprintf(packagePath, constants.Insert), err)
-				c.Status(fiber.StatusBadRequest)
-				return nil
-			}
-
-			if errors.Is(err, db.ErrEntityExists) {
-				log.Info("%s couldn't add: %v", fmt.Sprintf(packagePath, constants.Insert), err)
-				c.Status(fiber.StatusConflict)
-				return nil
-			}
-
 			log.Info("%s failed to add: %v", fmt.Sprintf(packagePath, constants.Insert), err)
 			c.Status(fiber.StatusInternalServerError)
 			return nil
@@ -58,6 +43,7 @@ func Insert(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 			return nil
 		}
 
+		c.Set("Content-Type", "text/plain")
 		c.Status(fiber.StatusOK)
 		return nil
 	}

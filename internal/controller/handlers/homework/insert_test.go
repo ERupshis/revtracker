@@ -1,13 +1,12 @@
 package homework
 
 import (
-	"database/sql"
+	"bytes"
 	"fmt"
 	"io"
 	"net/http"
 	"testing"
 
-	"github.com/erupshis/revtracker/internal/data"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
 	utilsReform "github.com/erupshis/revtracker/internal/storage/manager/reform/utils"
@@ -19,29 +18,23 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestSelect(t *testing.T) {
-	testLog, _ := logger.CreateTestPLug()
+func TestInsert(t *testing.T) {
+	testLog, _ := logger.CreateZapLogger("info")
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	homework := &data.Homework{
-		ID:   1,
-		Name: "hw1",
-	}
-
 	mockStorage := mocks.NewMockBaseStorage(ctrl)
 	gomock.InOrder(
-		mockStorage.EXPECT().SelectHomeworkByID(gomock.Any(), gomock.Any()).Return(homework, nil),
-		mockStorage.EXPECT().SelectHomeworkByID(gomock.Any(), gomock.Any()).Return(nil, sql.ErrNoRows),
-		mockStorage.EXPECT().SelectHomeworkByID(gomock.Any(), gomock.Any()).Return(nil, fmt.Errorf("test err")),
+		mockStorage.EXPECT().InsertHomework(gomock.Any(), gomock.Any()).Return(nil),
+		mockStorage.EXPECT().InsertHomework(gomock.Any(), gomock.Any()).Return(fmt.Errorf("test err")),
 	)
 
 	testApp := fiber.New()
-	testApp.Get("/:ID", Select(mockStorage, testLog))
+	testApp.Post("/:ID", Insert(mockStorage, testLog))
 	defer utils.ExecuteWithLogError(testApp.Shutdown, testLog)
 
-	port := 3003
+	port := 3004
 	go func() {
 		err := testApp.Listen(":" + fmt.Sprintf("%d", port))
 		if err != nil {
@@ -53,6 +46,7 @@ func TestSelect(t *testing.T) {
 		storage  storage.BaseStorage
 		log      logger.BaseLogger
 		paramURI string
+		body     []byte
 	}
 	type want struct {
 		statusCode int
@@ -69,18 +63,20 @@ func TestSelect(t *testing.T) {
 				storage:  nil,
 				log:      testLog,
 				paramURI: "/1",
+				body:     []byte(`{"Id":1,"Name":"hw1"}`),
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				body:       []byte(`{"Id":1,"Name":"hw1"}`),
+				body:       []byte("Id: 1"),
 			},
 		},
 		{
-			name: "wrong id type",
+			name: "incorrect json in body",
 			args: args{
 				storage:  nil,
 				log:      testLog,
-				paramURI: "/asd1",
+				paramURI: "/1",
+				body:     []byte(`{"Id":1"Name":"hw1"}`),
 			},
 			want: want{
 				statusCode: fiber.StatusBadRequest,
@@ -88,14 +84,28 @@ func TestSelect(t *testing.T) {
 			},
 		},
 		{
-			name: "no errors in result from db",
+			name: "missing data in body",
 			args: args{
 				storage:  nil,
 				log:      testLog,
 				paramURI: "/1",
+				body:     []byte(``),
 			},
 			want: want{
-				statusCode: fiber.StatusNoContent,
+				statusCode: fiber.StatusBadRequest,
+				body:       []byte(""),
+			},
+		},
+		{
+			name: "incorrect json in body (missing or empty name)",
+			args: args{
+				storage:  nil,
+				log:      testLog,
+				paramURI: "/1",
+				body:     []byte(`{"Id":1}`),
+			},
+			want: want{
+				statusCode: fiber.StatusBadRequest,
 				body:       []byte(""),
 			},
 		},
@@ -105,6 +115,7 @@ func TestSelect(t *testing.T) {
 				storage:  nil,
 				log:      testLog,
 				paramURI: "/1",
+				body:     []byte(`{"Id":1,"Name":"hw1"}`),
 			},
 			want: want{
 				statusCode: fiber.StatusInternalServerError,
@@ -114,7 +125,11 @@ func TestSelect(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			request, errReq := http.NewRequest(http.MethodGet, utilsReform.HostTest+fmt.Sprintf("%d", port)+tt.args.paramURI, nil)
+			request, errReq := http.NewRequest(
+				http.MethodPost,
+				utilsReform.HostTest+fmt.Sprintf("%d", port)+tt.args.paramURI,
+				bytes.NewBuffer(tt.args.body),
+			)
 			require.NoError(t, errReq)
 
 			client := http.Client{}

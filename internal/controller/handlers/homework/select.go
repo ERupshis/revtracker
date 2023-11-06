@@ -48,6 +48,7 @@ func Select(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 			return nil
 		}
 
+		c.Set("Content-Type", "application/json")
 		c.Status(fiber.StatusOK)
 		return nil
 	}
