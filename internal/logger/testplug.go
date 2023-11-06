@@ -7,7 +7,7 @@ import (
 type testPlug struct {
 }
 
-func CreateTestPLug() (BaseLogger, error) {
+func CreateMock() (BaseLogger, error) {
 	return &testPlug{}, nil
 }
 

@@ -19,7 +19,7 @@ import (
 )
 
 func TestInsert(t *testing.T) {
-	testLog, _ := logger.CreateTestPLug()
+	testLog, _ := logger.CreateMock()
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()

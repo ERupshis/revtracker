@@ -1,13 +1,14 @@
 package utils
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/erupshis/revtracker/internal/logger"
 )
 
 func TestExecuteWithLogError(t *testing.T) {
-	log, _ := logger.CreateZapLogger("info")
+	log, _ := logger.CreateMock()
 
 	type args struct {
 		callback func() error
@@ -22,6 +23,15 @@ func TestExecuteWithLogError(t *testing.T) {
 			args: args{
 				callback: func() error {
 					return nil
+				},
+				log: log,
+			},
+		},
+		{
+			name: "error from callback",
+			args: args{
+				callback: func() error {
+					return fmt.Errorf("test err")
 				},
 				log: log,
 			},
