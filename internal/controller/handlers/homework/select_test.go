@@ -1,11 +1,13 @@
 package homework
 
 import (
+	"database/sql"
 	"fmt"
 	"io"
 	"net/http"
 	"testing"
 
+	"github.com/erupshis/revtracker/internal/data"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
 	utilsReform "github.com/erupshis/revtracker/internal/storage/manager/reform/utils"
@@ -17,23 +19,29 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestDelete(t *testing.T) {
-	testLog, _ := logger.CreateTestPLug()
+func TestSelect(t *testing.T) {
+	testLog, _ := logger.CreateZapLogger("info")
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
+	homework := &data.Homework{
+		ID:   1,
+		Name: "hw1",
+	}
+
 	mockStorage := mocks.NewMockBaseStorage(ctrl)
 	gomock.InOrder(
-		mockStorage.EXPECT().DeleteHomeworkByID(gomock.Any(), gomock.Any()).Return(nil),
-		mockStorage.EXPECT().DeleteHomeworkByID(gomock.Any(), gomock.Any()).Return(fmt.Errorf("error")),
+		mockStorage.EXPECT().SelectHomeworkByID(gomock.Any(), gomock.Any()).Return(homework, nil),
+		mockStorage.EXPECT().SelectHomeworkByID(gomock.Any(), gomock.Any()).Return(nil, sql.ErrNoRows),
+		mockStorage.EXPECT().SelectHomeworkByID(gomock.Any(), gomock.Any()).Return(nil, fmt.Errorf("test err")),
 	)
 
 	testApp := fiber.New()
-	testApp.Delete("/:ID", Delete(mockStorage, testLog))
+	testApp.Get("/:ID", Select(mockStorage, testLog))
 	defer utils.ExecuteWithLogError(testApp.Shutdown, testLog)
 
-	port := 3002
+	port := 3003
 	go func() {
 		err := testApp.Listen(":" + fmt.Sprintf("%d", port))
 		if err != nil {
@@ -64,11 +72,11 @@ func TestDelete(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				body:       []byte(""),
+				body:       []byte(`{"Id":1,"Name":"hw1"}`),
 			},
 		},
 		{
-			name: "incorrect ID",
+			name: "wrong id type",
 			args: args{
 				storage:  nil,
 				log:      testLog,
@@ -80,7 +88,19 @@ func TestDelete(t *testing.T) {
 			},
 		},
 		{
-			name: "error from DB",
+			name: "no errors in result from db",
+			args: args{
+				storage:  nil,
+				log:      testLog,
+				paramURI: "/1",
+			},
+			want: want{
+				statusCode: fiber.StatusNoContent,
+				body:       []byte(""),
+			},
+		},
+		{
+			name: "error from db",
 			args: args{
 				storage:  nil,
 				log:      testLog,
@@ -94,7 +114,7 @@ func TestDelete(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			request, errReq := http.NewRequest(http.MethodDelete, utilsReform.HostTest+fmt.Sprintf("%d", port)+tt.args.paramURI, nil)
+			request, errReq := http.NewRequest(http.MethodGet, utilsReform.HostTest+fmt.Sprintf("%d", port)+tt.args.paramURI, nil)
 			require.NoError(t, errReq)
 
 			client := http.Client{}
@@ -111,5 +131,4 @@ func TestDelete(t *testing.T) {
 			assert.Equal(t, string(tt.want.body), string(respBody))
 		})
 	}
-
 }
