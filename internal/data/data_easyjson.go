@@ -4,7 +4,6 @@ package data
 
 import (
 	json "encoding/json"
-
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"
 	jwriter "github.com/mailru/easyjson/jwriter"
@@ -114,8 +113,8 @@ func easyjson794297d0DecodeGithubComErupshisRevtrackerInternalData1(in *jlexer.L
 			out.ID = int64(in.Int64())
 		case "Name":
 			out.Name = string(in.String())
-		case "Content_Id":
-			out.ContentID = int64(in.Int64())
+		case "Content":
+			(out.Content).UnmarshalEasyJSON(in)
 		default:
 			in.SkipRecursive()
 		}
@@ -141,9 +140,9 @@ func easyjson794297d0EncodeGithubComErupshisRevtrackerInternalData1(out *jwriter
 		out.String(string(in.Name))
 	}
 	{
-		const prefix string = ",\"Content_Id\":"
+		const prefix string = ",\"Content\":"
 		out.RawString(prefix)
-		out.Int64(int64(in.ContentID))
+		(in.Content).MarshalEasyJSON(out)
 	}
 	out.RawByte('}')
 }
@@ -281,6 +280,29 @@ func easyjson794297d0DecodeGithubComErupshisRevtrackerInternalData3(in *jlexer.L
 			out.ID = int64(in.Int64())
 		case "Name":
 			out.Name = string(in.String())
+		case "Questions":
+			if in.IsNull() {
+				in.Skip()
+				out.Questions = nil
+			} else {
+				in.Delim('[')
+				if out.Questions == nil {
+					if !in.IsDelim(']') {
+						out.Questions = make([]Question, 0, 1)
+					} else {
+						out.Questions = []Question{}
+					}
+				} else {
+					out.Questions = (out.Questions)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v1 Question
+					(v1).UnmarshalEasyJSON(in)
+					out.Questions = append(out.Questions, v1)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -304,6 +326,22 @@ func easyjson794297d0EncodeGithubComErupshisRevtrackerInternalData3(out *jwriter
 		const prefix string = ",\"Name\":"
 		out.RawString(prefix)
 		out.String(string(in.Name))
+	}
+	{
+		const prefix string = ",\"Questions\":"
+		out.RawString(prefix)
+		if in.Questions == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v2, v3 := range in.Questions {
+				if v2 > 0 {
+					out.RawByte(',')
+				}
+				(v3).MarshalEasyJSON(out)
+			}
+			out.RawByte(']')
+		}
 	}
 	out.RawByte('}')
 }
@@ -418,29 +456,6 @@ func easyjson794297d0DecodeGithubComErupshisRevtrackerInternalData5(in *jlexer.L
 		switch key {
 		case "Homework":
 			(out.Homework).UnmarshalEasyJSON(in)
-		case "Questions":
-			if in.IsNull() {
-				in.Skip()
-				out.Questions = nil
-			} else {
-				in.Delim('[')
-				if out.Questions == nil {
-					if !in.IsDelim(']') {
-						out.Questions = make([]Question, 0, 2)
-					} else {
-						out.Questions = []Question{}
-					}
-				} else {
-					out.Questions = (out.Questions)[:0]
-				}
-				for !in.IsDelim(']') {
-					var v1 Question
-					(v1).UnmarshalEasyJSON(in)
-					out.Questions = append(out.Questions, v1)
-					in.WantComma()
-				}
-				in.Delim(']')
-			}
 		default:
 			in.SkipRecursive()
 		}
@@ -459,22 +474,6 @@ func easyjson794297d0EncodeGithubComErupshisRevtrackerInternalData5(out *jwriter
 		const prefix string = ",\"Homework\":"
 		out.RawString(prefix[1:])
 		(in.Homework).MarshalEasyJSON(out)
-	}
-	{
-		const prefix string = ",\"Questions\":"
-		out.RawString(prefix)
-		if in.Questions == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
-		} else {
-			out.RawByte('[')
-			for v2, v3 := range in.Questions {
-				if v2 > 0 {
-					out.RawByte(',')
-				}
-				(v3).MarshalEasyJSON(out)
-			}
-			out.RawByte(']')
-		}
 	}
 	out.RawByte('}')
 }
@@ -521,8 +520,6 @@ func easyjson794297d0DecodeGithubComErupshisRevtrackerInternalData6(in *jlexer.L
 			continue
 		}
 		switch key {
-		case "Id":
-			out.ID = int64(in.Int64())
 		case "Task":
 			if in.IsNull() {
 				in.Skip()
@@ -568,13 +565,13 @@ func easyjson794297d0EncodeGithubComErupshisRevtrackerInternalData6(out *jwriter
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"Id\":"
-		out.RawString(prefix[1:])
-		out.Int64(int64(in.ID))
-	}
-	{
 		const prefix string = ",\"Task\":"
-		out.RawString(prefix)
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
 		if in.Task == nil {
 			out.RawString("null")
 		} else {
