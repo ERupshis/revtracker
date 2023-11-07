@@ -7,21 +7,17 @@ import (
 )
 
 func (s *Storage) InsertData(ctx context.Context, data *data.Data) error {
-
-	return nil
+	return s.mngr.InsertData(ctx, data)
 }
 
 func (s *Storage) UpdateData(ctx context.Context, data *data.Data) error {
-
-	return nil
+	return s.mngr.UpdateData(ctx, data)
 }
 
 func (s *Storage) SelectDataByHomeworkID(ctx context.Context) (*data.Data, error) {
-
-	return nil, nil
+	return s.mngr.SelectDataByHomeworkID(ctx)
 }
 
 func (s *Storage) DeleteDataByHomeworkID(ctx context.Context, ID int64) error {
-
-	return nil
+	return s.mngr.DeleteDataByHomeworkID(ctx, ID)
 }
