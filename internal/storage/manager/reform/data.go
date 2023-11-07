@@ -3,6 +3,7 @@ package reform
 import (
 	"context"
 	"fmt"
+	"sort"
 
 	"github.com/erupshis/revtracker/internal/data"
 	"github.com/erupshis/revtracker/internal/storage/manager/reform/common"
@@ -17,80 +18,76 @@ func (r *Reform) UpdateData(ctx context.Context, inData *data.Data) error {
 	return r.insertOrUpdateData(ctx, inData)
 }
 
-func (r *Reform) SelectDataByHomeworkID(ctx context.Context) (*data.Data, error) {
+func (r *Reform) SelectDataByHomeworkID(ctx context.Context, ID int64) (*data.Data, error) {
+	res := &data.Data{}
+	err := r.db.InTransactionContext(ctx, nil, func(tx *reform.TX) error {
+		homework, err := r.selectHomework(ctx, tx, map[string]interface{}{"homework_id": ID})
+		if err != nil {
+			return fmt.Errorf("select homework: %w", err)
+		}
 
-	return nil, nil
+		questions, err := r.getQuestions(ctx, tx, homework.ID)
+		if err != nil {
+			return fmt.Errorf("select questions: %w", err)
+		}
+
+		res.Homework = *homework
+		res.Homework.Questions = questions
+		return nil
+	})
+
+	if err != nil {
+		res = nil
+	}
+
+	return res, err
 }
 
 func (r *Reform) DeleteDataByHomeworkID(ctx context.Context, ID int64) error {
-	tx, err := r.db.BeginTx(ctx, nil)
-	if err != nil {
-		return fmt.Errorf("create transaction to insert inData: %w", err)
-	}
+	return r.db.InTransactionContext(ctx, nil, func(tx *reform.TX) error {
+		if err := common.Delete(ctx, r.db, tx, map[string]interface{}{"homework_id": ID}, data.HomeworkQuestionTable); err != nil {
+			return fmt.Errorf("delete links in homework_question: %w", err)
+		}
 
-	if err = common.Delete(ctx, r.db, tx, map[string]interface{}{"homework_id": ID}, data.HomeworkQuestionTable); err != nil {
-		_ = tx.Rollback()
-		return fmt.Errorf("delete links in homework_question: %w", err)
-	}
+		if err := common.Delete(ctx, r.db, tx, map[string]interface{}{"id": ID}, data.HomeworkTable); err != nil {
+			return fmt.Errorf("delete homework: %w", err)
+		}
 
-	if err = common.Delete(ctx, r.db, tx, map[string]interface{}{"id": ID}, data.HomeworkTable); err != nil {
-		_ = tx.Rollback()
-		return fmt.Errorf("delete homework: %w", err)
-	}
-
-	if err = tx.Commit(); err != nil {
-		_ = tx.Rollback()
-		return fmt.Errorf("commit transaction: %w", err)
-	}
-
-	return nil
+		return nil
+	})
 }
 
 func (r *Reform) insertOrUpdateData(ctx context.Context, inData *data.Data) error {
 	homework := &inData.Homework
 	questions := inData.Homework.Questions
 
-	tx, err := r.db.BeginTx(ctx, nil)
-	if err != nil {
-		return fmt.Errorf("create transaction to insert inData: %w", err)
-	}
+	return r.db.InTransactionContext(ctx, nil, func(tx *reform.TX) error {
+		if err := common.InsertOrUpdate(ctx, r.db, tx, homework); err != nil {
+			return fmt.Errorf("insert/update homework: %w", err)
+		}
 
-	if err = common.InsertOrUpdate(ctx, r.db, tx, homework); err != nil {
-		_ = tx.Rollback()
-		return fmt.Errorf("insert/update homework: %w", err)
-	}
+		if err := common.Delete(ctx, r.db, tx, map[string]interface{}{"homework_id": homework.ID}, data.HomeworkQuestionTable); err != nil {
+			return fmt.Errorf("delete links in homework_question: %w", err)
+		}
 
-	if err = common.Delete(ctx, r.db, tx, map[string]interface{}{"homework_id": homework.ID}, data.HomeworkQuestionTable); err != nil {
-		_ = tx.Rollback()
-		return fmt.Errorf("delete links in homework_question: %w", err)
-	}
+		if err := r.insertQuestions(ctx, tx, questions, homework.ID); err != nil {
+			return fmt.Errorf("insert/update questions: %w", err)
+		}
 
-	if err = r.insertQuestions(ctx, tx, questions, homework.ID); err != nil {
-		_ = tx.Rollback()
-		return fmt.Errorf("insert/update questions: %w", err)
-	}
-
-	if err = tx.Commit(); err != nil {
-		_ = tx.Rollback()
-		return fmt.Errorf("commit transaction: %w", err)
-	}
-
-	return nil
+		return nil
+	})
 }
 
 func (r *Reform) insertQuestions(ctx context.Context, tx *reform.TX, questions []data.Question, homeworkID int64) error {
 	for i := 0; i < len(questions); i++ {
 		question := &questions[i]
-		err := common.InsertOrUpdate(ctx, r.db, tx, &question.Content)
-		if err != nil {
-			_ = tx.Rollback()
+
+		if err := common.InsertOrUpdate(ctx, r.db, tx, &question.Content); err != nil {
 			return fmt.Errorf("insert/update content")
 		}
 
 		question.ContentID = question.Content.ID
-		err = common.InsertOrUpdate(ctx, r.db, tx, question)
-		if err != nil {
-			_ = tx.Rollback()
+		if err := common.InsertOrUpdate(ctx, r.db, tx, question); err != nil {
 			return fmt.Errorf("insert/update question")
 		}
 
@@ -99,11 +96,56 @@ func (r *Reform) insertQuestions(ctx context.Context, tx *reform.TX, questions [
 			QuestionID: question.ID,
 			Order:      int64(i),
 		}
-		err = common.InsertOrUpdate(ctx, r.db, tx, homeworkQuestion)
-		if err != nil {
-			_ = tx.Rollback()
+
+		if err := common.InsertOrUpdate(ctx, r.db, tx, homeworkQuestion); err != nil {
 			return fmt.Errorf("insert/update homework-question link. element's order: %d", i)
 		}
 	}
 	return nil
+}
+
+func (r *Reform) getOrderedQuestionIDs(ctx context.Context, tx *reform.TX, homeworkID int64) ([]int64, error) {
+	homeworkQuestions, err := r.selectHomeworkQuestions(ctx, tx, map[string]interface{}{"homework_id": homeworkID})
+	if err != nil {
+		return nil, fmt.Errorf("select questions: %w", err)
+	}
+
+	sort.Slice(homeworkQuestions, func(l, r int) bool {
+		return homeworkQuestions[l].Order < homeworkQuestions[r].Order
+	})
+
+	var res []int64
+	for _, hq := range homeworkQuestions {
+		res = append(res, hq.Order)
+	}
+
+	return res, nil
+}
+
+func (r *Reform) getQuestions(ctx context.Context, tx *reform.TX, homeworkID int64) ([]data.Question, error) {
+	questionsOrder, err := r.getOrderedQuestionIDs(ctx, tx, homeworkID)
+	if err != nil {
+		return nil, fmt.Errorf("get ordered questionIDs: %w", err)
+	}
+
+	var res []data.Question
+	for _, questionID := range questionsOrder {
+		question, err := r.selectQuestion(ctx, tx, map[string]interface{}{"id": questionID})
+		if err != nil {
+			return nil, fmt.Errorf("select question by id '%d': %w", questionID, err)
+		}
+
+		res = append(res, *question)
+	}
+
+	for i := 0; i < len(res); i++ {
+		questionContent, err := r.selectContent(ctx, tx, map[string]interface{}{"id": res[i].ContentID})
+		if err != nil {
+			return nil, fmt.Errorf("select question by id '%d': %w", res[i].ContentID, err)
+		}
+
+		res[i].Content = *questionContent
+	}
+
+	return res, nil
 }
