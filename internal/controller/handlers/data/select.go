@@ -1,4 +1,4 @@
-package handlers
+package data
 
 import (
 	"github.com/erupshis/revtracker/internal/logger"
@@ -6,9 +6,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func SelectChanges(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
+func Select(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		c.Status(fiber.StatusInternalServerError)
+		c.Set("Content-Type", "application/json")
+		c.Status(fiber.StatusOK)
 		return nil
 	}
 }

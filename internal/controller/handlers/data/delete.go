@@ -1,4 +1,4 @@
-package handlers
+package data
 
 import (
 	"github.com/erupshis/revtracker/internal/logger"
@@ -6,9 +6,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func UpdateData(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
+func Delete(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		c.Status(fiber.StatusInternalServerError)
+		c.Status(fiber.StatusOK)
 		return nil
 	}
 }
