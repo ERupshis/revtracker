@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="revtracker_test@localhost" uuid="5c4735b5-622e-441b-b261-0a54b8dc6ae0">
+    <data-source source="LOCAL" name="revtracker_test" uuid="341858a1-c417-4363-a090-c158cc592ab1">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
