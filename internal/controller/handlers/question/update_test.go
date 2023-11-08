@@ -19,7 +19,7 @@ import (
 )
 
 func TestUpdate(t *testing.T) {
-	testLog, _ := logger.CreateMock()
+	testLog, _ := logger.CreateZapLogger("info")
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -66,11 +66,11 @@ func TestUpdate(t *testing.T) {
 				storage:  nil,
 				log:      testLog,
 				paramURI: "/1",
-				body:     []byte(`{"Id":1,"Name":"q1","Content_Id":1}`),
+				body:     []byte(`{"Id":1,"Name":"q1","Content":{"Task":"task1","Answer":"answer1","Solution":"solution1"}}`),
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				body:       []byte(`{"Id":1,"Name":"q1","Content_Id":1}`),
+				body:       []byte(`{"Id":1,"Name":"q1","Content":{"Id":0,"Task":"task1","Answer":"answer1","Solution":"solution1"}}`),
 			},
 		},
 		{
@@ -118,11 +118,11 @@ func TestUpdate(t *testing.T) {
 				storage:  nil,
 				log:      testLog,
 				paramURI: "/1",
-				body:     []byte(`{"Name":"q1","Content_Id":1}`),
+				body:     []byte(`{"Name":"q1","Content":{"Task":"task1","Answer":"answer1","Solution":"solution1"}}`),
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				body:       []byte(`{"Id":1,"Name":"q1","Content_Id":1}`),
+				body:       []byte(`{"Id":1,"Name":"q1","Content":{"Id":0,"Task":"task1","Answer":"answer1","Solution":"solution1"}}`),
 			},
 		},
 		{
@@ -131,11 +131,11 @@ func TestUpdate(t *testing.T) {
 				storage:  nil,
 				log:      testLog,
 				paramURI: "/",
-				body:     []byte(`{"Id":1,"Name":"q1","Content_Id":1}`),
+				body:     []byte(`{"Id":1,"Name":"q1","Content":{"Task":"task1","Answer":"answer1","Solution":"solution1"}}`),
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				body:       []byte(`{"Id":1,"Name":"q1","Content_Id":1}`),
+				body:       []byte(`{"Id":1,"Name":"q1","Content":{"Id":0,"Task":"task1","Answer":"answer1","Solution":"solution1"}}`),
 			},
 		},
 		{
@@ -165,12 +165,12 @@ func TestUpdate(t *testing.T) {
 			},
 		},
 		{
-			name: "error from db",
+			name: "error from storage",
 			args: args{
 				storage:  nil,
 				log:      testLog,
 				paramURI: "/1",
-				body:     []byte(`{"Id":1,"Name":"q1","Content_Id":1}`),
+				body:     []byte(`{"Id":1,"Name":"q1","Content":{"Id":0,"Task":"task1","Answer":"answer1","Solution":"solution1"}}`),
 			},
 			want: want{
 				statusCode: fiber.StatusInternalServerError,

@@ -14,7 +14,7 @@ var (
 
 func TestValidateHomeworkData(t *testing.T) {
 	type args struct {
-		data *data.Homework
+		data *data.HomeworkData
 	}
 	tests := []struct {
 		name    string
@@ -24,7 +24,7 @@ func TestValidateHomeworkData(t *testing.T) {
 		{
 			name: "valid",
 			args: args{
-				data: &data.Homework{
+				data: &data.HomeworkData{
 					Name: "some",
 				},
 			},
@@ -33,7 +33,7 @@ func TestValidateHomeworkData(t *testing.T) {
 		{
 			name: "empty name",
 			args: args{
-				data: &data.Homework{
+				data: &data.HomeworkData{
 					Name: "",
 				},
 			},

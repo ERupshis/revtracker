@@ -31,7 +31,8 @@ func (r *Reform) SelectDataByHomeworkID(ctx context.Context, ID int64) (*data.Da
 			return fmt.Errorf("select questions: %w", err)
 		}
 
-		res.Homework = *homework
+		res.Homework.ID = homework.ID
+		res.Homework.Name = homework.Name
 		res.Homework.Questions = questions
 		return nil
 	})
@@ -58,7 +59,10 @@ func (r *Reform) DeleteDataByHomeworkID(ctx context.Context, ID int64) error {
 }
 
 func (r *Reform) insertOrUpdateData(ctx context.Context, inData *data.Data) error {
-	homework := &inData.Homework
+	homework := &data.Homework{
+		ID:   inData.Homework.ID,
+		Name: inData.Homework.Name,
+	}
 	questions := inData.Homework.Questions
 
 	return r.db.InTransactionContext(ctx, nil, func(tx *reform.TX) error {
@@ -73,6 +77,9 @@ func (r *Reform) insertOrUpdateData(ctx context.Context, inData *data.Data) erro
 		if err := r.insertQuestions(ctx, tx, questions, homework.ID); err != nil {
 			return fmt.Errorf("insert/update questions: %w", err)
 		}
+
+		inData.Homework.ID = homework.ID
+		inData.Homework.Name = homework.Name
 
 		return nil
 	})

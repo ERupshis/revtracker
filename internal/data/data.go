@@ -12,14 +12,13 @@ type User struct {
 
 //reform:homeworks
 type Homework struct {
-	ID        int64      `json:"Id" reform:"id,pk"`
-	Name      string     `json:"Name" reform:"name"`
-	Questions []Question `json:"Questions"`
+	ID   int64  `json:"Id" reform:"id,pk"`
+	Name string `json:"Name" reform:"name"`
 }
 
 //reform:contents
 type Content struct {
-	ID       int64   `json:"-" reform:"id,pk"`
+	ID       int64   `json:"Id" reform:"id,pk"`
 	Task     *string `json:"Task" reform:"task"`
 	Answer   *string `json:"Answer" reform:"answer"`
 	Solution *string `json:"Solution" reform:"solution"`
@@ -42,9 +41,11 @@ type HomeworkQuestion struct {
 }
 
 type Data struct {
-	Homework Homework `json:"Homework"`
+	Homework HomeworkData `json:"Homework"`
 }
 
-type FrontMessage struct {
-	Data Data `json:"Data"`
+type HomeworkData struct {
+	ID        int64      `json:"Id"`
+	Name      string     `json:"Name"`
+	Questions []Question `json:"Questions"`
 }

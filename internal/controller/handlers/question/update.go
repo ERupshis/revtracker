@@ -7,6 +7,7 @@ import (
 	"github.com/erupshis/revtracker/internal/constants"
 	"github.com/erupshis/revtracker/internal/controller/handlers/utils"
 	"github.com/erupshis/revtracker/internal/data"
+	utilsData "github.com/erupshis/revtracker/internal/data/utils"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
 	"github.com/gofiber/fiber/v2"
@@ -38,8 +39,8 @@ func Update(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 			return nil
 		}
 
-		if question.ContentID == 0 {
-			log.Info("%s missing ContentID", fmt.Sprintf(packagePath, constants.Insert))
+		if err := utilsData.ValidateContentData(&question.Content); err != nil {
+			log.Info("%s incorrect content data: %v", fmt.Sprintf(packagePath, constants.Insert), err)
 			c.Status(fiber.StatusBadRequest)
 			return nil
 		}

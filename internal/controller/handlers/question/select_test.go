@@ -19,6 +19,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+var (
+	testStr = "some_str"
+)
+
 func TestSelect(t *testing.T) {
 	testLog, _ := logger.CreateMock()
 
@@ -26,9 +30,13 @@ func TestSelect(t *testing.T) {
 	defer ctrl.Finish()
 
 	question := &data.Question{
-		ID:        1,
-		Name:      "q1",
-		ContentID: 1,
+		ID:   1,
+		Name: "q1",
+		Content: data.Content{
+			Task:     &testStr,
+			Answer:   &testStr,
+			Solution: &testStr,
+		},
 	}
 
 	mockStorage := mocks.NewMockBaseStorage(ctrl)
@@ -73,7 +81,7 @@ func TestSelect(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				body:       []byte(`{"Id":1,"Name":"q1","Content_Id":1}`),
+				body:       []byte(`{"Id":1,"Name":"q1","Content":{"Id":0,"Task":"some_str","Answer":"some_str","Solution":"some_str"}}`),
 			},
 		},
 		{

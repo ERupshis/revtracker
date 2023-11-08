@@ -8,7 +8,7 @@ import (
 
 const check = "check:"
 
-func ValidateHomeworkData(data *data.Homework) error {
+func ValidateHomeworkData(data *data.HomeworkData) error {
 	if data.Name == "" {
 		return fmt.Errorf("empty name")
 	}

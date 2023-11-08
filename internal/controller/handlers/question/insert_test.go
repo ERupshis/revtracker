@@ -19,7 +19,7 @@ import (
 )
 
 func TestInsert(t *testing.T) {
-	testLog, _ := logger.CreateMock()
+	testLog, _ := logger.CreateZapLogger("info")
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -63,7 +63,7 @@ func TestInsert(t *testing.T) {
 				storage:  nil,
 				log:      testLog,
 				paramURI: "",
-				body:     []byte(`{"Id":1,"Name":"q1","Content_Id":1}`),
+				body:     []byte(`{"Id":1,"Name":"q1","Content":{"Task":"task1","Answer":"answer1","Solution":"solution1"}}`),
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
@@ -123,12 +123,12 @@ func TestInsert(t *testing.T) {
 			},
 		},
 		{
-			name: "error from db",
+			name: "error from storage",
 			args: args{
 				storage:  nil,
 				log:      testLog,
 				paramURI: "",
-				body:     []byte(`{"Id":1,"Name":"q1","Content_Id":1}`),
+				body:     []byte(`{"Id":1,"Name":"q1","Content":{"Task":"task1","Answer":"answer1","Solution":"solution1"}}`),
 			},
 			want: want{
 				statusCode: fiber.StatusInternalServerError,

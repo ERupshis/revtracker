@@ -63,11 +63,11 @@ func TestInsert(t *testing.T) {
 				storage:  nil,
 				log:      testLog,
 				paramURI: "",
-				body:     []byte(`{"Id":1,"Task":"task1", "Answer":"answer1", "Solution":"solution1"}`),
+				body:     []byte(`{"Task":"task1", "Answer":"answer1", "Solution":"solution1"}`),
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				body:       []byte("Id: 1"),
+				body:       []byte("Id: 0"),
 			},
 		},
 		{
