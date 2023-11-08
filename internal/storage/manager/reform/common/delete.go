@@ -16,7 +16,7 @@ func Delete(ctx context.Context, db *reform.DB, tx *reform.TX, filters map[strin
 			return fmt.Errorf("delete %s by ID: %w", table.Name(), err)
 		}
 
-		if deletedCount < 0 && deletedCount > 1 {
+		if deletedCount > 1 {
 			return fmt.Errorf("delete %s by ID wrong deletions count: %d", table.Name(), deletedCount)
 		}
 
