@@ -43,3 +43,14 @@ func IsUniqueConstraint(err error) bool {
 
 	return false
 }
+
+func IsForeignKeyConstraint(err error) bool {
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) {
+		if pgErr.Code == "23503" {
+			return true
+		}
+	}
+
+	return false
+}

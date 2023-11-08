@@ -66,7 +66,7 @@ func (r *Reform) selectQuestions(ctx context.Context, tx *reform.TX, filters map
 	var questions []data.Question
 
 	selectFunc := func(tx *reform.TX) error {
-		questionsRaw, err := common.SelectAll(ctx, r.db, tx, filters, data.QuestionTable)
+		questionsRaw, err := common.SelectAll(ctx, r.db, tx, filters, "id", data.QuestionTable)
 		if err != nil {
 			return fmt.Errorf("select question by filters '%v': %w", filters, err)
 		}

@@ -32,15 +32,18 @@ func SelectOne(ctx context.Context, db *reform.DB, tx *reform.TX, filters map[st
 	return content, nil
 }
 
-func SelectAll(ctx context.Context, db *reform.DB, tx *reform.TX, filters map[string]interface{}, table reform.Table) ([]reform.Struct, error) {
+func SelectAll(ctx context.Context, db *reform.DB, tx *reform.TX, filters map[string]interface{}, orderBy string, table reform.Table) ([]reform.Struct, error) {
 	tail, values := utils.CreateTailAndParams(db, filters)
+	if orderBy != "" {
+		tail += utils.TailOrderBy + orderBy
+	}
 
 	var content []reform.Struct
 	var err error
 	if tx != nil {
-		content, err = tx.SelectAllFrom(table, tail+utils.TailOrderByID, values...)
+		content, err = tx.SelectAllFrom(table, tail, values...)
 	} else {
-		content, err = db.WithContext(ctx).SelectAllFrom(table, tail+utils.TailOrderByID, values...)
+		content, err = db.WithContext(ctx).SelectAllFrom(table, tail, values...)
 	}
 
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {

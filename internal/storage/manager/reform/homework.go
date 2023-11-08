@@ -35,7 +35,7 @@ func (r *Reform) selectHomework(ctx context.Context, tx *reform.TX, filters map[
 }
 
 func (r *Reform) selectHomeworks(ctx context.Context, tx *reform.TX, filters map[string]interface{}) ([]data.Homework, error) {
-	content, err := common.SelectAll(ctx, r.db, tx, filters, data.HomeworkTable)
+	content, err := common.SelectAll(ctx, r.db, tx, filters, "id", data.HomeworkTable)
 	if err != nil {
 		return nil, fmt.Errorf("select questions: %w", err)
 	}

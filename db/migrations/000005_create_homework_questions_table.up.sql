@@ -4,5 +4,6 @@ CREATE TABLE IF NOT EXISTS homework_questions (
      question_id BIGINT REFERENCES questions(id) NOT NULL,
      "order" BIGINT NOT NULL,
 
-     CONSTRAINT unique_homework_question_order UNIQUE (homework_id, question_id, "order")
+     CONSTRAINT unique_homework_question UNIQUE (homework_id, question_id),
+     CONSTRAINT unique_homework_order UNIQUE (homework_id, "order")
 );

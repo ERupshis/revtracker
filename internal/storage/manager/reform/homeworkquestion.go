@@ -17,6 +17,14 @@ func (r *Reform) UpdateHomeworkQuestion(ctx context.Context, homeworkQuestion *d
 	return common.InsertOrUpdate(ctx, r.db, nil, homeworkQuestion)
 }
 
+func (r *Reform) SelectHomeworkQuestions(ctx context.Context) ([]data.HomeworkQuestion, error) {
+	return r.selectHomeworkQuestions(ctx, nil, nil)
+}
+
+func (r *Reform) SelectHomeworkQuestionsByHomeworkID(ctx context.Context, ID int64) ([]data.HomeworkQuestion, error) {
+	return r.selectHomeworkQuestions(ctx, nil, map[string]interface{}{"homework_id": ID})
+}
+
 func (r *Reform) SelectHomeworkQuestionByID(ctx context.Context, ID int64) (*data.HomeworkQuestion, error) {
 	content, err := common.SelectOne(ctx, r.db, nil, map[string]interface{}{"id": ID}, data.HomeworkQuestionTable)
 	return content.(*data.HomeworkQuestion), err
@@ -27,7 +35,7 @@ func (r *Reform) DeleteHomeworkQuestionByID(ctx context.Context, ID int64) error
 }
 
 func (r *Reform) selectHomeworkQuestions(ctx context.Context, tx *reform.TX, filters map[string]interface{}) ([]data.HomeworkQuestion, error) {
-	content, err := common.SelectAll(ctx, r.db, tx, filters, data.HomeworkQuestionTable)
+	content, err := common.SelectAll(ctx, r.db, tx, filters, " \"order\" ASC, homework_id ASC, id ASC", data.HomeworkQuestionTable)
 	if err != nil {
 		return nil, fmt.Errorf("select homeworkQuestions: %w", err)
 	}

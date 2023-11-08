@@ -39,8 +39,13 @@ func Update(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 		}
 
 		if err := storage.UpdateHomeworkQuestion(c.Context(), homeworkQuestion); err != nil {
+			if utils.IsForeignKeyConstraint(err) {
+				c.Status(fiber.StatusConflict)
+			} else {
+				c.Status(fiber.StatusInternalServerError)
+			}
+
 			log.Info("%s failed to update: %v", fmt.Sprintf(packagePath, constants.Update), err)
-			c.Status(fiber.StatusInternalServerError)
 			return nil
 		}
 

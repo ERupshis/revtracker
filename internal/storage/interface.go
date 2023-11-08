@@ -35,6 +35,8 @@ type BaseStorage interface {
 
 	InsertHomeworkQuestion(ctx context.Context, homeworkQuestion *data.HomeworkQuestion) error
 	UpdateHomeworkQuestion(ctx context.Context, homeworkQuestion *data.HomeworkQuestion) error
+	SelectHomeworkQuestions(ctx context.Context) ([]data.HomeworkQuestion, error)
+	SelectHomeworkQuestionsByHomeworkID(ctx context.Context, ID int64) ([]data.HomeworkQuestion, error)
 	SelectHomeworkQuestionByID(ctx context.Context, ID int64) (*data.HomeworkQuestion, error)
 	DeleteHomeworkQuestionByID(ctx context.Context, ID int64) error
 }
