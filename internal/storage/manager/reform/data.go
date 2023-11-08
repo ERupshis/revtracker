@@ -139,19 +139,10 @@ func (r *Reform) getQuestions(ctx context.Context, tx *reform.TX, homeworkID int
 	for _, questionID := range questionsOrder {
 		question, err := r.selectQuestion(ctx, tx, map[string]interface{}{"id": questionID})
 		if err != nil {
-			return nil, fmt.Errorf("select question by id '%d': %w", questionID, err)
+			return nil, fmt.Errorf("get question from db: %w", err)
 		}
 
 		res = append(res, *question)
-	}
-
-	for i := 0; i < len(res); i++ {
-		questionContent, err := r.selectContent(ctx, tx, map[string]interface{}{"id": res[i].ContentID})
-		if err != nil {
-			return nil, fmt.Errorf("select question by id '%d': %w", res[i].ContentID, err)
-		}
-
-		res[i].Content = *questionContent
 	}
 
 	return res, nil
