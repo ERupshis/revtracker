@@ -6,8 +6,6 @@ import (
 	"gopkg.in/reform.v1"
 )
 
-const HostTest = "http://localhost:"
-
 //const TailOrderByID = " ORDER BY id"
 
 const TailOrderBy = " ORDER BY "

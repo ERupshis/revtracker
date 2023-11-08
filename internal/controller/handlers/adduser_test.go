@@ -9,7 +9,6 @@ import (
 	"github.com/erupshis/revtracker/internal/data"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
-	utilsReform "github.com/erupshis/revtracker/internal/storage/manager/reform/utils"
 	"github.com/erupshis/revtracker/internal/utils"
 	"github.com/erupshis/revtracker/mocks"
 	"github.com/gofiber/fiber/v2"
@@ -39,18 +38,6 @@ func TestAddUser(t *testing.T) {
 		mockStorage.EXPECT().SelectUser(gomock.Any(), gomock.Any()).Return(nil, nil),
 		mockStorage.EXPECT().InsertUser(gomock.Any(), gomock.Any()).Return(int64(-1), nil),
 	)
-
-	testApp := fiber.New()
-	testApp.Post("/:name", AddUser(mockStorage, testLog))
-	defer utils.ExecuteWithLogError(testApp.Shutdown, testLog)
-
-	port := 3001
-	go func() {
-		err := testApp.Listen(":" + fmt.Sprintf("%d", port))
-		if err != nil {
-			panic(err)
-		}
-	}()
 
 	type args struct {
 		storage  storage.BaseStorage
@@ -141,11 +128,14 @@ func TestAddUser(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			request, errReq := http.NewRequest(http.MethodPost, utilsReform.HostTest+fmt.Sprintf("%d", port)+tt.args.paramURI, nil)
+			testApp := fiber.New()
+			testApp.Post("/:name", AddUser(mockStorage, testLog))
+			defer utils.ExecuteWithLogError(testApp.Shutdown, testLog)
+
+			request, errReq := http.NewRequest(http.MethodPost, tt.args.paramURI, nil)
 			require.NoError(t, errReq)
 
-			client := http.Client{}
-			response, errResp := client.Do(request)
+			response, errResp := testApp.Test(request)
 			require.NoError(t, errResp)
 			defer func() {
 				_ = response.Body.Close()
