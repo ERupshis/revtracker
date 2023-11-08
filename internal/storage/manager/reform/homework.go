@@ -31,6 +31,11 @@ func (r *Reform) DeleteHomeworkByID(ctx context.Context, ID int64) error {
 
 func (r *Reform) selectHomework(ctx context.Context, tx *reform.TX, filters map[string]interface{}) (*data.Homework, error) {
 	content, err := common.SelectOne(ctx, r.db, tx, filters, data.HomeworkTable)
+
+	if content == nil {
+		return nil, err
+	}
+
 	return content.(*data.Homework), err
 }
 

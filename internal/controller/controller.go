@@ -65,6 +65,7 @@ func (c *Controller) Route() *fiber.App {
 		app.Post("/", data.Insert(c.strg, c.log))
 		app.Put("/", data.Update(c.strg, c.log))
 		app.Put("/:ID", data.Update(c.strg, c.log))
+		app.Get("/", data.Select(c.strg, c.log))
 		app.Get("/:ID", data.Select(c.strg, c.log))
 		app.Delete("/:ID", data.Delete(c.strg, c.log))
 	})

@@ -35,7 +35,7 @@ func (r *Reform) DeleteHomeworkQuestionByID(ctx context.Context, ID int64) error
 }
 
 func (r *Reform) selectHomeworkQuestions(ctx context.Context, tx *reform.TX, filters map[string]interface{}) ([]data.HomeworkQuestion, error) {
-	content, err := common.SelectAll(ctx, r.db, tx, filters, " \"order\" ASC, homework_id ASC, id ASC", data.HomeworkQuestionTable)
+	content, err := common.SelectAll(ctx, r.db, tx, filters, " homework_id ASC, \"order\" ASC, id ASC", data.HomeworkQuestionTable)
 	if err != nil {
 		return nil, fmt.Errorf("select homeworkQuestions: %w", err)
 	}

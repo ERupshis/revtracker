@@ -18,28 +18,51 @@ func (r *Reform) UpdateData(ctx context.Context, inData *data.Data) error {
 	return r.insertOrUpdateData(ctx, inData)
 }
 
-func (r *Reform) SelectDataByHomeworkID(ctx context.Context, ID int64) (*data.Data, error) {
-	res := &data.Data{}
+func (r *Reform) SelectDataAll(ctx context.Context) ([]data.Data, error) {
+	var res []data.Data
 	err := r.db.InTransactionContext(ctx, nil, func(tx *reform.TX) error {
-		homework, err := r.selectHomework(ctx, tx, map[string]interface{}{"homework_id": ID})
+		homeworks, err := r.selectHomeworks(ctx, tx, nil)
 		if err != nil {
-			return fmt.Errorf("select homework: %w", err)
+			return fmt.Errorf("select all homewrokData: %w", err)
 		}
 
-		questions, err := r.getQuestions(ctx, tx, homework.ID)
-		if err != nil {
-			return fmt.Errorf("select questions: %w", err)
+		for _, homework := range homeworks {
+			homeworkData, err := r.selectDataHomeworkByID(ctx, tx, homework.ID)
+			if err != nil {
+				return fmt.Errorf("select all homewrokData: %w", err)
+			}
+
+			if homeworkData != nil {
+				res = append(res,
+					data.Data{
+						Homework: *homeworkData,
+					},
+				)
+			}
 		}
 
-		res.Homework.ID = homework.ID
-		res.Homework.Name = homework.Name
-		res.Homework.Questions = questions
 		return nil
 	})
 
-	if err != nil {
-		res = nil
-	}
+	return res, err
+}
+
+func (r *Reform) SelectDataByHomeworkID(ctx context.Context, ID int64) (*data.Data, error) {
+	var res *data.Data
+	err := r.db.InTransactionContext(ctx, nil, func(tx *reform.TX) error {
+		homeworkData, err := r.selectDataHomeworkByID(ctx, tx, ID)
+		if err != nil {
+			return fmt.Errorf("select homeworkData: %w", err)
+		}
+
+		if homeworkData != nil {
+			res = &data.Data{
+				Homework: *homeworkData,
+			}
+		}
+
+		return nil
+	})
 
 	return res, err
 }
@@ -123,7 +146,7 @@ func (r *Reform) getOrderedQuestionIDs(ctx context.Context, tx *reform.TX, homew
 
 	var res []int64
 	for _, hq := range homeworkQuestions {
-		res = append(res, hq.Order)
+		res = append(res, hq.QuestionID)
 	}
 
 	return res, nil
@@ -146,4 +169,26 @@ func (r *Reform) getQuestions(ctx context.Context, tx *reform.TX, homeworkID int
 	}
 
 	return res, nil
+}
+
+func (r *Reform) selectDataHomeworkByID(ctx context.Context, tx *reform.TX, ID int64) (*data.HomeworkData, error) {
+	homework, err := r.selectHomework(ctx, tx, map[string]interface{}{"id": ID})
+	if err != nil {
+		return nil, fmt.Errorf("select homework: %w", err)
+	}
+
+	if homework == nil {
+		return nil, nil
+	}
+
+	questions, err := r.getQuestions(ctx, tx, homework.ID)
+	if err != nil {
+		return nil, fmt.Errorf("select questions: %w", err)
+	}
+
+	return &data.HomeworkData{
+		ID:        homework.ID,
+		Name:      homework.Name,
+		Questions: questions,
+	}, nil
 }

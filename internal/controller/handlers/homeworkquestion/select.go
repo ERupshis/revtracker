@@ -42,6 +42,12 @@ func Select(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 			return nil
 		}
 
+		if homeworkQuestions == nil {
+			log.Info("%s data wasn't found for id '%d'", fmt.Sprintf(packagePath, constants.Select), ID)
+			c.Status(fiber.StatusNoContent)
+			return nil
+		}
+
 		response, err := json.Marshal(homeworkQuestions)
 		if err != nil {
 			log.Info("%s failed to marshal json for response body", fmt.Sprintf(packagePath, constants.Select))

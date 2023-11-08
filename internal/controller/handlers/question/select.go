@@ -1,7 +1,6 @@
 package question
 
 import (
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -32,12 +31,6 @@ func Select(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 		}
 
 		if err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				log.Info("%s couldn't find: %v", fmt.Sprintf(packagePath, constants.Select), err)
-				c.Status(fiber.StatusNoContent)
-				return nil
-			}
-
 			log.Info("%s failed to find: %v", fmt.Sprintf(packagePath, constants.Select), err)
 			c.Status(fiber.StatusInternalServerError)
 			return nil
@@ -46,8 +39,12 @@ func Select(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 		var response []byte
 		if question != nil {
 			response, err = json.Marshal(question)
-		} else {
+		} else if questions != nil {
 			response, err = json.Marshal(questions)
+		} else {
+			log.Info("%s data wasn't found for id '%d'", fmt.Sprintf(packagePath, constants.Select), ID)
+			c.Status(fiber.StatusNoContent)
+			return nil
 		}
 
 		if err != nil {
