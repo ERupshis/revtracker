@@ -38,7 +38,7 @@ func TestSelect(t *testing.T) {
 			Solution: &testStr,
 		},
 	}
-	data := &data.Data{
+	inData := &data.Data{
 		Homework: data.HomeworkData{
 			ID:   1,
 			Name: "hw_1",
@@ -50,7 +50,7 @@ func TestSelect(t *testing.T) {
 
 	mockStorage := mocks.NewMockBaseStorage(ctrl)
 	gomock.InOrder(
-		mockStorage.EXPECT().SelectDataByHomeworkID(gomock.Any(), gomock.Any()).Return(data, nil),
+		mockStorage.EXPECT().SelectDataByHomeworkID(gomock.Any(), gomock.Any()).Return(inData, nil),
 		mockStorage.EXPECT().SelectDataByHomeworkID(gomock.Any(), gomock.Any()).Return(nil, sql.ErrNoRows),
 		mockStorage.EXPECT().SelectDataByHomeworkID(gomock.Any(), gomock.Any()).Return(nil, fmt.Errorf("test err")),
 	)
