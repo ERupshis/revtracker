@@ -14,7 +14,7 @@ func Delete(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		ID, err := utils.GetIDFromParams(c)
 		if err != nil {
-			log.Info("%s get ID from params: %v", fmt.Sprintf(packagePath, constants.Select), err)
+			log.Info("%s get ID from params: %v", fmt.Sprintf(packagePath, constants.Delete), err)
 			c.Status(fiber.StatusBadRequest)
 			return nil
 		}
