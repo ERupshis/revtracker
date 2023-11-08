@@ -34,12 +34,14 @@ func TestSelect(t *testing.T) {
 
 	mockStorage := mocks.NewMockBaseStorage(ctrl)
 	gomock.InOrder(
-		mockStorage.EXPECT().SelectHomeworkQuestionByID(gomock.Any(), gomock.Any()).Return(question, nil),
-		mockStorage.EXPECT().SelectHomeworkQuestionByID(gomock.Any(), gomock.Any()).Return(nil, sql.ErrNoRows),
-		mockStorage.EXPECT().SelectHomeworkQuestionByID(gomock.Any(), gomock.Any()).Return(nil, fmt.Errorf("test err")),
+		mockStorage.EXPECT().SelectHomeworkQuestionsByHomeworkID(gomock.Any(), gomock.Any()).Return([]data.HomeworkQuestion{*question}, nil),
+		mockStorage.EXPECT().SelectHomeworkQuestionsByHomeworkID(gomock.Any(), gomock.Any()).Return(nil, sql.ErrNoRows),
+		mockStorage.EXPECT().SelectHomeworkQuestionsByHomeworkID(gomock.Any(), gomock.Any()).Return(nil, fmt.Errorf("test err")),
+		mockStorage.EXPECT().SelectHomeworkQuestions(gomock.Any()).Return([]data.HomeworkQuestion{*question}, nil),
 	)
 
 	testApp := fiber.New()
+	testApp.Get("/", Select(mockStorage, testLog))
 	testApp.Get("/:ID", Select(mockStorage, testLog))
 	defer utils.ExecuteWithLogError(testApp.Shutdown, testLog)
 
@@ -74,7 +76,7 @@ func TestSelect(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				body:       []byte(`{"Id":1,"Homework_Id":1,"Question_Id":1,"Order":1}`),
+				body:       []byte(`[{"Id":1,"Homework_Id":1,"Question_Id":1,"Order":1}]`),
 			},
 		},
 		{
@@ -111,6 +113,18 @@ func TestSelect(t *testing.T) {
 			want: want{
 				statusCode: fiber.StatusInternalServerError,
 				body:       []byte(""),
+			},
+		},
+		{
+			name: "valid for all",
+			args: args{
+				storage:  nil,
+				log:      testLog,
+				paramURI: "/",
+			},
+			want: want{
+				statusCode: fiber.StatusOK,
+				body:       []byte(`[{"Id":1,"Homework_Id":1,"Question_Id":1,"Order":1}]`),
 			},
 		},
 	}
