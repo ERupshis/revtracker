@@ -14,6 +14,10 @@ func (s *Storage) UpdateHomework(ctx context.Context, homework *data.Homework) e
 	return s.mngr.UpdateHomework(ctx, homework)
 }
 
+func (s *Storage) SelectHomeworks(ctx context.Context) ([]data.Homework, error) {
+	return s.mngr.SelectHomeworks(ctx)
+}
+
 func (s *Storage) SelectHomeworkByID(ctx context.Context, ID int64) (*data.Homework, error) {
 	return s.mngr.SelectHomeworkByID(ctx, ID)
 }

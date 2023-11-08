@@ -44,10 +44,12 @@ func TestSelect(t *testing.T) {
 		mockStorage.EXPECT().SelectQuestionByID(gomock.Any(), gomock.Any()).Return(question, nil),
 		mockStorage.EXPECT().SelectQuestionByID(gomock.Any(), gomock.Any()).Return(nil, sql.ErrNoRows),
 		mockStorage.EXPECT().SelectQuestionByID(gomock.Any(), gomock.Any()).Return(nil, fmt.Errorf("test err")),
+		mockStorage.EXPECT().SelectQuestions(gomock.Any()).Return([]data.Question{*question}, nil),
 	)
 
 	testApp := fiber.New()
 	testApp.Get("/:ID", Select(mockStorage, testLog))
+	testApp.Get("/", Select(mockStorage, testLog))
 	defer utils.ExecuteWithLogError(testApp.Shutdown, testLog)
 
 	port := 3022
@@ -118,6 +120,18 @@ func TestSelect(t *testing.T) {
 			want: want{
 				statusCode: fiber.StatusInternalServerError,
 				body:       []byte(""),
+			},
+		},
+		{
+			name: "valid select all",
+			args: args{
+				storage:  nil,
+				log:      testLog,
+				paramURI: "/",
+			},
+			want: want{
+				statusCode: fiber.StatusOK,
+				body:       []byte(`[{"Id":1,"Name":"q1","Content":{"Task":"some_str","Answer":"some_str","Solution":"some_str"}}]`),
 			},
 		},
 	}

@@ -17,6 +17,10 @@ func (r *Reform) UpdateHomework(ctx context.Context, homework *data.Homework) er
 	return common.InsertOrUpdate(ctx, r.db, nil, homework)
 }
 
+func (r *Reform) SelectHomeworks(ctx context.Context) ([]data.Homework, error) {
+	return r.selectHomeworks(ctx, nil, nil)
+}
+
 func (r *Reform) SelectHomeworkByID(ctx context.Context, ID int64) (*data.Homework, error) {
 	return r.selectHomework(ctx, nil, map[string]interface{}{"id": ID})
 }

@@ -8,6 +8,7 @@ import (
 
 	"github.com/erupshis/revtracker/internal/constants"
 	"github.com/erupshis/revtracker/internal/controller/handlers/utils"
+	"github.com/erupshis/revtracker/internal/data"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
 	"github.com/gofiber/fiber/v2"
@@ -16,13 +17,20 @@ import (
 func Select(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		ID, err := utils.GetIDFromParams(c)
-		if err != nil {
+		if err != nil && !errors.Is(err, utils.ErrMissingIDinURI) {
 			log.Info("%s get ID from params: %v", fmt.Sprintf(packagePath, constants.Select), err)
 			c.Status(fiber.StatusBadRequest)
 			return nil
 		}
 
-		homework, err := storage.SelectHomeworkByID(c.Context(), ID)
+		var homework *data.Homework
+		var homeworks []data.Homework
+		if ID != -1 {
+			homework, err = storage.SelectHomeworkByID(c.Context(), ID)
+		} else {
+			homeworks, err = storage.SelectHomeworks(c.Context())
+		}
+
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				log.Info("%s couldn't find: %v", fmt.Sprintf(packagePath, constants.Select), err)
@@ -35,7 +43,13 @@ func Select(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 			return nil
 		}
 
-		response, err := json.Marshal(homework)
+		var response []byte
+		if homework != nil {
+			response, err = json.Marshal(homework)
+		} else {
+			response, err = json.Marshal(homeworks)
+		}
+
 		if err != nil {
 			log.Info("%s failed to marshal json for response body", fmt.Sprintf(packagePath, constants.Select))
 			c.Status(fiber.StatusInternalServerError)

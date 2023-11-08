@@ -25,10 +25,10 @@ func Select(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 
 		var question *data.Question
 		var questions []data.Question
-		if ID == -1 {
-			questions, err = storage.SelectQuestions(c.Context())
-		} else {
+		if ID != -1 {
 			question, err = storage.SelectQuestionByID(c.Context(), ID)
+		} else {
+			questions, err = storage.SelectQuestions(c.Context())
 		}
 
 		if err != nil {

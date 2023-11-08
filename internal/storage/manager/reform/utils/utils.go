@@ -8,6 +8,8 @@ import (
 
 const HostTest = "http://localhost:"
 
+const TailOrderByID = " ORDER BY id"
+
 func CreateTailAndParams(db *reform.DB, filters map[string]interface{}) (string, []interface{}) {
 	tail := "WHERE"
 	var values []interface{}

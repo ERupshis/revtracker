@@ -38,9 +38,9 @@ func SelectAll(ctx context.Context, db *reform.DB, tx *reform.TX, filters map[st
 	var content []reform.Struct
 	var err error
 	if tx != nil {
-		content, err = tx.SelectAllFrom(table, tail, values...)
+		content, err = tx.SelectAllFrom(table, tail+utils.TailOrderByID, values...)
 	} else {
-		content, err = db.WithContext(ctx).SelectAllFrom(table, tail, values...)
+		content, err = db.WithContext(ctx).SelectAllFrom(table, tail+utils.TailOrderByID, values...)
 	}
 
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {

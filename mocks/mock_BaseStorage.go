@@ -250,6 +250,21 @@ func (mr *MockBaseStorageMockRecorder) SelectHomeworkQuestionByID(arg0, arg1 int
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectHomeworkQuestionByID", reflect.TypeOf((*MockBaseStorage)(nil).SelectHomeworkQuestionByID), arg0, arg1)
 }
 
+// SelectHomeworks mocks base method.
+func (m *MockBaseStorage) SelectHomeworks(arg0 context.Context) ([]data.Homework, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectHomeworks", arg0)
+	ret0, _ := ret[0].([]data.Homework)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectHomeworks indicates an expected call of SelectHomeworks.
+func (mr *MockBaseStorageMockRecorder) SelectHomeworks(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectHomeworks", reflect.TypeOf((*MockBaseStorage)(nil).SelectHomeworks), arg0)
+}
+
 // SelectQuestionByID mocks base method.
 func (m *MockBaseStorage) SelectQuestionByID(arg0 context.Context, arg1 int64) (*data.Question, error) {
 	m.ctrl.T.Helper()

@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/erupshis/revtracker/internal/constants"
+	"github.com/erupshis/revtracker/internal/controller/handlers/utils"
 	"github.com/erupshis/revtracker/internal/data"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
@@ -32,8 +33,13 @@ func Insert(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 		}
 
 		if err := storage.InsertHomework(c.Context(), homework); err != nil {
+			if utils.IsUniqueConstraint(err) {
+				c.Status(fiber.StatusConflict)
+			} else {
+				c.Status(fiber.StatusInternalServerError)
+			}
+
 			log.Info("%s failed to add: %v", fmt.Sprintf(packagePath, constants.Insert), err)
-			c.Status(fiber.StatusInternalServerError)
 			return nil
 		}
 

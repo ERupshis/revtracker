@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION remove_related_homework_questions()
 $$
 BEGIN
     IF TG_OP = 'DELETE' THEN
-        DELETE FROM homework_questions WHERE id = OLD.homework_id;
+        DELETE FROM homework_questions WHERE OLD.id = homework_id;
     END IF;
 
     RETURN OLD;

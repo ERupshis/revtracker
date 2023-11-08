@@ -17,6 +17,7 @@ type BaseStorageManager interface {
 
 	InsertHomework(ctx context.Context, homework *data.Homework) error
 	UpdateHomework(ctx context.Context, homework *data.Homework) error
+	SelectHomeworks(ctx context.Context) ([]data.Homework, error)
 	SelectHomeworkByID(ctx context.Context, ID int64) (*data.Homework, error)
 	DeleteHomeworkByID(ctx context.Context, ID int64) error
 
