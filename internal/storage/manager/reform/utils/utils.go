@@ -24,5 +24,9 @@ func CreateTailAndParams(db *reform.DB, filters map[string]interface{}) (string,
 		tail += fmt.Sprintf(" %s = %s", key, db.Placeholder(i))
 	}
 
+	if tail == "WHERE" {
+		return "", nil
+	}
+
 	return tail, values
 }

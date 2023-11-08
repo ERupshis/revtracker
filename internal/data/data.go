@@ -18,7 +18,7 @@ type Homework struct {
 
 //reform:contents
 type Content struct {
-	ID       int64   `json:"Id" reform:"id,pk"`
+	ID       int64   `json:"-" reform:"id,pk"`
 	Task     *string `json:"Task" reform:"task"`
 	Answer   *string `json:"Answer" reform:"answer"`
 	Solution *string `json:"Solution" reform:"solution"`

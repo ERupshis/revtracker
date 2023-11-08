@@ -83,7 +83,7 @@ func TestInsert(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				body:       []byte(`{"Homework":{"Id":1,"Name":"hw_name","Questions":[{"Id":1,"Name":"q1_name","Content":{"Id":0,"Task":"task1","Answer":"answer1","Solution":"solution1"}}]}}`),
+				body:       []byte(`{"Homework":{"Id":1,"Name":"hw_name","Questions":[{"Id":1,"Name":"q1_name","Content":{"Task":"task1","Answer":"answer1","Solution":"solution1"}}]}}`),
 			},
 		},
 		{

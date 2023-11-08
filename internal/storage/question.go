@@ -14,6 +14,10 @@ func (s *Storage) UpdateQuestion(ctx context.Context, question *data.Question) e
 	return s.mngr.UpdateQuestion(ctx, question)
 }
 
+func (s *Storage) SelectQuestions(ctx context.Context) ([]data.Question, error) {
+	return s.mngr.SelectQuestions(ctx)
+}
+
 func (s *Storage) SelectQuestionByID(ctx context.Context, ID int64) (*data.Question, error) {
 	return s.mngr.SelectQuestionByID(ctx, ID)
 }

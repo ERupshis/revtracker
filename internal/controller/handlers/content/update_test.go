@@ -28,7 +28,6 @@ func TestUpdate(t *testing.T) {
 	gomock.InOrder(
 		mockStorage.EXPECT().UpdateContent(gomock.Any(), gomock.Any()).Return(nil),
 		mockStorage.EXPECT().UpdateContent(gomock.Any(), gomock.Any()).Return(nil),
-		mockStorage.EXPECT().UpdateContent(gomock.Any(), gomock.Any()).Return(nil),
 		mockStorage.EXPECT().UpdateContent(gomock.Any(), gomock.Any()).Return(fmt.Errorf("test err")),
 	)
 
@@ -70,7 +69,7 @@ func TestUpdate(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				body:       []byte(`{"Id":1,"Task":"task1","Answer":"answer1","Solution":"solution1"}`),
+				body:       []byte(`{"Task":"task1","Answer":"answer1","Solution":"solution1"}`),
 			},
 		},
 		{
@@ -122,20 +121,7 @@ func TestUpdate(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				body:       []byte(`{"Id":1,"Task":"task1","Answer":"answer1","Solution":"solution1"}`),
-			},
-		},
-		{
-			name: "ID in body only",
-			args: args{
-				storage:  nil,
-				log:      testLog,
-				paramURI: "/",
-				body:     []byte(`{"Id":1,"Task":"task1","Answer":"answer1","Solution":"solution1"}`),
-			},
-			want: want{
-				statusCode: fiber.StatusOK,
-				body:       []byte(`{"Id":1,"Task":"task1","Answer":"answer1","Solution":"solution1"}`),
+				body:       []byte(`{"Task":"task1","Answer":"answer1","Solution":"solution1"}`),
 			},
 		},
 		{
@@ -157,7 +143,7 @@ func TestUpdate(t *testing.T) {
 				storage:  nil,
 				log:      testLog,
 				paramURI: "/1",
-				body:     []byte(`{"Id":1,"Task":"task1","Answer":"answer1","Solution":"solution1"}`),
+				body:     []byte(`{"Task":"task1","Answer":"answer1","Solution":"solution1"}`),
 			},
 			want: want{
 				statusCode: fiber.StatusInternalServerError,

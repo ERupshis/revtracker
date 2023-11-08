@@ -40,14 +40,19 @@ func Update(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 		}
 
 		if err := utilsData.ValidateContentData(&question.Content); err != nil {
-			log.Info("%s incorrect content data: %v", fmt.Sprintf(packagePath, constants.Insert), err)
+			log.Info("%s incorrect content data: %v", fmt.Sprintf(packagePath, constants.Update), err)
 			c.Status(fiber.StatusBadRequest)
 			return nil
 		}
 
 		if err := storage.UpdateQuestion(c.Context(), question); err != nil {
+			if utils.IsUniqueConstraint(err) {
+				c.Status(fiber.StatusConflict)
+			} else {
+				c.Status(fiber.StatusInternalServerError)
+			}
+
 			log.Info("%s failed to update: %v", fmt.Sprintf(packagePath, constants.Update), err)
-			c.Status(fiber.StatusInternalServerError)
 			return nil
 		}
 

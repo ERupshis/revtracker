@@ -90,7 +90,7 @@ func TestSelect(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				body:       []byte(`{"Homework":{"Id":1,"Name":"hw_1","Questions":[{"Id":1,"Name":"q1","Content":{"Id":0,"Task":"some_str","Answer":"some_str","Solution":"some_str"}}]}}`),
+				body:       []byte(`{"Homework":{"Id":1,"Name":"hw_1","Questions":[{"Id":1,"Name":"q1","Content":{"Task":"some_str","Answer":"some_str","Solution":"some_str"}}]}}`),
 			},
 		},
 		{

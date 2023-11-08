@@ -77,7 +77,7 @@ func TestSelect(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				body:       []byte(`{"Id":1,"Task":"task","Answer":"ans","Solution":"sol"}`),
+				body:       []byte(`{"Task":"task","Answer":"ans","Solution":"sol"}`),
 			},
 		},
 		{

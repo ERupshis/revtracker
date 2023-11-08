@@ -5,8 +5,9 @@ import (
 	"fmt"
 
 	"github.com/erupshis/revtracker/internal/constants"
+	"github.com/erupshis/revtracker/internal/controller/handlers/utils"
 	"github.com/erupshis/revtracker/internal/data"
-	"github.com/erupshis/revtracker/internal/data/utils"
+	utilsData "github.com/erupshis/revtracker/internal/data/utils"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
 	"github.com/gofiber/fiber/v2"
@@ -32,15 +33,20 @@ func Insert(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 			return nil
 		}
 
-		if err := utils.ValidateContentData(&question.Content); err != nil {
+		if err := utilsData.ValidateContentData(&question.Content); err != nil {
 			log.Info("%s incorrect content data: %v", fmt.Sprintf(packagePath, constants.Insert), err)
 			c.Status(fiber.StatusBadRequest)
 			return nil
 		}
 
 		if err := storage.InsertQuestion(c.Context(), question); err != nil {
+			if utils.IsUniqueConstraint(err) {
+				c.Status(fiber.StatusConflict)
+			} else {
+				c.Status(fiber.StatusInternalServerError)
+			}
+
 			log.Info("%s failed to add: %v", fmt.Sprintf(packagePath, constants.Insert), err)
-			c.Status(fiber.StatusInternalServerError)
 			return nil
 		}
 

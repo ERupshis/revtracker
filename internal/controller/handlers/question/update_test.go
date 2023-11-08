@@ -70,7 +70,7 @@ func TestUpdate(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				body:       []byte(`{"Id":1,"Name":"q1","Content":{"Id":0,"Task":"task1","Answer":"answer1","Solution":"solution1"}}`),
+				body:       []byte(`{"Id":1,"Name":"q1","Content":{"Task":"task1","Answer":"answer1","Solution":"solution1"}}`),
 			},
 		},
 		{
@@ -122,7 +122,7 @@ func TestUpdate(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				body:       []byte(`{"Id":1,"Name":"q1","Content":{"Id":0,"Task":"task1","Answer":"answer1","Solution":"solution1"}}`),
+				body:       []byte(`{"Id":1,"Name":"q1","Content":{"Task":"task1","Answer":"answer1","Solution":"solution1"}}`),
 			},
 		},
 		{
@@ -135,7 +135,7 @@ func TestUpdate(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				body:       []byte(`{"Id":1,"Name":"q1","Content":{"Id":0,"Task":"task1","Answer":"answer1","Solution":"solution1"}}`),
+				body:       []byte(`{"Id":1,"Name":"q1","Content":{"Task":"task1","Answer":"answer1","Solution":"solution1"}}`),
 			},
 		},
 		{

@@ -2,7 +2,6 @@ package controller
 
 import (
 	"github.com/erupshis/revtracker/internal/controller/handlers"
-	"github.com/erupshis/revtracker/internal/controller/handlers/content"
 	"github.com/erupshis/revtracker/internal/controller/handlers/data"
 	"github.com/erupshis/revtracker/internal/controller/handlers/homework"
 	"github.com/erupshis/revtracker/internal/controller/handlers/question"
@@ -34,18 +33,19 @@ func (c *Controller) Route() *fiber.App {
 		app.Delete("/:ID", homework.Delete(c.strg, c.log))
 	})
 
-	app.Route("/content", func(app fiber.Router) {
-		app.Post("/", content.Insert(c.strg, c.log))
-		app.Put("/", content.Update(c.strg, c.log))
-		app.Put("/:ID", content.Update(c.strg, c.log))
-		app.Get("/:ID", content.Select(c.strg, c.log))
-		app.Delete("/:ID", content.Delete(c.strg, c.log))
-	})
+	//app.Route("/content", func(app fiber.Router) {
+	//	app.Post("/", content.Insert(c.strg, c.log))
+	//	app.Put("/", content.Update(c.strg, c.log))
+	//	app.Put("/:ID", content.Update(c.strg, c.log))
+	//	app.Get("/:ID", content.Select(c.strg, c.log))
+	//	app.Delete("/:ID", content.Delete(c.strg, c.log))
+	//})
 
 	app.Route("/question", func(app fiber.Router) {
 		app.Post("/", question.Insert(c.strg, c.log))
 		app.Put("/", question.Update(c.strg, c.log))
 		app.Put("/:ID", question.Update(c.strg, c.log))
+		app.Get("/", question.Select(c.strg, c.log))
 		app.Get("/:ID", question.Select(c.strg, c.log))
 		app.Delete("/:ID", question.Delete(c.strg, c.log))
 	})

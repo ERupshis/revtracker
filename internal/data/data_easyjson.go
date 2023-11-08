@@ -527,8 +527,6 @@ func easyjson794297d0DecodeGithubComErupshisRevtrackerInternalData6(in *jlexer.L
 			continue
 		}
 		switch key {
-		case "Id":
-			out.ID = int64(in.Int64())
 		case "Task":
 			if in.IsNull() {
 				in.Skip()
@@ -574,13 +572,13 @@ func easyjson794297d0EncodeGithubComErupshisRevtrackerInternalData6(out *jwriter
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"Id\":"
-		out.RawString(prefix[1:])
-		out.Int64(int64(in.ID))
-	}
-	{
 		const prefix string = ",\"Task\":"
-		out.RawString(prefix)
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
 		if in.Task == nil {
 			out.RawString("null")
 		} else {
