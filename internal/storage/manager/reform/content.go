@@ -3,7 +3,7 @@ package reform
 import (
 	"context"
 
-	data "github.com/erupshis/revtracker/internal/data"
+	"github.com/erupshis/revtracker/internal/data"
 	"github.com/erupshis/revtracker/internal/storage/manager/reform/common"
 	"gopkg.in/reform.v1"
 )
