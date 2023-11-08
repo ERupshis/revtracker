@@ -18,7 +18,7 @@ import (
 )
 
 func TestInsert(t *testing.T) {
-	testLog, _ := logger.CreateZapLogger("info")
+	testLog, _ := logger.CreateMock()
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()

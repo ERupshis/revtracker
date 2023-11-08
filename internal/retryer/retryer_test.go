@@ -65,7 +65,7 @@ func Test_canRetryCall(t *testing.T) {
 }
 
 func TestRetryCallWithTimeout(t *testing.T) {
-	log, _ := logger.CreateZapLogger("Info")
+	log, _ := logger.CreateMock()
 
 	type args struct {
 		ctx              context.Context
@@ -145,7 +145,7 @@ func TestRetryCallWithTimeout(t *testing.T) {
 }
 
 func TestRetryCallWithTimeoutErrorOnly(t *testing.T) {
-	log, _ := logger.CreateZapLogger("Info")
+	log, _ := logger.CreateMock()
 
 	type args struct {
 		ctx              context.Context
