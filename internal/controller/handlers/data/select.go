@@ -1,6 +1,7 @@
 package data
 
 import (
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -30,7 +31,7 @@ func Select(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 			homeworksData, err = storage.SelectDataAll(c.Context())
 		}
 
-		if err != nil {
+		if err != nil && !errors.Is(err, sql.ErrNoRows) {
 			log.Info("%s failed to find: %v", fmt.Sprintf(packagePath, constants.Select), err)
 			c.Status(fiber.StatusInternalServerError)
 			return nil

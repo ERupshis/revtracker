@@ -30,13 +30,7 @@ func Select(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 			homeworkQuestions, err = storage.SelectHomeworkQuestions(c.Context())
 		}
 
-		if err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				log.Info("%s couldn't find: %v", fmt.Sprintf(packagePath, constants.Select), err)
-				c.Status(fiber.StatusNoContent)
-				return nil
-			}
-
+		if err != nil && !errors.Is(err, sql.ErrNoRows) {
 			log.Info("%s failed to find: %v", fmt.Sprintf(packagePath, constants.Select), err)
 			c.Status(fiber.StatusInternalServerError)
 			return nil
