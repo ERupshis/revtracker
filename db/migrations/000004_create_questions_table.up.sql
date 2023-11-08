@@ -21,27 +21,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER remove_contents_trigger
+CREATE OR REPLACE TRIGGER remove_contents_trigger
     AFTER DELETE OR UPDATE
     ON questions
     FOR EACH ROW
 EXECUTE FUNCTION remove_related_contents();
-
-
-CREATE OR REPLACE FUNCTION remove_related_homework_questions_from_questions()
-    RETURNS TRIGGER AS
-$$
-BEGIN
-    IF TG_OP = 'DELETE' THEN
-        DELETE FROM homework_questions WHERE OLD.id = question_id;
-    END IF;
-
-    RETURN OLD;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER remove_homework_questions_from_questions_trigger
-    AFTER DELETE
-    ON questions
-    FOR EACH ROW
-EXECUTE FUNCTION remove_related_homework_questions_from_questions();
