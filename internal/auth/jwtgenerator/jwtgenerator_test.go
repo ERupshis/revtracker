@@ -3,7 +3,7 @@ package jwtgenerator
 import (
 	"testing"
 
-	"github.com/erupshis/bonusbridge/internal/logger"
+	"github.com/erupshis/revtracker/internal/logger"
 )
 
 func TestJwtGenerator_Overall(t *testing.T) {
