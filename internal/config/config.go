@@ -39,7 +39,7 @@ func checkFlags(config *Config) {
 	flag.StringVar(&config.HostAddr, flagHostAddress, "localhost:8080", "server endpoint")
 
 	// auth.
-	flag.StringVar(&config.LogLevel, flagJWTKey, "TO REMOVE DEFAULT", "JWT web token key")
+	flag.StringVar(&config.JWTKey, flagJWTKey, "TO REMOVE DEFAULT", "JWT web token key")
 
 	// postgres.
 	flag.StringVar(&config.DatabaseDSN, flagDatabaseDSN, "postgres://postgres:postgres@localhost:5432/revtracker_test?sslmode=disable", "database DSN")
