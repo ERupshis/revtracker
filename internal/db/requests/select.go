@@ -11,14 +11,14 @@ import (
 )
 
 func SelectOne(ctx context.Context, db *reform.DB, tx *reform.TX, filters []utils.Argument, table reform.Table) (reform.Struct, error) {
-	tail, values := utils.CreateTailAndParams(db, filters)
+	tail, values := utils.CreateTailAndParams(db, filters, 0)
 
 	var content reform.Struct
 	var err error
 	if tx != nil {
-		content, err = tx.SelectOneFrom(table, tail, values...)
+		content, err = tx.SelectOneFrom(table, utils.AddDeletedCheck(tail, false), values...)
 	} else {
-		content, err = db.WithContext(ctx).SelectOneFrom(table, tail, values...)
+		content, err = db.WithContext(ctx).SelectOneFrom(table, utils.AddDeletedCheck(tail, false), values...)
 	}
 
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
@@ -33,7 +33,8 @@ func SelectOne(ctx context.Context, db *reform.DB, tx *reform.TX, filters []util
 }
 
 func SelectAll(ctx context.Context, db *reform.DB, tx *reform.TX, filters []utils.Argument, orderBy string, table reform.Table) ([]reform.Struct, error) {
-	tail, values := utils.CreateTailAndParams(db, filters)
+	tail, values := utils.CreateTailAndParams(db, filters, 0)
+	tail = utils.AddDeletedCheck(tail, false)
 	if orderBy != "" {
 		tail += utils.TailOrderBy + orderBy
 	}

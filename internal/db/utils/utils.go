@@ -13,6 +13,8 @@ const TailOrderBy = " ORDER BY "
 const (
 	conjAnd = " AND"
 	conjOR  = " OR"
+
+	colDeleted = "deleted"
 )
 
 type Argument struct {
@@ -46,8 +48,8 @@ func CreateArgumentOR(name string, value interface{}) Argument {
 }
 
 // TODO: need to replace map on slice.
-func CreateTailAndParams(db *reform.DB, filters []Argument) (string, []interface{}) {
-	tail := "WHERE"
+func CreateTailAndParams(db *reform.DB, filters []Argument, placeHoldersFrom int) (string, []interface{}) {
+	tail := ""
 	var values []interface{}
 	i := 0
 	for _, arg := range filters {
@@ -59,12 +61,28 @@ func CreateTailAndParams(db *reform.DB, filters []Argument) (string, []interface
 
 		i++
 
-		tail += fmt.Sprintf(" %s = %s", arg.Name, db.Placeholder(i))
+		tail += fmt.Sprintf(" %s = %s", arg.Name, db.Placeholder(placeHoldersFrom+i))
 	}
 
-	if tail == "WHERE" {
+	if tail == "" {
 		return "", nil
 	}
 
-	return tail, values
+	return fmt.Sprintf("WHERE (%s)", tail), values
+}
+
+func AddDeletedCheck(tail string, deleted bool) string {
+	if tail == "" {
+		if deleted {
+			return "WHERE " + colDeleted
+		} else {
+			return "WHERE NOT " + colDeleted
+		}
+	}
+
+	if deleted {
+		return tail + " AND " + colDeleted
+	} else {
+		return tail + " AND NOT " + colDeleted
+	}
 }
