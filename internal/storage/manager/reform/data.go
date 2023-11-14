@@ -6,7 +6,7 @@ import (
 	"sort"
 
 	"github.com/erupshis/revtracker/internal/data"
-	"github.com/erupshis/revtracker/internal/storage/manager/reform/common"
+	"github.com/erupshis/revtracker/internal/db/requests"
 	"gopkg.in/reform.v1"
 )
 
@@ -69,11 +69,11 @@ func (r *Reform) SelectDataByHomeworkID(ctx context.Context, ID int64) (*data.Da
 
 func (r *Reform) DeleteDataByHomeworkID(ctx context.Context, ID int64) error {
 	return r.db.InTransactionContext(ctx, nil, func(tx *reform.TX) error {
-		if err := common.Delete(ctx, r.db, tx, map[string]interface{}{"homework_id": ID}, data.HomeworkQuestionTable); err != nil {
+		if err := requests.Delete(ctx, r.db, tx, map[string]interface{}{"homework_id": ID}, data.HomeworkQuestionTable); err != nil {
 			return fmt.Errorf("delete links in homework_question: %w", err)
 		}
 
-		if err := common.Delete(ctx, r.db, tx, map[string]interface{}{"id": ID}, data.HomeworkTable); err != nil {
+		if err := requests.Delete(ctx, r.db, tx, map[string]interface{}{"id": ID}, data.HomeworkTable); err != nil {
 			return fmt.Errorf("delete homework: %w", err)
 		}
 
@@ -89,11 +89,11 @@ func (r *Reform) insertOrUpdateData(ctx context.Context, inData *data.Data) erro
 	questions := inData.Homework.Questions
 
 	return r.db.InTransactionContext(ctx, nil, func(tx *reform.TX) error {
-		if err := common.InsertOrUpdate(ctx, r.db, tx, homework); err != nil {
+		if err := requests.InsertOrUpdate(ctx, r.db, tx, homework); err != nil {
 			return fmt.Errorf("insert/update homework: %w", err)
 		}
 
-		if err := common.Delete(ctx, r.db, tx, map[string]interface{}{"homework_id": homework.ID}, data.HomeworkQuestionTable); err != nil {
+		if err := requests.Delete(ctx, r.db, tx, map[string]interface{}{"homework_id": homework.ID}, data.HomeworkQuestionTable); err != nil {
 			return fmt.Errorf("delete links in homework_question: %w", err)
 		}
 
@@ -112,12 +112,12 @@ func (r *Reform) insertQuestions(ctx context.Context, tx *reform.TX, questions [
 	for i := 0; i < len(questions); i++ {
 		question := &questions[i]
 
-		if err := common.InsertOrUpdate(ctx, r.db, tx, &question.Content); err != nil {
+		if err := requests.InsertOrUpdate(ctx, r.db, tx, &question.Content); err != nil {
 			return fmt.Errorf("insert/update content")
 		}
 
 		question.ContentID = question.Content.ID
-		if err := common.InsertOrUpdate(ctx, r.db, tx, question); err != nil {
+		if err := requests.InsertOrUpdate(ctx, r.db, tx, question); err != nil {
 			return fmt.Errorf("insert/update question")
 		}
 
@@ -127,7 +127,7 @@ func (r *Reform) insertQuestions(ctx context.Context, tx *reform.TX, questions [
 			Order:      int64(i),
 		}
 
-		if err := common.InsertOrUpdate(ctx, r.db, tx, homeworkQuestion); err != nil {
+		if err := requests.InsertOrUpdate(ctx, r.db, tx, homeworkQuestion); err != nil {
 			return fmt.Errorf("insert/update homework-question link. element's order: %d", i)
 		}
 	}

@@ -19,26 +19,26 @@ func Login(usersStorage storage.BaseUsersStorage, jwt jwtgenerator.JwtGenerator,
 			return nil
 		}
 
-		userDB, err := usersStorage.GetUser(c.Context(), user.Login)
+		userDataInStorage, err := usersStorage.SelectUserByLogin(c.Context(), user.Login)
 		if err != nil {
 			c.Status(fiber.StatusInternalServerError)
 			log.Info("[auth:handlers:Login] failed to get userID from user's database: %v", err)
 			return nil
 		}
 
-		if userDB == nil {
+		if userDataInStorage == nil {
 			c.Status(fiber.StatusUnauthorized)
 			log.Info("[auth:handlers:Login] failed to get userID from user's database: %v", err)
 			return nil
 		}
 
-		if user.Password != userDB.Password {
+		if user.Password != userDataInStorage.Password {
 			c.Status(fiber.StatusUnauthorized)
 			log.Info("[auth:handlers:Login] failed to authorize user")
 			return nil
 		}
 
-		token, err := jwt.BuildJWTString(userDB.ID)
+		token, err := jwt.BuildJWTString(userDataInStorage.ID)
 		if err != nil {
 			c.Status(fiber.StatusInternalServerError)
 			log.Info("[auth:handlers:Login] new token generation failed: %w", err)

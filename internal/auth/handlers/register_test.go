@@ -12,11 +12,11 @@ package handlers
 // 	mockStorage := mocks.NewMockBaseUsersManager(ctrl)
 // 	gomock.InOrder(
 // 		mockStorage.EXPECT().GetUserID(gomock.Any(), gomock.Any()).Return(int64(-1), nil),
-// 		mockStorage.EXPECT().AddUser(gomock.Any(), gomock.Any()).Return(int64(1), nil),
+// 		mockStorage.EXPECT().InsertUser(gomock.Any(), gomock.Any()).Return(int64(1), nil),
 // 		mockStorage.EXPECT().GetUserID(gomock.Any(), gomock.Any()).Return(int64(-1), fmt.Errorf("failed to find user(db error)")),
 // 		mockStorage.EXPECT().GetUserID(gomock.Any(), gomock.Any()).Return(int64(1), nil),
 // 		mockStorage.EXPECT().GetUserID(gomock.Any(), gomock.Any()).Return(int64(-1), nil),
-// 		mockStorage.EXPECT().AddUser(gomock.Any(), gomock.Any()).Return(int64(1), fmt.Errorf("failed to add user(db error)")),
+// 		mockStorage.EXPECT().InsertUser(gomock.Any(), gomock.Any()).Return(int64(1), fmt.Errorf("failed to add user(db error)")),
 // 	)
 //
 // 	ts := httptest.NewServer(Register(mockStorage, jwtGen, log))

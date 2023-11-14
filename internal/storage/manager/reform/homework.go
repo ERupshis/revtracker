@@ -5,16 +5,16 @@ import (
 	"fmt"
 
 	"github.com/erupshis/revtracker/internal/data"
-	"github.com/erupshis/revtracker/internal/storage/manager/reform/common"
+	"github.com/erupshis/revtracker/internal/db/requests"
 	"gopkg.in/reform.v1"
 )
 
 func (r *Reform) InsertHomework(ctx context.Context, homework *data.Homework) error {
-	return common.InsertOrUpdate(ctx, r.db, nil, homework)
+	return requests.InsertOrUpdate(ctx, r.db, nil, homework)
 }
 
 func (r *Reform) UpdateHomework(ctx context.Context, homework *data.Homework) error {
-	return common.InsertOrUpdate(ctx, r.db, nil, homework)
+	return requests.InsertOrUpdate(ctx, r.db, nil, homework)
 }
 
 func (r *Reform) SelectHomeworks(ctx context.Context) ([]data.Homework, error) {
@@ -26,11 +26,11 @@ func (r *Reform) SelectHomeworkByID(ctx context.Context, ID int64) (*data.Homewo
 }
 
 func (r *Reform) DeleteHomeworkByID(ctx context.Context, ID int64) error {
-	return common.Delete(ctx, r.db, nil, map[string]interface{}{"id": ID}, data.HomeworkTable)
+	return requests.Delete(ctx, r.db, nil, map[string]interface{}{"id": ID}, data.HomeworkTable)
 }
 
 func (r *Reform) selectHomework(ctx context.Context, tx *reform.TX, filters map[string]interface{}) (*data.Homework, error) {
-	content, err := common.SelectOne(ctx, r.db, tx, filters, data.HomeworkTable)
+	content, err := requests.SelectOne(ctx, r.db, tx, filters, data.HomeworkTable)
 
 	if content == nil {
 		return nil, err
@@ -40,7 +40,7 @@ func (r *Reform) selectHomework(ctx context.Context, tx *reform.TX, filters map[
 }
 
 func (r *Reform) selectHomeworks(ctx context.Context, tx *reform.TX, filters map[string]interface{}) ([]data.Homework, error) {
-	content, err := common.SelectAll(ctx, r.db, tx, filters, "id", data.HomeworkTable)
+	content, err := requests.SelectAll(ctx, r.db, tx, filters, "id", data.HomeworkTable)
 	if err != nil {
 		return nil, fmt.Errorf("select questions: %w", err)
 	}

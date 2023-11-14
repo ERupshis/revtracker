@@ -5,6 +5,10 @@ import (
 	"github.com/erupshis/revtracker/internal/storage/manager"
 )
 
+var (
+	_ BaseStorage = (*Storage)(nil)
+)
+
 type Storage struct {
 	log  logger.BaseLogger
 	mngr manager.BaseStorageManager

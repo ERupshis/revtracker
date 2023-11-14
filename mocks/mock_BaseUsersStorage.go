@@ -38,7 +38,7 @@ func (m *MockBaseUsersStorage) EXPECT() *MockBaseUsersStorageMockRecorder {
 // AddUser mocks base method.
 func (m *MockBaseUsersStorage) AddUser(arg0 context.Context, arg1 *data.User) (int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddUser", arg0, arg1)
+	ret := m.ctrl.Call(m, "InsertUser", arg0, arg1)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
@@ -47,7 +47,7 @@ func (m *MockBaseUsersStorage) AddUser(arg0 context.Context, arg1 *data.User) (i
 // AddUser indicates an expected call of AddUser.
 func (mr *MockBaseUsersStorageMockRecorder) AddUser(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddUser", reflect.TypeOf((*MockBaseUsersStorage)(nil).AddUser), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertUser", reflect.TypeOf((*MockBaseUsersStorage)(nil).AddUser), arg0, arg1)
 }
 
 // GetUser mocks base method.

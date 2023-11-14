@@ -1,4 +1,4 @@
-package common
+package requests
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/erupshis/revtracker/internal/storage/manager/reform/utils"
+	"github.com/erupshis/revtracker/internal/db/utils"
 	"gopkg.in/reform.v1"
 )
 

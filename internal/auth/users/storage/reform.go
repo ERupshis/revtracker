@@ -2,60 +2,50 @@ package storage
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/erupshis/revtracker/internal/auth/data"
 	"github.com/erupshis/revtracker/internal/logger"
 	"gopkg.in/reform.v1"
 )
 
-// usersStoragePostgres storageManager implementation for PostgreSQL. Consist of database and QueriesHandler.
+var (
+	_ BaseUsersStorage = (*usersReform)(nil)
+)
+
+// usersReform storageManager implementation for PostgreSQL. Consist of database and QueriesHandler.
 // Request to database are synchronized by sync.RWMutex. All requests are done on united transaction. Multi insert/update/delete is not supported at the moment.
-type usersStoragePostgres struct {
+type usersReform struct {
 	db *reform.DB
 
 	log logger.BaseLogger
 }
 
-// Create creates usersStoragePostgres implementation. Supports migrations and check connection to database.
+// Create creates usersReform implementation. Supports migrations and check connection to database.
 func Create(dbConn *reform.DB, log logger.BaseLogger) BaseUsersStorage {
-	return &usersStoragePostgres{
+	return &usersReform{
 		db:  dbConn,
 		log: log,
 	}
 }
 
-func (p *usersStoragePostgres) AddUser(ctx context.Context, user *data.User) (int64, error) {
-	// TODO: add impl.
-	return -1, nil
+func (r *usersReform) InsertUser(ctx context.Context, user *data.User) error {
+	return nil
 }
 
-func (p *usersStoragePostgres) GetUser(ctx context.Context, login string) (*data.User, error) {
-	// TODO: add impl.
+func (r *usersReform) UpdateUser(ctx context.Context, user *data.User) error {
+	return nil
+}
+
+func (r *usersReform) SelectUserByID(ctx context.Context, ID int64) (*data.User, error) {
 	return nil, nil
 }
 
-func (p *usersStoragePostgres) GetUserID(ctx context.Context, login string) (int64, error) {
-	// TODO: add impl.
-	return -1, nil
-}
-
-func (p *usersStoragePostgres) GetUserRole(ctx context.Context, userID int64) (int, error) {
-	user, err := p.getUser(ctx, map[string]interface{}{"id": userID})
-	if err != nil {
-		return -1, fmt.Errorf("get user role: %w", err)
-	}
-
-	if user == nil {
-		return -1, nil
-	}
-
-	return user.Role, nil
-}
-
-func (p *usersStoragePostgres) getUser(ctx context.Context, filters map[string]interface{}) (*data.User, error) {
-	// TODO: add impl.
+func (r *usersReform) SelectUserByLogin(ctx context.Context, login string) (*data.User, error) {
 	return nil, nil
+}
+
+func (r *usersReform) DeleteUserByID(ctx context.Context, ID int64) error {
+	return nil
 }
 
 // TODO: hash password in db.

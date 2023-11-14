@@ -6,6 +6,7 @@ import (
 	"github.com/erupshis/revtracker/internal/auth/data"
 	"github.com/erupshis/revtracker/internal/auth/jwtgenerator"
 	"github.com/erupshis/revtracker/internal/auth/users/storage"
+	"github.com/erupshis/revtracker/internal/auth/utils"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/gofiber/fiber/v2"
 )
@@ -20,27 +21,32 @@ func Register(usersStorage storage.BaseUsersStorage, jwt jwtgenerator.JwtGenerat
 			return nil
 		}
 
-		userID, err := usersStorage.GetUserID(c.Context(), user.Login)
+		userInStorage, err := usersStorage.SelectUserByLogin(c.Context(), user.Login)
 		if err != nil {
 			c.Status(fiber.StatusInternalServerError)
 			log.Info("[auth:handlers:Register] failed to check user in database: %v", err)
 			return nil
 		}
 
-		if userID != -1 {
+		if userInStorage != nil {
 			c.Status(fiber.StatusConflict)
 			log.Info("[auth:handlers:Register] login already exists")
 			return nil
 		}
 
-		userID, err = usersStorage.AddUser(c.Context(), &user)
-		if err != nil || userID == -1 {
+		if ok, _ := utils.IsUserDataValid(&user); !ok {
+			c.Status(fiber.StatusBadRequest)
+			log.Info("[auth:handlers:Register] incorrect new user input data: %v", err)
+			return nil
+		}
+
+		if err = usersStorage.InsertUser(c.Context(), &user); err != nil {
 			c.Status(fiber.StatusInternalServerError)
 			log.Info("[auth:handlers:Register] failed to add new user '%s': %v", user.Login, err)
 			return nil
 		}
 
-		token, err := jwt.BuildJWTString(userID)
+		token, err := jwt.BuildJWTString(user.ID)
 		if err != nil {
 			c.Status(fiber.StatusInternalServerError)
 			log.Info("[auth:handlers:Register] new token generation failed: %v", err)

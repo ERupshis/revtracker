@@ -6,6 +6,10 @@ import (
 	"gopkg.in/reform.v1"
 )
 
+var (
+	_ manager.BaseStorageManager = (*Reform)(nil)
+)
+
 type Reform struct {
 	log logger.BaseLogger
 

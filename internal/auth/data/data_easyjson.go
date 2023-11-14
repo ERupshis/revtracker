@@ -56,7 +56,12 @@ func easyjson794297d0EncodeGithubComErupshisRevtrackerInternalAuthData(out *jwri
 	_ = first
 	{
 		const prefix string = ",\"login\":"
-		out.RawString(prefix[1:])
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
 		out.String(string(in.Login))
 	}
 	{

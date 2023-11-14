@@ -28,9 +28,9 @@ func (v *userTableType) Name() string {
 // Columns returns a new slice of column names for that view or table in SQL database.
 func (v *userTableType) Columns() []string {
 	return []string{
+		"id",
 		"login",
 		"password",
-		"id",
 		"name",
 		"role_id",
 	}
@@ -57,13 +57,13 @@ var UserTable = &userTableType{
 		Type:    "User",
 		SQLName: "users",
 		Fields: []parse.FieldInfo{
+			{Name: "ID", Type: "int64", Column: "id"},
 			{Name: "Login", Type: "string", Column: "login"},
 			{Name: "Password", Type: "string", Column: "password"},
-			{Name: "ID", Type: "int64", Column: "id"},
 			{Name: "Name", Type: "string", Column: "name"},
 			{Name: "Role", Type: "int", Column: "role_id"},
 		},
-		PKFieldIndex: 2,
+		PKFieldIndex: 0,
 	},
 	z: new(User).Values(),
 }
@@ -71,9 +71,9 @@ var UserTable = &userTableType{
 // String returns a string representation of this struct or record.
 func (s User) String() string {
 	res := make([]string, 5)
-	res[0] = "Login: " + reform.Inspect(s.Login, true)
-	res[1] = "Password: " + reform.Inspect(s.Password, true)
-	res[2] = "ID: " + reform.Inspect(s.ID, true)
+	res[0] = "ID: " + reform.Inspect(s.ID, true)
+	res[1] = "Login: " + reform.Inspect(s.Login, true)
+	res[2] = "Password: " + reform.Inspect(s.Password, true)
 	res[3] = "Name: " + reform.Inspect(s.Name, true)
 	res[4] = "Role: " + reform.Inspect(s.Role, true)
 	return strings.Join(res, ", ")
@@ -83,9 +83,9 @@ func (s User) String() string {
 // Returned interface{} values are never untyped nils.
 func (s *User) Values() []interface{} {
 	return []interface{}{
+		s.ID,
 		s.Login,
 		s.Password,
-		s.ID,
 		s.Name,
 		s.Role,
 	}
@@ -95,9 +95,9 @@ func (s *User) Values() []interface{} {
 // Returned interface{} values are never untyped nils.
 func (s *User) Pointers() []interface{} {
 	return []interface{}{
+		&s.ID,
 		&s.Login,
 		&s.Password,
-		&s.ID,
 		&s.Name,
 		&s.Role,
 	}

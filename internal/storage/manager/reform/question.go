@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/erupshis/revtracker/internal/data"
-	"github.com/erupshis/revtracker/internal/storage/manager/reform/common"
+	"github.com/erupshis/revtracker/internal/db/requests"
 	"gopkg.in/reform.v1"
 )
 
@@ -26,7 +26,7 @@ func (r *Reform) SelectQuestionByID(ctx context.Context, ID int64) (*data.Questi
 }
 
 func (r *Reform) DeleteQuestionByID(ctx context.Context, ID int64) error {
-	return common.Delete(ctx, r.db, nil, map[string]interface{}{"id": ID}, data.QuestionTable)
+	return requests.Delete(ctx, r.db, nil, map[string]interface{}{"id": ID}, data.QuestionTable)
 }
 
 func (r *Reform) insertQuestionAndContent(ctx context.Context, tx *reform.TX, question *data.Question) error {
@@ -41,13 +41,13 @@ func (r *Reform) insertQuestionAndContent(ctx context.Context, tx *reform.TX, qu
 			question.Content.ID = currentQuestion.ContentID
 		}
 
-		if err = common.InsertOrUpdate(ctx, r.db, tx, &question.Content); err != nil {
+		if err = requests.InsertOrUpdate(ctx, r.db, tx, &question.Content); err != nil {
 			return fmt.Errorf("insert question: add content: %w", err)
 		}
 
 		question.ContentID = question.Content.ID
 
-		if err = common.InsertOrUpdate(ctx, r.db, tx, question); err != nil {
+		if err = requests.InsertOrUpdate(ctx, r.db, tx, question); err != nil {
 			return fmt.Errorf("insert question: add question: %w", err)
 		}
 
@@ -66,7 +66,7 @@ func (r *Reform) selectQuestions(ctx context.Context, tx *reform.TX, filters map
 	var questions []data.Question
 
 	selectFunc := func(tx *reform.TX) error {
-		questionsRaw, err := common.SelectAll(ctx, r.db, tx, filters, "id", data.QuestionTable)
+		questionsRaw, err := requests.SelectAll(ctx, r.db, tx, filters, "id", data.QuestionTable)
 		if err != nil {
 			return fmt.Errorf("select question by filters '%v': %w", filters, err)
 		}
@@ -102,7 +102,7 @@ func (r *Reform) selectQuestion(ctx context.Context, tx *reform.TX, filters map[
 	var question *data.Question
 
 	selectFunc := func(tx *reform.TX) error {
-		questionRaw, err := common.SelectOne(ctx, r.db, tx, filters, data.QuestionTable)
+		questionRaw, err := requests.SelectOne(ctx, r.db, tx, filters, data.QuestionTable)
 		if err != nil {
 			return fmt.Errorf("select question by filters '%v': %w", filters, err)
 		}

@@ -21,10 +21,11 @@ var ErrUserNotFound = fmt.Errorf("user not found")
 //go:generate easyjson -all data.go
 //reform:users
 type User struct {
+	ID int64 `json:"-" reform:"id,pk"`
+
 	Login    string `json:"login" reform:"login"`
 	Password string `json:"password" reform:"password"`
 
-	ID   int64  `json:"-" reform:"id,pk"`
 	Name string `json:"-" reform:"name"`
 	Role int    `json:"-" reform:"role_id"`
 }

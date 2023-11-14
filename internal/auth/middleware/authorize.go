@@ -32,20 +32,20 @@ func AuthorizeUser(userRoleRequirement int, usersStorage storage.BaseUsersStorag
 		}
 
 		userID := jwt.GetUserID(token[1])
-		userRole, err := usersStorage.GetUserRole(c.Context(), userID)
+		userData, err := usersStorage.SelectUserByID(c.Context(), userID)
 		if err != nil {
 			log.Info("[auth:middleware:Authorize] failed to search user in system: %v", err)
 			c.Status(http.StatusInternalServerError)
 			return nil
 		}
 
-		if userRole == -1 {
+		if userData == nil {
 			log.Info("[auth:middleware:Authorize] user is not registered in system")
 			c.Status(http.StatusUnauthorized)
 			return nil
 		}
 
-		if userRole < userRoleRequirement {
+		if userData.Role < userRoleRequirement {
 			log.Info("[auth:middleware:Authorize] user doesn't have permission to resource: %s", c.Path())
 			c.Status(http.StatusForbidden)
 			return nil
