@@ -144,10 +144,10 @@ func TestRegister(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			testApp := fiber.New()
-			testApp.Delete("/", Register(mockStorage, jwtGen, log))
+			testApp.Post("/", Register(mockStorage, jwtGen, log))
 			defer utils.ExecuteWithLogError(testApp.Shutdown, log)
 
-			request, errReq := http.NewRequest(http.MethodDelete, "/", bytes.NewBuffer(tt.args.body))
+			request, errReq := http.NewRequest(http.MethodPost, "/", bytes.NewBuffer(tt.args.body))
 			require.NoError(t, errReq)
 
 			response, errResp := testApp.Test(request)
