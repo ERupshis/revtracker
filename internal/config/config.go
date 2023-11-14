@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/caarlos0/env"
+	"github.com/erupshis/revtracker/internal/config/utils"
 )
 
 type Config struct {
@@ -70,16 +71,16 @@ func checkEnvironments(config *Config) {
 	}
 
 	// main app.
-	_ = SetEnvToParamIfNeed(&config.HostAddr, envs.HostAddr)
+	_ = utils.SetEnvToParamIfNeed(&config.HostAddr, envs.HostAddr)
 
 	// authentication.
-	_ = SetEnvToParamIfNeed(&config.JWTKey, envs.JWTKey)
+	_ = utils.SetEnvToParamIfNeed(&config.JWTKey, envs.JWTKey)
 
 	// postgres.
-	_ = SetEnvToParamIfNeed(&config.DatabaseDSN, envs.DatabaseDSN)
-	_ = SetEnvToParamIfNeed(&config.DatabaseIdleConn, envs.DatabaseIdleConn)
-	_ = SetEnvToParamIfNeed(&config.DatabaseOpenConn, envs.DatabaseOpenConn)
+	_ = utils.SetEnvToParamIfNeed(&config.DatabaseDSN, envs.DatabaseDSN)
+	_ = utils.SetEnvToParamIfNeed(&config.DatabaseIdleConn, envs.DatabaseIdleConn)
+	_ = utils.SetEnvToParamIfNeed(&config.DatabaseOpenConn, envs.DatabaseOpenConn)
 
 	// log level.
-	_ = SetEnvToParamIfNeed(&config.LogLevel, envs.LogLevel)
+	_ = utils.SetEnvToParamIfNeed(&config.LogLevel, envs.LogLevel)
 }

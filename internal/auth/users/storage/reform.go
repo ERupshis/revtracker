@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/erupshis/revtracker/internal/auth/data"
+	"github.com/erupshis/revtracker/internal/db/requests"
 	"github.com/erupshis/revtracker/internal/logger"
 	"gopkg.in/reform.v1"
 )
@@ -29,26 +30,31 @@ func Create(dbConn *reform.DB, log logger.BaseLogger) BaseUsersStorage {
 }
 
 func (r *usersReform) InsertUser(ctx context.Context, user *data.User) error {
-	return nil
+	return requests.InsertOrUpdate(ctx, r.db, nil, user)
 }
 
 func (r *usersReform) UpdateUser(ctx context.Context, user *data.User) error {
-	return nil
+	return requests.InsertOrUpdate(ctx, r.db, nil, user)
 }
 
 func (r *usersReform) SelectUserByID(ctx context.Context, ID int64) (*data.User, error) {
-	return nil, nil
+	return r.selectUser(ctx, nil, map[string]interface{}{"id": ID})
 }
 
 func (r *usersReform) SelectUserByLogin(ctx context.Context, login string) (*data.User, error) {
-	return nil, nil
+	return r.selectUser(ctx, nil, map[string]interface{}{"login": login})
 }
 
 func (r *usersReform) DeleteUserByID(ctx context.Context, ID int64) error {
-	return nil
+	return requests.Delete(ctx, r.db, nil, map[string]interface{}{"id": ID}, data.UserTable)
 }
 
-// TODO: hash password in db.
+func (r *usersReform) selectUser(ctx context.Context, tx *reform.TX, filters map[string]interface{}) (*data.User, error) {
+	content, err := requests.SelectOne(ctx, r.db, tx, filters, data.UserTable)
+	return content.(*data.User), err
+}
+
+// TODO: hash password in db. Need to split storage - should be storage and manager.
 // password := "user_password" // Replace with the actual password provided by the user
 //
 // // Hash and salt the password
