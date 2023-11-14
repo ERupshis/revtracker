@@ -21,7 +21,7 @@ func Register(usersStorage storage.BaseUsersStorage, jwt jwtgenerator.JwtGenerat
 			return nil
 		}
 
-		userInStorage, err := usersStorage.SelectUserByLogin(c.Context(), user.Login)
+		userInStorage, err := usersStorage.SelectUserByLoginOrName(c.Context(), user.Login, user.Name)
 		if err != nil {
 			c.Status(fiber.StatusInternalServerError)
 			log.Info("[auth:handlers:Register] failed to check user in database: %v", err)
@@ -34,7 +34,7 @@ func Register(usersStorage storage.BaseUsersStorage, jwt jwtgenerator.JwtGenerat
 			return nil
 		}
 
-		if ok, _ := utils.IsUserDataValid(&user); !ok {
+		if ok, err := utils.IsUserDataValid(&user, nil); !ok {
 			c.Status(fiber.StatusBadRequest)
 			log.Info("[auth:handlers:Register] incorrect new user input data: %v", err)
 			return nil

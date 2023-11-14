@@ -6,6 +6,7 @@ import (
 	"github.com/erupshis/revtracker/internal/auth/data"
 	"github.com/erupshis/revtracker/internal/auth/jwtgenerator"
 	"github.com/erupshis/revtracker/internal/auth/users/storage"
+	"github.com/erupshis/revtracker/internal/auth/utils"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/gofiber/fiber/v2"
 )
@@ -16,6 +17,12 @@ func Login(usersStorage storage.BaseUsersStorage, jwt jwtgenerator.JwtGenerator,
 		if err := json.Unmarshal(c.Body(), &user); err != nil {
 			c.Status(fiber.StatusBadRequest)
 			log.Info("[auth:handlers:Login] bad new user input data: %v", err)
+			return nil
+		}
+
+		if ok, err := utils.IsUserDataValid(&user, map[string]interface{}{utils.UserName: ""}); !ok {
+			c.Status(fiber.StatusBadRequest)
+			log.Info("[auth:handlers:Register] incorrect user input data: %v", err)
 			return nil
 		}
 

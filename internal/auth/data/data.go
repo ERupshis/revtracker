@@ -23,9 +23,9 @@ var ErrUserNotFound = fmt.Errorf("user not found")
 type User struct {
 	ID int64 `json:"-" reform:"id,pk"`
 
-	Login    string `json:"login" reform:"login"`
-	Password string `json:"password" reform:"password"`
+	Login    string `json:"Login" reform:"login"`
+	Password string `json:"Password" reform:"password"`
 
-	Name string `json:"-" reform:"name"`
+	Name string `json:"Name" reform:"name"`
 	Role int    `json:"-" reform:"role_id"`
 }

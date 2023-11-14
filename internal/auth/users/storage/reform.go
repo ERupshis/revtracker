@@ -39,18 +39,22 @@ func (r *usersReform) UpdateUser(ctx context.Context, user *data.User) error {
 }
 
 func (r *usersReform) SelectUserByID(ctx context.Context, ID int64) (*data.User, error) {
-	return r.selectUser(ctx, nil, map[string]utils.Argument{"id": utils.CreateArgument(ID)})
+	return r.selectUser(ctx, nil, []utils.Argument{utils.CreateArgument("id", ID)})
 }
 
 func (r *usersReform) SelectUserByLogin(ctx context.Context, login string) (*data.User, error) {
-	return r.selectUser(ctx, nil, map[string]utils.Argument{"login": utils.CreateArgument(login)})
+	return r.selectUser(ctx, nil, []utils.Argument{utils.CreateArgument("login", login)})
+}
+
+func (r *usersReform) SelectUserByLoginOrName(ctx context.Context, login string, name string) (*data.User, error) {
+	return r.selectUser(ctx, nil, []utils.Argument{utils.CreateArgument("login", login), utils.CreateArgumentOR("name", name)})
 }
 
 func (r *usersReform) DeleteUserByID(ctx context.Context, ID int64) error {
-	return requests.Delete(ctx, r.db, nil, map[string]utils.Argument{"id": utils.CreateArgument(ID)}, data.UserTable)
+	return requests.Delete(ctx, r.db, nil, []utils.Argument{utils.CreateArgument("id", ID)}, data.UserTable)
 }
 
-func (r *usersReform) selectUser(ctx context.Context, tx *reform.TX, filters map[string]utils.Argument) (*data.User, error) {
+func (r *usersReform) selectUser(ctx context.Context, tx *reform.TX, filters []utils.Argument) (*data.User, error) {
 	content, err := requests.SelectOne(ctx, r.db, tx, filters, data.UserTable)
 
 	if content == nil {

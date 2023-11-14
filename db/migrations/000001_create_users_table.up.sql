@@ -20,4 +20,4 @@ CREATE TABLE IF NOT EXISTS users
 );
 
 INSERT INTO users(login, password, name, role_id)
-VALUES ('admin', 'pwd', 'name', 1);
+VALUES ('admin', 'pwd', 'name', 2);

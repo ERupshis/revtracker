@@ -9,7 +9,13 @@ import (
 	"github.com/erupshis/revtracker/internal/auth/middleware"
 )
 
-const wrongUserDataMsgTemplate = "incorrect user data:"
+const (
+	wrongUserDataMsgTemplate = "incorrect user data:"
+
+	UserName     = "name"
+	UserLogin    = "login"
+	UserPassword = "password"
+)
 
 func GetUserIDFromContext(ctx context.Context) (int64, error) {
 	userIDraw := ctx.Value(middleware.ContextString(data.UserID))
@@ -25,21 +31,21 @@ func GetUserIDFromContext(ctx context.Context) (int64, error) {
 	return userID, nil
 }
 
-func IsUserDataValid(userData *data.User) (bool, error) {
+func IsUserDataValid(userData *data.User, ignoringFields map[string]interface{}) (bool, error) {
 	if userData == nil {
 		return false, fmt.Errorf("%s userData is nil", wrongUserDataMsgTemplate)
 	}
 
 	var errMsg string
-	if userData.Login == "" {
+	if userData.Login == "" && !isIgnored(UserLogin, ignoringFields) {
 		errMsg += " login"
 	}
 
-	if userData.Password == "" {
+	if userData.Password == "" && !isIgnored(UserPassword, ignoringFields) {
 		errMsg += " password"
 	}
 
-	if userData.Name == "" {
+	if userData.Name == "" && !isIgnored(UserName, ignoringFields) {
 		errMsg += " name"
 	}
 
@@ -48,4 +54,13 @@ func IsUserDataValid(userData *data.User) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func isIgnored(fieldName string, exceptionFields map[string]interface{}) bool {
+	if exceptionFields == nil {
+		return false
+	}
+
+	_, ok := exceptionFields[fieldName]
+	return ok
 }

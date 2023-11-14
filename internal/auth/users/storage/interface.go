@@ -12,5 +12,6 @@ type BaseUsersStorage interface {
 	UpdateUser(ctx context.Context, user *data.User) error
 	SelectUserByID(ctx context.Context, ID int64) (*data.User, error)
 	SelectUserByLogin(ctx context.Context, login string) (*data.User, error)
+	SelectUserByLoginOrName(ctx context.Context, login string, name string) (*data.User, error)
 	DeleteUserByID(ctx context.Context, ID int64) error
 }

@@ -36,10 +36,12 @@ func easyjson794297d0DecodeGithubComErupshisRevtrackerInternalAuthData(in *jlexe
 			continue
 		}
 		switch key {
-		case "login":
+		case "Login":
 			out.Login = string(in.String())
-		case "password":
+		case "Password":
 			out.Password = string(in.String())
+		case "Name":
+			out.Name = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -55,7 +57,7 @@ func easyjson794297d0EncodeGithubComErupshisRevtrackerInternalAuthData(out *jwri
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"login\":"
+		const prefix string = ",\"Login\":"
 		if first {
 			first = false
 			out.RawString(prefix[1:])
@@ -65,9 +67,14 @@ func easyjson794297d0EncodeGithubComErupshisRevtrackerInternalAuthData(out *jwri
 		out.String(string(in.Login))
 	}
 	{
-		const prefix string = ",\"password\":"
+		const prefix string = ",\"Password\":"
 		out.RawString(prefix)
 		out.String(string(in.Password))
+	}
+	{
+		const prefix string = ",\"Name\":"
+		out.RawString(prefix)
+		out.String(string(in.Name))
 	}
 	out.RawByte('}')
 }
