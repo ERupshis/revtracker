@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 
+	"github.com/erupshis/revtracker/internal/db/constants"
 	"gopkg.in/reform.v1"
 )
 
@@ -13,8 +14,6 @@ const TailOrderBy = " ORDER BY "
 const (
 	conjAnd = " AND"
 	conjOR  = " OR"
-
-	colDeleted = "deleted"
 )
 
 type Argument struct {
@@ -74,15 +73,15 @@ func CreateTailAndParams(db *reform.DB, filters []Argument, placeHoldersFrom int
 func AddDeletedCheck(tail string, deleted bool) string {
 	if tail == "" {
 		if deleted {
-			return "WHERE " + colDeleted
+			return "WHERE " + constants.ColDeleted
 		} else {
-			return "WHERE NOT " + colDeleted
+			return "WHERE NOT " + constants.ColDeleted
 		}
 	}
 
 	if deleted {
-		return tail + " AND " + colDeleted
+		return tail + " AND " + constants.ColDeleted
 	} else {
-		return tail + " AND NOT " + colDeleted
+		return tail + " AND NOT " + constants.ColDeleted
 	}
 }

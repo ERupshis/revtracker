@@ -8,6 +8,7 @@ import (
 
 	authData "github.com/erupshis/revtracker/internal/auth/data"
 	"github.com/erupshis/revtracker/internal/data"
+	"github.com/erupshis/revtracker/internal/db/constants"
 	"github.com/erupshis/revtracker/internal/db/utils"
 	"gopkg.in/reform.v1"
 )
@@ -46,11 +47,13 @@ func InsertOrUpdate(ctx context.Context, db *reform.DB, tx *reform.TX, record re
 func getUniqueFilters(record reform.Record) []utils.Argument {
 	switch rec := record.(type) {
 	case *data.Homework:
-		return []utils.Argument{utils.CreateArgument("name", rec.Name)}
+		return []utils.Argument{utils.CreateArgument(constants.ColName, rec.Name)}
+	case *data.HomeworkQuestion:
+		return []utils.Argument{utils.CreateArgument(constants.ColHomeworkID, rec.HomeworkID), utils.CreateArgument(constants.ColQuestionID, rec.QuestionID)}
 	case *data.Question:
-		return []utils.Argument{utils.CreateArgument("name", rec.Name)}
+		return []utils.Argument{utils.CreateArgument(constants.ColName, rec.Name)}
 	case *authData.User:
-		return []utils.Argument{utils.CreateArgument("name", rec.Name), utils.CreateArgumentAND("login", rec.Login)}
+		return []utils.Argument{utils.CreateArgument(constants.ColName, rec.Name), utils.CreateArgumentAND(constants.ColLogin, rec.Login)}
 	default:
 		panic("unknown type")
 	}

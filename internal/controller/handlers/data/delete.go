@@ -3,8 +3,8 @@ package data
 import (
 	"fmt"
 
-	"github.com/erupshis/revtracker/internal/constants"
 	"github.com/erupshis/revtracker/internal/controller/handlers/utils"
+	"github.com/erupshis/revtracker/internal/db/constants"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
 	"github.com/gofiber/fiber/v2"

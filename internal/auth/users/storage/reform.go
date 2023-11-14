@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/erupshis/revtracker/internal/auth/data"
+	"github.com/erupshis/revtracker/internal/db/constants"
 	"github.com/erupshis/revtracker/internal/db/requests"
 	"github.com/erupshis/revtracker/internal/db/utils"
 	"github.com/erupshis/revtracker/internal/logger"
@@ -39,19 +40,19 @@ func (r *usersReform) UpdateUser(ctx context.Context, user *data.User) error {
 }
 
 func (r *usersReform) SelectUserByID(ctx context.Context, ID int64) (*data.User, error) {
-	return r.selectUser(ctx, nil, []utils.Argument{utils.CreateArgument("id", ID)})
+	return r.selectUser(ctx, nil, []utils.Argument{utils.CreateArgument(constants.ColID, ID)})
 }
 
 func (r *usersReform) SelectUserByLogin(ctx context.Context, login string) (*data.User, error) {
-	return r.selectUser(ctx, nil, []utils.Argument{utils.CreateArgument("login", login)})
+	return r.selectUser(ctx, nil, []utils.Argument{utils.CreateArgument(constants.ColLogin, login)})
 }
 
 func (r *usersReform) SelectUserByLoginOrName(ctx context.Context, login string, name string) (*data.User, error) {
-	return r.selectUser(ctx, nil, []utils.Argument{utils.CreateArgument("login", login), utils.CreateArgumentOR("name", name)})
+	return r.selectUser(ctx, nil, []utils.Argument{utils.CreateArgument(constants.ColLogin, login), utils.CreateArgumentOR("name", name)})
 }
 
 func (r *usersReform) DeleteUserByID(ctx context.Context, ID int64) error {
-	return requests.Delete(ctx, r.db, nil, []utils.Argument{utils.CreateArgument("id", ID)}, data.UserTable)
+	return requests.Delete(ctx, r.db, nil, []utils.Argument{utils.CreateArgument(constants.ColID, ID)}, data.UserTable)
 }
 
 func (r *usersReform) selectUser(ctx context.Context, tx *reform.TX, filters []utils.Argument) (*data.User, error) {

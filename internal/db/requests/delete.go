@@ -6,6 +6,7 @@ import (
 
 	authData "github.com/erupshis/revtracker/internal/auth/data"
 	"github.com/erupshis/revtracker/internal/data"
+	"github.com/erupshis/revtracker/internal/db/constants"
 	"github.com/erupshis/revtracker/internal/db/utils"
 	"gopkg.in/reform.v1"
 )
@@ -28,7 +29,7 @@ func Delete(ctx context.Context, db *reform.DB, tx *reform.TX, filters []utils.A
 
 		tail, values = utils.CreateTailAndParams(db, filters, 1)
 		markDeleted(structs[0])
-		_, err = tx.UpdateView(structs[0], []string{"deleted"}, tail, values...)
+		_, err = tx.UpdateView(structs[0], []string{constants.ColDeleted}, tail, values...)
 
 		if err != nil {
 			return fmt.Errorf("delete %s by filters '%v': %w", table.Name(), filters, err)
@@ -52,6 +53,7 @@ func markDeleted(reformStruct reform.Struct) {
 		arg.Deleted = true
 	case *data.HomeworkQuestion:
 		arg.Deleted = true
+		// TODO: have colission with second constraint.
 	case *data.Question:
 		arg.Deleted = true
 	case *authData.User:
