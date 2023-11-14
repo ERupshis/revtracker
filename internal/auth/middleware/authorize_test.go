@@ -56,8 +56,7 @@ func TestAuthorizeUser(t *testing.T) {
 		role                int
 	}
 	type want struct {
-		statusCode          int
-		authorizationHeader bool
+		statusCode int
 	}
 	tests := []struct {
 		name string
