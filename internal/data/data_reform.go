@@ -30,6 +30,7 @@ func (v *homeworkTableType) Columns() []string {
 	return []string{
 		"id",
 		"name",
+		"deleted",
 	}
 }
 
@@ -56,6 +57,7 @@ var HomeworkTable = &homeworkTableType{
 		Fields: []parse.FieldInfo{
 			{Name: "ID", Type: "int64", Column: "id"},
 			{Name: "Name", Type: "string", Column: "name"},
+			{Name: "Deleted", Type: "bool", Column: "deleted"},
 		},
 		PKFieldIndex: 0,
 	},
@@ -64,9 +66,10 @@ var HomeworkTable = &homeworkTableType{
 
 // String returns a string representation of this struct or record.
 func (s Homework) String() string {
-	res := make([]string, 2)
+	res := make([]string, 3)
 	res[0] = "ID: " + reform.Inspect(s.ID, true)
 	res[1] = "Name: " + reform.Inspect(s.Name, true)
+	res[2] = "Deleted: " + reform.Inspect(s.Deleted, true)
 	return strings.Join(res, ", ")
 }
 
@@ -76,6 +79,7 @@ func (s *Homework) Values() []interface{} {
 	return []interface{}{
 		s.ID,
 		s.Name,
+		s.Deleted,
 	}
 }
 
@@ -85,6 +89,7 @@ func (s *Homework) Pointers() []interface{} {
 	return []interface{}{
 		&s.ID,
 		&s.Name,
+		&s.Deleted,
 	}
 }
 
@@ -153,6 +158,7 @@ func (v *contentTableType) Columns() []string {
 		"task",
 		"answer",
 		"solution",
+		"deleted",
 	}
 }
 
@@ -181,6 +187,7 @@ var ContentTable = &contentTableType{
 			{Name: "Task", Type: "*string", Column: "task"},
 			{Name: "Answer", Type: "*string", Column: "answer"},
 			{Name: "Solution", Type: "*string", Column: "solution"},
+			{Name: "Deleted", Type: "bool", Column: "deleted"},
 		},
 		PKFieldIndex: 0,
 	},
@@ -189,11 +196,12 @@ var ContentTable = &contentTableType{
 
 // String returns a string representation of this struct or record.
 func (s Content) String() string {
-	res := make([]string, 4)
+	res := make([]string, 5)
 	res[0] = "ID: " + reform.Inspect(s.ID, true)
 	res[1] = "Task: " + reform.Inspect(s.Task, true)
 	res[2] = "Answer: " + reform.Inspect(s.Answer, true)
 	res[3] = "Solution: " + reform.Inspect(s.Solution, true)
+	res[4] = "Deleted: " + reform.Inspect(s.Deleted, true)
 	return strings.Join(res, ", ")
 }
 
@@ -205,6 +213,7 @@ func (s *Content) Values() []interface{} {
 		s.Task,
 		s.Answer,
 		s.Solution,
+		s.Deleted,
 	}
 }
 
@@ -216,6 +225,7 @@ func (s *Content) Pointers() []interface{} {
 		&s.Task,
 		&s.Answer,
 		&s.Solution,
+		&s.Deleted,
 	}
 }
 
@@ -283,6 +293,7 @@ func (v *questionTableType) Columns() []string {
 		"id",
 		"name",
 		"content_id",
+		"deleted",
 	}
 }
 
@@ -310,6 +321,7 @@ var QuestionTable = &questionTableType{
 			{Name: "ID", Type: "int64", Column: "id"},
 			{Name: "Name", Type: "string", Column: "name"},
 			{Name: "ContentID", Type: "int64", Column: "content_id"},
+			{Name: "Deleted", Type: "bool", Column: "deleted"},
 		},
 		PKFieldIndex: 0,
 	},
@@ -318,10 +330,11 @@ var QuestionTable = &questionTableType{
 
 // String returns a string representation of this struct or record.
 func (s Question) String() string {
-	res := make([]string, 3)
+	res := make([]string, 4)
 	res[0] = "ID: " + reform.Inspect(s.ID, true)
 	res[1] = "Name: " + reform.Inspect(s.Name, true)
 	res[2] = "ContentID: " + reform.Inspect(s.ContentID, true)
+	res[3] = "Deleted: " + reform.Inspect(s.Deleted, true)
 	return strings.Join(res, ", ")
 }
 
@@ -332,6 +345,7 @@ func (s *Question) Values() []interface{} {
 		s.ID,
 		s.Name,
 		s.ContentID,
+		s.Deleted,
 	}
 }
 
@@ -342,6 +356,7 @@ func (s *Question) Pointers() []interface{} {
 		&s.ID,
 		&s.Name,
 		&s.ContentID,
+		&s.Deleted,
 	}
 }
 
@@ -410,6 +425,7 @@ func (v *homeworkQuestionTableType) Columns() []string {
 		"homework_id",
 		"question_id",
 		"order",
+		"deleted",
 	}
 }
 
@@ -438,6 +454,7 @@ var HomeworkQuestionTable = &homeworkQuestionTableType{
 			{Name: "HomeworkID", Type: "int64", Column: "homework_id"},
 			{Name: "QuestionID", Type: "int64", Column: "question_id"},
 			{Name: "Order", Type: "int64", Column: "order"},
+			{Name: "Deleted", Type: "bool", Column: "deleted"},
 		},
 		PKFieldIndex: 0,
 	},
@@ -446,11 +463,12 @@ var HomeworkQuestionTable = &homeworkQuestionTableType{
 
 // String returns a string representation of this struct or record.
 func (s HomeworkQuestion) String() string {
-	res := make([]string, 4)
+	res := make([]string, 5)
 	res[0] = "ID: " + reform.Inspect(s.ID, true)
 	res[1] = "HomeworkID: " + reform.Inspect(s.HomeworkID, true)
 	res[2] = "QuestionID: " + reform.Inspect(s.QuestionID, true)
 	res[3] = "Order: " + reform.Inspect(s.Order, true)
+	res[4] = "Deleted: " + reform.Inspect(s.Deleted, true)
 	return strings.Join(res, ", ")
 }
 
@@ -462,6 +480,7 @@ func (s *HomeworkQuestion) Values() []interface{} {
 		s.HomeworkID,
 		s.QuestionID,
 		s.Order,
+		s.Deleted,
 	}
 }
 
@@ -473,6 +492,7 @@ func (s *HomeworkQuestion) Pointers() []interface{} {
 		&s.HomeworkID,
 		&s.QuestionID,
 		&s.Order,
+		&s.Deleted,
 	}
 }
 

@@ -33,6 +33,7 @@ func (v *userTableType) Columns() []string {
 		"password",
 		"name",
 		"role_id",
+		"deleted",
 	}
 }
 
@@ -62,6 +63,7 @@ var UserTable = &userTableType{
 			{Name: "Password", Type: "string", Column: "password"},
 			{Name: "Name", Type: "string", Column: "name"},
 			{Name: "Role", Type: "int", Column: "role_id"},
+			{Name: "Deleted", Type: "bool", Column: "deleted"},
 		},
 		PKFieldIndex: 0,
 	},
@@ -70,12 +72,13 @@ var UserTable = &userTableType{
 
 // String returns a string representation of this struct or record.
 func (s User) String() string {
-	res := make([]string, 5)
+	res := make([]string, 6)
 	res[0] = "ID: " + reform.Inspect(s.ID, true)
 	res[1] = "Login: " + reform.Inspect(s.Login, true)
 	res[2] = "Password: " + reform.Inspect(s.Password, true)
 	res[3] = "Name: " + reform.Inspect(s.Name, true)
 	res[4] = "Role: " + reform.Inspect(s.Role, true)
+	res[5] = "Deleted: " + reform.Inspect(s.Deleted, true)
 	return strings.Join(res, ", ")
 }
 
@@ -88,6 +91,7 @@ func (s *User) Values() []interface{} {
 		s.Password,
 		s.Name,
 		s.Role,
+		s.Deleted,
 	}
 }
 
@@ -100,6 +104,7 @@ func (s *User) Pointers() []interface{} {
 		&s.Password,
 		&s.Name,
 		&s.Role,
+		&s.Deleted,
 	}
 }
 

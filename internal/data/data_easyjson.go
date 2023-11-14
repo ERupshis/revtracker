@@ -215,7 +215,7 @@ func easyjson794297d0DecodeGithubComErupshisRevtrackerInternalData2(in *jlexer.L
 				in.Delim('[')
 				if out.Questions == nil {
 					if !in.IsDelim(']') {
-						out.Questions = make([]Question, 0, 1)
+						out.Questions = make([]Question, 0, 0)
 					} else {
 						out.Questions = []Question{}
 					}

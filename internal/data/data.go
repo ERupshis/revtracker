@@ -6,8 +6,9 @@ package data
 
 //reform:homeworks
 type Homework struct {
-	ID   int64  `json:"Id" reform:"id,pk"`
-	Name string `json:"Name" reform:"name"`
+	ID      int64  `json:"Id" reform:"id,pk"`
+	Name    string `json:"Name" reform:"name"`
+	Deleted bool   `json:"-" reform:"deleted"`
 }
 
 //reform:contents
@@ -16,6 +17,7 @@ type Content struct {
 	Task     *string `json:"Task" reform:"task"`
 	Answer   *string `json:"Answer" reform:"answer"`
 	Solution *string `json:"Solution" reform:"solution"`
+	Deleted  bool    `json:"-" reform:"deleted"`
 }
 
 //reform:questions
@@ -24,6 +26,7 @@ type Question struct {
 	Name      string  `json:"Name" reform:"name"`
 	ContentID int64   `json:"-" reform:"content_id"`
 	Content   Content `json:"Content"`
+	Deleted   bool    `json:"-" reform:"deleted"`
 }
 
 //reform:homework_questions
@@ -32,6 +35,7 @@ type HomeworkQuestion struct {
 	HomeworkID int64 `json:"Homework_Id"  reform:"homework_id"`
 	QuestionID int64 `json:"Question_Id" reform:"question_id"`
 	Order      int64 `json:"Order" reform:"order"`
+	Deleted    bool  `json:"-" reform:"deleted"`
 }
 
 type Data struct {

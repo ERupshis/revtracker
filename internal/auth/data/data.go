@@ -1,18 +1,11 @@
 package data
 
-import (
-	"fmt"
-)
-
 const UserID = "userID"
 
 const (
 	RoleUser = iota + 1
 	RoleAdmin
 )
-
-// ErrUserNotFound missing user in database.
-var ErrUserNotFound = fmt.Errorf("user not found")
 
 //go:generate reform
 
@@ -28,4 +21,6 @@ type User struct {
 
 	Name string `json:"Name" reform:"name"`
 	Role int    `json:"-" reform:"role_id"`
+
+	Deleted bool `json:"-" reform:"deleted"`
 }
