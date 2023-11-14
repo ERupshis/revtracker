@@ -23,19 +23,19 @@ func (r *Reform) SelectHomeworkQuestions(ctx context.Context) ([]data.HomeworkQu
 }
 
 func (r *Reform) SelectHomeworkQuestionsByHomeworkID(ctx context.Context, ID int64) ([]data.HomeworkQuestion, error) {
-	return r.selectHomeworkQuestions(ctx, nil, map[string]utils.Argument{"homework_id": utils.CreateArgument(ID)})
+	return r.selectHomeworkQuestions(ctx, nil, []utils.Argument{utils.CreateArgument("homework_id", ID)})
 }
 
 func (r *Reform) SelectHomeworkQuestionByID(ctx context.Context, ID int64) (*data.HomeworkQuestion, error) {
-	content, err := common2.SelectOne(ctx, r.db, nil, map[string]utils.Argument{"id": utils.CreateArgument(ID)}, data.HomeworkQuestionTable)
+	content, err := common2.SelectOne(ctx, r.db, nil, []utils.Argument{utils.CreateArgument("id", ID)}, data.HomeworkQuestionTable)
 	return content.(*data.HomeworkQuestion), err
 }
 
 func (r *Reform) DeleteHomeworkQuestionByID(ctx context.Context, ID int64) error {
-	return common2.Delete(ctx, r.db, nil, map[string]utils.Argument{"id": utils.CreateArgument(ID)}, data.HomeworkQuestionTable)
+	return common2.Delete(ctx, r.db, nil, []utils.Argument{utils.CreateArgument("id", ID)}, data.HomeworkQuestionTable)
 }
 
-func (r *Reform) selectHomeworkQuestions(ctx context.Context, tx *reform.TX, filters map[string]utils.Argument) ([]data.HomeworkQuestion, error) {
+func (r *Reform) selectHomeworkQuestions(ctx context.Context, tx *reform.TX, filters []utils.Argument) ([]data.HomeworkQuestion, error) {
 	content, err := common2.SelectAll(ctx, r.db, tx, filters, " homework_id ASC, \"order\" ASC, id ASC", data.HomeworkQuestionTable)
 	if err != nil {
 		return nil, fmt.Errorf("select homeworkQuestions: %w", err)

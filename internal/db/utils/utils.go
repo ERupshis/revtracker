@@ -17,35 +17,40 @@ const (
 
 type Argument struct {
 	Conjunction string
+	Name        string
 	Value       interface{}
 }
 
-func CreateArgument(value interface{}) Argument {
+func CreateArgument(name string, value interface{}) Argument {
 	return Argument{
 		Conjunction: "",
+		Name:        name,
 		Value:       value,
 	}
 }
 
-func CreateArgumentAND(value interface{}) Argument {
+func CreateArgumentAND(name string, value interface{}) Argument {
 	return Argument{
 		Conjunction: conjAnd,
+		Name:        name,
 		Value:       value,
 	}
 }
 
-func CreateArgumentOR(value interface{}) Argument {
+func CreateArgumentOR(name string, value interface{}) Argument {
 	return Argument{
 		Conjunction: conjOR,
+		Name:        name,
 		Value:       value,
 	}
 }
 
-func CreateTailAndParams(db *reform.DB, filters map[string]Argument) (string, []interface{}) {
+// TODO: need to replace map on slice.
+func CreateTailAndParams(db *reform.DB, filters []Argument) (string, []interface{}) {
 	tail := "WHERE"
 	var values []interface{}
 	i := 0
-	for key, arg := range filters {
+	for _, arg := range filters {
 		values = append(values, arg.Value)
 
 		if i != 0 {
@@ -54,7 +59,7 @@ func CreateTailAndParams(db *reform.DB, filters map[string]Argument) (string, []
 
 		i++
 
-		tail += fmt.Sprintf(" %s = %s", key, db.Placeholder(i))
+		tail += fmt.Sprintf(" %s = %s", arg.Name, db.Placeholder(i))
 	}
 
 	if tail == "WHERE" {
