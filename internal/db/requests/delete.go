@@ -8,7 +8,7 @@ import (
 	"gopkg.in/reform.v1"
 )
 
-func Delete(ctx context.Context, db *reform.DB, tx *reform.TX, filters map[string]interface{}, table reform.Table) error {
+func Delete(ctx context.Context, db *reform.DB, tx *reform.TX, filters map[string]utils.Argument, table reform.Table) error {
 	deleteFunc := func(tx *reform.TX) error {
 		tail, values := utils.CreateTailAndParams(db, filters)
 		_, err := tx.DeleteFrom(table, tail, values...)

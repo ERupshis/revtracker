@@ -10,7 +10,7 @@ import (
 	"gopkg.in/reform.v1"
 )
 
-func SelectOne(ctx context.Context, db *reform.DB, tx *reform.TX, filters map[string]interface{}, table reform.Table) (reform.Struct, error) {
+func SelectOne(ctx context.Context, db *reform.DB, tx *reform.TX, filters map[string]utils.Argument, table reform.Table) (reform.Struct, error) {
 	tail, values := utils.CreateTailAndParams(db, filters)
 
 	var content reform.Struct
@@ -32,7 +32,7 @@ func SelectOne(ctx context.Context, db *reform.DB, tx *reform.TX, filters map[st
 	return content, nil
 }
 
-func SelectAll(ctx context.Context, db *reform.DB, tx *reform.TX, filters map[string]interface{}, orderBy string, table reform.Table) ([]reform.Struct, error) {
+func SelectAll(ctx context.Context, db *reform.DB, tx *reform.TX, filters map[string]utils.Argument, orderBy string, table reform.Table) ([]reform.Struct, error) {
 	tail, values := utils.CreateTailAndParams(db, filters)
 	if orderBy != "" {
 		tail += utils.TailOrderBy + orderBy

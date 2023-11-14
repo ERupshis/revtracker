@@ -6,6 +6,7 @@ import (
 
 	"github.com/erupshis/revtracker/internal/data"
 	"github.com/erupshis/revtracker/internal/db/requests"
+	"github.com/erupshis/revtracker/internal/db/utils"
 	"gopkg.in/reform.v1"
 )
 
@@ -22,14 +23,14 @@ func (r *Reform) SelectHomeworks(ctx context.Context) ([]data.Homework, error) {
 }
 
 func (r *Reform) SelectHomeworkByID(ctx context.Context, ID int64) (*data.Homework, error) {
-	return r.selectHomework(ctx, nil, map[string]interface{}{"id": ID})
+	return r.selectHomework(ctx, nil, map[string]utils.Argument{"id": utils.CreateArgument(ID)})
 }
 
 func (r *Reform) DeleteHomeworkByID(ctx context.Context, ID int64) error {
-	return requests.Delete(ctx, r.db, nil, map[string]interface{}{"id": ID}, data.HomeworkTable)
+	return requests.Delete(ctx, r.db, nil, map[string]utils.Argument{"id": utils.CreateArgument(ID)}, data.HomeworkTable)
 }
 
-func (r *Reform) selectHomework(ctx context.Context, tx *reform.TX, filters map[string]interface{}) (*data.Homework, error) {
+func (r *Reform) selectHomework(ctx context.Context, tx *reform.TX, filters map[string]utils.Argument) (*data.Homework, error) {
 	content, err := requests.SelectOne(ctx, r.db, tx, filters, data.HomeworkTable)
 
 	if content == nil {
@@ -39,7 +40,7 @@ func (r *Reform) selectHomework(ctx context.Context, tx *reform.TX, filters map[
 	return content.(*data.Homework), err
 }
 
-func (r *Reform) selectHomeworks(ctx context.Context, tx *reform.TX, filters map[string]interface{}) ([]data.Homework, error) {
+func (r *Reform) selectHomeworks(ctx context.Context, tx *reform.TX, filters map[string]utils.Argument) ([]data.Homework, error) {
 	content, err := requests.SelectAll(ctx, r.db, tx, filters, "id", data.HomeworkTable)
 	if err != nil {
 		return nil, fmt.Errorf("select questions: %w", err)

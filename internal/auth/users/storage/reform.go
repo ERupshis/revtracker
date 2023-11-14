@@ -5,6 +5,7 @@ import (
 
 	"github.com/erupshis/revtracker/internal/auth/data"
 	"github.com/erupshis/revtracker/internal/db/requests"
+	"github.com/erupshis/revtracker/internal/db/utils"
 	"github.com/erupshis/revtracker/internal/logger"
 	"gopkg.in/reform.v1"
 )
@@ -38,19 +39,23 @@ func (r *usersReform) UpdateUser(ctx context.Context, user *data.User) error {
 }
 
 func (r *usersReform) SelectUserByID(ctx context.Context, ID int64) (*data.User, error) {
-	return r.selectUser(ctx, nil, map[string]interface{}{"id": ID})
+	return r.selectUser(ctx, nil, map[string]utils.Argument{"id": utils.CreateArgument(ID)})
 }
 
 func (r *usersReform) SelectUserByLogin(ctx context.Context, login string) (*data.User, error) {
-	return r.selectUser(ctx, nil, map[string]interface{}{"login": login})
+	return r.selectUser(ctx, nil, map[string]utils.Argument{"login": utils.CreateArgument(login)})
 }
 
 func (r *usersReform) DeleteUserByID(ctx context.Context, ID int64) error {
-	return requests.Delete(ctx, r.db, nil, map[string]interface{}{"id": ID}, data.UserTable)
+	return requests.Delete(ctx, r.db, nil, map[string]utils.Argument{"id": utils.CreateArgument(ID)}, data.UserTable)
 }
 
-func (r *usersReform) selectUser(ctx context.Context, tx *reform.TX, filters map[string]interface{}) (*data.User, error) {
+func (r *usersReform) selectUser(ctx context.Context, tx *reform.TX, filters map[string]utils.Argument) (*data.User, error) {
 	content, err := requests.SelectOne(ctx, r.db, tx, filters, data.UserTable)
+
+	if content == nil {
+		return nil, err
+	}
 	return content.(*data.User), err
 }
 

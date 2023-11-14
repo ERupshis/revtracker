@@ -7,6 +7,7 @@ import (
 
 	"github.com/erupshis/revtracker/internal/data"
 	"github.com/erupshis/revtracker/internal/db/requests"
+	"github.com/erupshis/revtracker/internal/db/utils"
 	"gopkg.in/reform.v1"
 )
 
@@ -69,11 +70,11 @@ func (r *Reform) SelectDataByHomeworkID(ctx context.Context, ID int64) (*data.Da
 
 func (r *Reform) DeleteDataByHomeworkID(ctx context.Context, ID int64) error {
 	return r.db.InTransactionContext(ctx, nil, func(tx *reform.TX) error {
-		if err := requests.Delete(ctx, r.db, tx, map[string]interface{}{"homework_id": ID}, data.HomeworkQuestionTable); err != nil {
+		if err := requests.Delete(ctx, r.db, tx, map[string]utils.Argument{"homework_id": utils.CreateArgument(ID)}, data.HomeworkQuestionTable); err != nil {
 			return fmt.Errorf("delete links in homework_question: %w", err)
 		}
 
-		if err := requests.Delete(ctx, r.db, tx, map[string]interface{}{"id": ID}, data.HomeworkTable); err != nil {
+		if err := requests.Delete(ctx, r.db, tx, map[string]utils.Argument{"id": utils.CreateArgument(ID)}, data.HomeworkTable); err != nil {
 			return fmt.Errorf("delete homework: %w", err)
 		}
 
@@ -93,7 +94,7 @@ func (r *Reform) insertOrUpdateData(ctx context.Context, inData *data.Data) erro
 			return fmt.Errorf("insert/update homework: %w", err)
 		}
 
-		if err := requests.Delete(ctx, r.db, tx, map[string]interface{}{"homework_id": homework.ID}, data.HomeworkQuestionTable); err != nil {
+		if err := requests.Delete(ctx, r.db, tx, map[string]utils.Argument{"homework_id": utils.CreateArgument(homework.ID)}, data.HomeworkQuestionTable); err != nil {
 			return fmt.Errorf("delete links in homework_question: %w", err)
 		}
 
@@ -135,7 +136,7 @@ func (r *Reform) insertQuestions(ctx context.Context, tx *reform.TX, questions [
 }
 
 func (r *Reform) getOrderedQuestionIDs(ctx context.Context, tx *reform.TX, homeworkID int64) ([]int64, error) {
-	homeworkQuestions, err := r.selectHomeworkQuestions(ctx, tx, map[string]interface{}{"homework_id": homeworkID})
+	homeworkQuestions, err := r.selectHomeworkQuestions(ctx, tx, map[string]utils.Argument{"homework_id": utils.CreateArgument(homeworkID)})
 	if err != nil {
 		return nil, fmt.Errorf("select questions: %w", err)
 	}
@@ -160,7 +161,7 @@ func (r *Reform) getQuestions(ctx context.Context, tx *reform.TX, homeworkID int
 
 	var res []data.Question
 	for _, questionID := range questionsOrder {
-		question, err := r.selectQuestion(ctx, tx, map[string]interface{}{"id": questionID})
+		question, err := r.selectQuestion(ctx, tx, map[string]utils.Argument{"id": utils.CreateArgument(questionID)})
 		if err != nil {
 			return nil, fmt.Errorf("get question from db: %w", err)
 		}
@@ -172,7 +173,7 @@ func (r *Reform) getQuestions(ctx context.Context, tx *reform.TX, homeworkID int
 }
 
 func (r *Reform) selectDataHomeworkByID(ctx context.Context, tx *reform.TX, ID int64) (*data.HomeworkData, error) {
-	homework, err := r.selectHomework(ctx, tx, map[string]interface{}{"id": ID})
+	homework, err := r.selectHomework(ctx, tx, map[string]utils.Argument{"id": utils.CreateArgument(ID)})
 	if err != nil {
 		return nil, fmt.Errorf("select homework: %w", err)
 	}
