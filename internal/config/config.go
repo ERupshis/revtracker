@@ -5,14 +5,16 @@ import (
 	"log"
 
 	"github.com/caarlos0/env"
+	"github.com/erupshis/revtracker/internal/config/utils"
 )
 
 type Config struct {
-	DatabaseDSN      string // DatabaseDSN PostgreSQL data source name.
+	DatabaseDSN      string // DatabaseDSN PostgreSQL data source name
 	DatabaseIdleConn int
 	DatabaseOpenConn int
-	HostAddr         string // Host server's address.
-	LogLevel         string // log level.
+	HostAddr         string // Host server's address
+	JWTKey           string // jwt web token generation key
+	LogLevel         string // log level
 }
 
 func Parse() Config {
@@ -29,12 +31,16 @@ const (
 	flagLogLevel         = "l"
 	flagDatabaseIdleConn = "di"
 	flagDatabaseOpenConn = "do"
+	flagJWTKey           = "j"
 )
 
 // checkFlags checks flags of app's launch.
 func checkFlags(config *Config) {
 	// main app.
 	flag.StringVar(&config.HostAddr, flagHostAddress, "localhost:8080", "server endpoint")
+
+	// auth.
+	flag.StringVar(&config.JWTKey, flagJWTKey, "TO REMOVE DEFAULT", "JWT web token key")
 
 	// postgres.
 	flag.StringVar(&config.DatabaseDSN, flagDatabaseDSN, "postgres://postgres:postgres@localhost:5432/revtracker_test?sslmode=disable", "database DSN")
@@ -52,6 +58,7 @@ type envConfig struct {
 	DatabaseIdleConn string `env:"DB_MAX_IDLE_CONN"`
 	DatabaseOpenConn string `env:"DB_MAX_OPEN_CONN"`
 	HostAddr         string `env:"RUN_ADDRESS"`
+	JWTKey           string `env:"JWT_KEY"`
 	LogLevel         string `env:"LOG_LEVEL"`
 }
 
@@ -64,13 +71,16 @@ func checkEnvironments(config *Config) {
 	}
 
 	// main app.
-	_ = SetEnvToParamIfNeed(&config.HostAddr, envs.HostAddr)
+	_ = utils.SetEnvToParamIfNeed(&config.HostAddr, envs.HostAddr)
+
+	// authentication.
+	_ = utils.SetEnvToParamIfNeed(&config.JWTKey, envs.JWTKey)
 
 	// postgres.
-	_ = SetEnvToParamIfNeed(&config.DatabaseDSN, envs.DatabaseDSN)
-	_ = SetEnvToParamIfNeed(&config.DatabaseIdleConn, envs.DatabaseIdleConn)
-	_ = SetEnvToParamIfNeed(&config.DatabaseOpenConn, envs.DatabaseOpenConn)
+	_ = utils.SetEnvToParamIfNeed(&config.DatabaseDSN, envs.DatabaseDSN)
+	_ = utils.SetEnvToParamIfNeed(&config.DatabaseIdleConn, envs.DatabaseIdleConn)
+	_ = utils.SetEnvToParamIfNeed(&config.DatabaseOpenConn, envs.DatabaseOpenConn)
 
-	//log level.
-	_ = SetEnvToParamIfNeed(&config.LogLevel, envs.LogLevel)
+	// log level.
+	_ = utils.SetEnvToParamIfNeed(&config.LogLevel, envs.LogLevel)
 }

@@ -1,4 +1,4 @@
-package config
+package utils
 
 import (
 	"fmt"
@@ -43,10 +43,10 @@ func Atoi64(value string) (int64, error) {
 }
 
 //goland:noinspection HttpUrlsUsage
-//func AddHTTPPrefixIfNeed(value string) string {
+// func AddHTTPPrefixIfNeed(value string) string {
 //	if !strings.HasPrefix(value, "http://") {
 //		return "http://" + value
 //	}
 //
 //	return value
-//}
+// }

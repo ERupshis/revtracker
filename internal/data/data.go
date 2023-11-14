@@ -4,12 +4,6 @@ package data
 
 //go:generate easyjson -all data.go
 
-//reform:users
-type User struct {
-	ID   int64  `json:"Id" reform:"id,pk"`
-	Name string `json:"Name" reform:"name"`
-}
-
 //reform:homeworks
 type Homework struct {
 	ID   int64  `json:"Id" reform:"id,pk"`

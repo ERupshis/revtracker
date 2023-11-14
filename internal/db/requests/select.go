@@ -1,4 +1,4 @@
-package common
+package requests
 
 import (
 	"context"
@@ -6,11 +6,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/erupshis/revtracker/internal/storage/manager/reform/utils"
+	"github.com/erupshis/revtracker/internal/db/utils"
 	"gopkg.in/reform.v1"
 )
 
-func SelectOne(ctx context.Context, db *reform.DB, tx *reform.TX, filters map[string]interface{}, table reform.Table) (reform.Struct, error) {
+func SelectOne(ctx context.Context, db *reform.DB, tx *reform.TX, filters []utils.Argument, table reform.Table) (reform.Struct, error) {
 	tail, values := utils.CreateTailAndParams(db, filters)
 
 	var content reform.Struct
@@ -32,7 +32,7 @@ func SelectOne(ctx context.Context, db *reform.DB, tx *reform.TX, filters map[st
 	return content, nil
 }
 
-func SelectAll(ctx context.Context, db *reform.DB, tx *reform.TX, filters map[string]interface{}, orderBy string, table reform.Table) ([]reform.Struct, error) {
+func SelectAll(ctx context.Context, db *reform.DB, tx *reform.TX, filters []utils.Argument, orderBy string, table reform.Table) ([]reform.Struct, error) {
 	tail, values := utils.CreateTailAndParams(db, filters)
 	if orderBy != "" {
 		tail += utils.TailOrderBy + orderBy

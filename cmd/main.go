@@ -7,6 +7,10 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/erupshis/revtracker/internal/auth"
+	"github.com/erupshis/revtracker/internal/auth/data"
+	"github.com/erupshis/revtracker/internal/auth/jwtgenerator"
+	usersStorage "github.com/erupshis/revtracker/internal/auth/users/storage"
 	"github.com/erupshis/revtracker/internal/config"
 	"github.com/erupshis/revtracker/internal/controller"
 	"github.com/erupshis/revtracker/internal/db"
@@ -19,10 +23,10 @@ import (
 )
 
 func main() {
-	//config.
+	// config.
 	cfg := config.Parse()
 
-	//log system.
+	// log system.
 	log, err := logger.CreateZapLogger(cfg.LogLevel)
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "failed to create logger: %v", err)
@@ -39,17 +43,27 @@ func main() {
 
 	reformConn := reform.NewDB(databaseConn.DB, postgresql.Dialect, reform.NewPrintfLogger(log.Printf))
 
+	// authentication.
+	users := usersStorage.Create(reformConn, log)
+	jwtGenerator := jwtgenerator.Create(cfg.JWTKey, 2, log)
+	authController := auth.CreateController(users, jwtGenerator, log)
+
+	// data.
 	storageManager := reformManager.CreateReform(reformConn, log)
 	dataStorage := storage.Create(storageManager, log)
 	mainController := controller.Create(dataStorage, log)
 
-	//controllers mounting.
+	// controllers mounting.
 	server := fiber.New()
 	server.Use(log.LogHandler)
-	//server.Use(authController.Authorize(userdata.RoleUser))
-	server.Mount("/api", mainController.Route())
 
-	//server launch.
+	server.Mount("/api/user", authController.Route())
+
+	serverData := server.Group("/api")
+	serverData.Use(authController.AuthorizeUser(data.RoleUser))
+	serverData.Mount("/", mainController.Route())
+
+	// server launch.
 	go func(log logger.BaseLogger) {
 		log.Info("server is launching with host '%s'", cfg.HostAddr)
 		if err = server.Listen(cfg.HostAddr); err != nil {

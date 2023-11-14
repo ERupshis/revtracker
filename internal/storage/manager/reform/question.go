@@ -5,7 +5,8 @@ import (
 	"fmt"
 
 	"github.com/erupshis/revtracker/internal/data"
-	"github.com/erupshis/revtracker/internal/storage/manager/reform/common"
+	"github.com/erupshis/revtracker/internal/db/requests"
+	"github.com/erupshis/revtracker/internal/db/utils"
 	"gopkg.in/reform.v1"
 )
 
@@ -22,16 +23,16 @@ func (r *Reform) SelectQuestions(ctx context.Context) ([]data.Question, error) {
 }
 
 func (r *Reform) SelectQuestionByID(ctx context.Context, ID int64) (*data.Question, error) {
-	return r.selectQuestion(ctx, nil, map[string]interface{}{"id": ID})
+	return r.selectQuestion(ctx, nil, []utils.Argument{utils.CreateArgument("id", ID)})
 }
 
 func (r *Reform) DeleteQuestionByID(ctx context.Context, ID int64) error {
-	return common.Delete(ctx, r.db, nil, map[string]interface{}{"id": ID}, data.QuestionTable)
+	return requests.Delete(ctx, r.db, nil, []utils.Argument{utils.CreateArgument("id", ID)}, data.QuestionTable)
 }
 
 func (r *Reform) insertQuestionAndContent(ctx context.Context, tx *reform.TX, question *data.Question) error {
 	insertOrUpdateFunc := func(tx *reform.TX) error {
-		currentQuestion, err := r.selectQuestion(ctx, nil, map[string]interface{}{"id": question.ID})
+		currentQuestion, err := r.selectQuestion(ctx, nil, []utils.Argument{utils.CreateArgument("id", question.ID)})
 		if err != nil {
 			return fmt.Errorf("insert question: check question in db: %w", err)
 		}
@@ -41,13 +42,13 @@ func (r *Reform) insertQuestionAndContent(ctx context.Context, tx *reform.TX, qu
 			question.Content.ID = currentQuestion.ContentID
 		}
 
-		if err = common.InsertOrUpdate(ctx, r.db, tx, &question.Content); err != nil {
+		if err = requests.InsertOrUpdate(ctx, r.db, tx, &question.Content); err != nil {
 			return fmt.Errorf("insert question: add content: %w", err)
 		}
 
 		question.ContentID = question.Content.ID
 
-		if err = common.InsertOrUpdate(ctx, r.db, tx, question); err != nil {
+		if err = requests.InsertOrUpdate(ctx, r.db, tx, question); err != nil {
 			return fmt.Errorf("insert question: add question: %w", err)
 		}
 
@@ -62,11 +63,11 @@ func (r *Reform) insertQuestionAndContent(ctx context.Context, tx *reform.TX, qu
 }
 
 // TODO: need to add custom query.
-func (r *Reform) selectQuestions(ctx context.Context, tx *reform.TX, filters map[string]interface{}) ([]data.Question, error) {
+func (r *Reform) selectQuestions(ctx context.Context, tx *reform.TX, filters []utils.Argument) ([]data.Question, error) {
 	var questions []data.Question
 
 	selectFunc := func(tx *reform.TX) error {
-		questionsRaw, err := common.SelectAll(ctx, r.db, tx, filters, "id", data.QuestionTable)
+		questionsRaw, err := requests.SelectAll(ctx, r.db, tx, filters, "id", data.QuestionTable)
 		if err != nil {
 			return fmt.Errorf("select question by filters '%v': %w", filters, err)
 		}
@@ -78,7 +79,7 @@ func (r *Reform) selectQuestions(ctx context.Context, tx *reform.TX, filters map
 		for _, q := range questionsRaw {
 			questions = append(questions, *q.(*data.Question))
 
-			questionContent, err := r.selectContent(ctx, tx, map[string]interface{}{"id": questions[len(questions)-1].ContentID})
+			questionContent, err := r.selectContent(ctx, tx, []utils.Argument{utils.CreateArgument("id", questions[len(questions)-1].ContentID)})
 			if err != nil {
 				return fmt.Errorf("select question by id '%d': %w", questions[len(questions)-1].ContentID, err)
 			}
@@ -98,11 +99,11 @@ func (r *Reform) selectQuestions(ctx context.Context, tx *reform.TX, filters map
 	return questions, err
 }
 
-func (r *Reform) selectQuestion(ctx context.Context, tx *reform.TX, filters map[string]interface{}) (*data.Question, error) {
+func (r *Reform) selectQuestion(ctx context.Context, tx *reform.TX, filters []utils.Argument) (*data.Question, error) {
 	var question *data.Question
 
 	selectFunc := func(tx *reform.TX) error {
-		questionRaw, err := common.SelectOne(ctx, r.db, tx, filters, data.QuestionTable)
+		questionRaw, err := requests.SelectOne(ctx, r.db, tx, filters, data.QuestionTable)
 		if err != nil {
 			return fmt.Errorf("select question by filters '%v': %w", filters, err)
 		}
@@ -112,7 +113,7 @@ func (r *Reform) selectQuestion(ctx context.Context, tx *reform.TX, filters map[
 		}
 
 		question = questionRaw.(*data.Question)
-		questionContent, err := r.selectContent(ctx, tx, map[string]interface{}{"id": question.ContentID})
+		questionContent, err := r.selectContent(ctx, tx, []utils.Argument{utils.CreateArgument("id", question.ContentID)})
 		if err != nil {
 			return fmt.Errorf("select question by id '%d': %w", question.ContentID, err)
 		}
