@@ -22,20 +22,20 @@ func Login(usersStorage storage.BaseUsersStorage, jwt jwtgenerator.JwtGenerator,
 
 		if ok, err := utils.IsUserDataValid(&user, map[string]interface{}{utils.UserName: ""}); !ok {
 			c.Status(fiber.StatusBadRequest)
-			log.Info("[auth:handlers:Register] incorrect user input data: %v", err)
+			log.Info("[auth:handlers:Login] incorrect user input data: %v", err)
 			return nil
 		}
 
 		userDataInStorage, err := usersStorage.SelectUserByLogin(c.Context(), user.Login)
 		if err != nil {
 			c.Status(fiber.StatusInternalServerError)
-			log.Info("[auth:handlers:Login] failed to get userID from user's database: %v", err)
+			log.Info("[auth:handlers:Login] failed to get user from database: %v", err)
 			return nil
 		}
 
 		if userDataInStorage == nil {
 			c.Status(fiber.StatusUnauthorized)
-			log.Info("[auth:handlers:Login] failed to get userID from user's database: %v", err)
+			log.Info("[auth:handlers:Login] failed to get user from user's database (missing)")
 			return nil
 		}
 
