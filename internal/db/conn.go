@@ -7,6 +7,7 @@ import (
 	"fmt"
 
 	"github.com/erupshis/revtracker/internal/config"
+	dbErrors "github.com/erupshis/revtracker/internal/db/errors"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/retryer"
 	"github.com/golang-migrate/migrate/v4"
@@ -65,7 +66,7 @@ func (p *Conn) CheckConnection(ctx context.Context) (bool, error) {
 	exec := func(context context.Context) (int64, []byte, error) {
 		return 0, []byte{}, p.PingContext(context)
 	}
-	_, _, err := retryer.RetryCallWithTimeout(ctx, p.log, nil, DatabaseErrorsToRetry, exec)
+	_, _, err := retryer.RetryCallWithTimeout(ctx, p.log, nil, dbErrors.DatabaseErrorsToRetry, exec)
 	if err != nil {
 		return false, fmt.Errorf("check connection: %w", err)
 	}
