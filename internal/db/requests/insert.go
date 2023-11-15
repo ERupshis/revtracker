@@ -48,7 +48,7 @@ func InsertOrUpdate(ctx context.Context, db *reform.DB, tx *reform.TX, record re
 func getUniqueFilters(record reform.Record) []utils.Argument {
 	switch rec := record.(type) {
 	case *data.Content:
-		return nil
+		return []utils.Argument{utils.CreateArgument(constants.ColID, rec.ID)}
 	case *data.Homework:
 		return []utils.Argument{utils.CreateArgument(constants.ColName, rec.Name)}
 	case *data.HomeworkQuestion:
@@ -64,6 +64,9 @@ func getUniqueFilters(record reform.Record) []utils.Argument {
 
 func updateExistingRecord(record reform.Record, reformStruct reform.Struct) {
 	switch rec := record.(type) {
+	case *data.Content:
+		existingRecord := reformStruct.(*data.Content)
+		rec.ID = existingRecord.ID
 	case *data.Homework:
 		existingRecord := reformStruct.(*data.Homework)
 		rec.ID = existingRecord.ID
@@ -73,6 +76,7 @@ func updateExistingRecord(record reform.Record, reformStruct reform.Struct) {
 	case *data.Question:
 		existingRecord := reformStruct.(*data.Question)
 		rec.ID = existingRecord.ID
+		rec.ContentID = existingRecord.ContentID
 	case *authData.User:
 		existingRecord := reformStruct.(*authData.User)
 		rec.ID = existingRecord.ID

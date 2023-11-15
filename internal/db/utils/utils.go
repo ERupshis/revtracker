@@ -46,7 +46,6 @@ func CreateArgumentOR(name string, value interface{}) Argument {
 	}
 }
 
-// TODO: need to replace map on slice.
 func CreateTailAndParams(db *reform.DB, filters []Argument, placeHoldersFrom int) (string, []interface{}) {
 	tail := ""
 	var values []interface{}

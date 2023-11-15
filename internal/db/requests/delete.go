@@ -53,7 +53,6 @@ func markDeleted(reformStruct reform.Struct) {
 		arg.Deleted = true
 	case *data.HomeworkQuestion:
 		arg.Deleted = true
-		// TODO: have colission with second constraint.
 	case *data.Question:
 		arg.Deleted = true
 	case *authData.User:

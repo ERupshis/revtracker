@@ -32,6 +32,28 @@ func SelectOne(ctx context.Context, db *reform.DB, tx *reform.TX, filters []util
 	return content, nil
 }
 
+func SelectOneAbs(ctx context.Context, db *reform.DB, tx *reform.TX, filters []utils.Argument, table reform.Table) (reform.Struct, error) {
+	tail, values := utils.CreateTailAndParams(db, filters, 0)
+
+	var content reform.Struct
+	var err error
+	if tx != nil {
+		content, err = tx.SelectOneFrom(table, tail, values...)
+	} else {
+		content, err = db.WithContext(ctx).SelectOneFrom(table, utils.AddDeletedCheck(tail, false), values...)
+	}
+
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return nil, fmt.Errorf("select %s by ID: %w", table.Name(), err)
+	}
+
+	if content == nil {
+		return nil, nil
+	}
+
+	return content, nil
+}
+
 func SelectAll(ctx context.Context, db *reform.DB, tx *reform.TX, filters []utils.Argument, orderBy string, table reform.Table) ([]reform.Struct, error) {
 	tail, values := utils.CreateTailAndParams(db, filters, 0)
 	tail = utils.AddDeletedCheck(tail, false)

@@ -68,7 +68,7 @@ func (r *Reform) selectQuestions(ctx context.Context, tx *reform.TX, filters []u
 	var questions []data.Question
 
 	selectFunc := func(tx *reform.TX) error {
-		questionsRaw, err := requests.SelectAll(ctx, r.db, tx, filters, "id", data.QuestionTable)
+		questionsRaw, err := requests.SelectAll(ctx, r.db, tx, filters, constants.ColID, data.QuestionTable)
 		if err != nil {
 			return fmt.Errorf("select question by filters '%v': %w", filters, err)
 		}
@@ -104,7 +104,7 @@ func (r *Reform) selectQuestion(ctx context.Context, tx *reform.TX, filters []ut
 	var question *data.Question
 
 	selectFunc := func(tx *reform.TX) error {
-		questionRaw, err := requests.SelectOne(ctx, r.db, tx, filters, data.QuestionTable)
+		questionRaw, err := requests.SelectOneAbs(ctx, r.db, tx, filters, data.QuestionTable)
 		if err != nil {
 			return fmt.Errorf("select question by filters '%v': %w", filters, err)
 		}
@@ -114,7 +114,7 @@ func (r *Reform) selectQuestion(ctx context.Context, tx *reform.TX, filters []ut
 		}
 
 		question = questionRaw.(*data.Question)
-		questionContent, err := r.selectContent(ctx, tx, []utils.Argument{utils.CreateArgument(constants.ColID, question.ContentID)})
+		questionContent, err := r.selectContentAbs(ctx, tx, []utils.Argument{utils.CreateArgument(constants.ColID, question.ContentID)})
 		if err != nil {
 			return fmt.Errorf("select question by id '%d': %w", question.ContentID, err)
 		}
