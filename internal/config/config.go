@@ -14,6 +14,7 @@ type Config struct {
 	DatabaseOpenConn int
 	HostAddr         string // Host server's address
 	JWTKey           string // jwt web token generation key
+	JWTExpiration    int    // jwt web token expiration time (hours)
 	LogLevel         string // log level
 }
 
@@ -32,6 +33,7 @@ const (
 	flagDatabaseIdleConn = "di"
 	flagDatabaseOpenConn = "do"
 	flagJWTKey           = "j"
+	flagJWTExpiration    = "je"
 )
 
 // checkFlags checks flags of app's launch.
@@ -41,6 +43,7 @@ func checkFlags(config *Config) {
 
 	// auth.
 	flag.StringVar(&config.JWTKey, flagJWTKey, "TO REMOVE DEFAULT", "JWT web token key")
+	flag.IntVar(&config.JWTExpiration, flagJWTExpiration, 24, "JWT expiration time")
 
 	// postgres.
 	flag.StringVar(&config.DatabaseDSN, flagDatabaseDSN, "postgres://postgres:postgres@localhost:5432/revtracker_test?sslmode=disable", "database DSN")
@@ -59,6 +62,7 @@ type envConfig struct {
 	DatabaseOpenConn string `env:"DB_MAX_OPEN_CONN"`
 	HostAddr         string `env:"RUN_ADDRESS"`
 	JWTKey           string `env:"JWT_KEY"`
+	JWTExpiration    string `env:"JWT_EXPIRATION"`
 	LogLevel         string `env:"LOG_LEVEL"`
 }
 
@@ -75,7 +79,7 @@ func checkEnvironments(config *Config) {
 
 	// authentication.
 	_ = utils.SetEnvToParamIfNeed(&config.JWTKey, envs.JWTKey)
-
+	_ = utils.SetEnvToParamIfNeed(&config.JWTExpiration, envs.JWTExpiration)
 	// postgres.
 	_ = utils.SetEnvToParamIfNeed(&config.DatabaseDSN, envs.DatabaseDSN)
 	_ = utils.SetEnvToParamIfNeed(&config.DatabaseIdleConn, envs.DatabaseIdleConn)

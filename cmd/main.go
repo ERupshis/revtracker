@@ -45,7 +45,7 @@ func main() {
 
 	// authentication.
 	users := usersStorage.Create(reformConn, log)
-	jwtGenerator := jwtgenerator.Create(cfg.JWTKey, 2, log)
+	jwtGenerator := jwtgenerator.Create(cfg.JWTKey, cfg.JWTExpiration, log)
 	authController := auth.CreateController(users, jwtGenerator, log)
 
 	// data.
