@@ -13,6 +13,7 @@ import (
 	"gopkg.in/reform.v1"
 )
 
+// TODO: need to split insert and update. Conflict on p_key.
 func InsertOrUpdate(ctx context.Context, db *reform.DB, tx *reform.TX, record reform.Record) error {
 	uniqueFilters := getUniqueFilters(record)
 	tail, values := utils.CreateTailAndParams(db, uniqueFilters, 0)
@@ -46,6 +47,8 @@ func InsertOrUpdate(ctx context.Context, db *reform.DB, tx *reform.TX, record re
 
 func getUniqueFilters(record reform.Record) []utils.Argument {
 	switch rec := record.(type) {
+	case *data.Content:
+		return nil
 	case *data.Homework:
 		return []utils.Argument{utils.CreateArgument(constants.ColName, rec.Name)}
 	case *data.HomeworkQuestion:
