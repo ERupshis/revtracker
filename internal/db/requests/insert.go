@@ -24,7 +24,7 @@ func InsertOrUpdate(ctx context.Context, db *reform.DB, tx *reform.TX, record re
 		}
 
 		if reformStruct != nil && len(uniqueFilters) != 0 {
-			record.SetPK(reformStruct.(reform.Record).PKValue())
+			updateExistingRecord(record, reformStruct)
 		}
 
 		return tx.Save(record)
@@ -49,14 +49,33 @@ func getUniqueFilters(record reform.Record) []utils.Argument {
 	case *data.Homework:
 		return []utils.Argument{utils.CreateArgument(constants.ColName, rec.Name)}
 	case *data.HomeworkQuestion:
-		return []utils.Argument{utils.CreateArgument(constants.ColHomeworkID, rec.HomeworkID), utils.CreateArgument(constants.ColQuestionID, rec.QuestionID)}
+		return []utils.Argument{utils.CreateArgument(constants.ColHomeworkID, rec.HomeworkID), utils.CreateArgument(constants.ColOrder, rec.Order)}
 	case *data.Question:
 		return []utils.Argument{utils.CreateArgument(constants.ColName, rec.Name)}
 	case *authData.User:
-		return []utils.Argument{utils.CreateArgument(constants.ColName, rec.Name), utils.CreateArgumentAND(constants.ColLogin, rec.Login)}
+		return []utils.Argument{utils.CreateArgumentAND(constants.ColLogin, rec.Login)}
 	default:
 		panic("unknown type")
 	}
 
 	return nil
+}
+
+func updateExistingRecord(record reform.Record, reformStruct reform.Struct) {
+	switch rec := record.(type) {
+	case *data.Homework:
+		existingRecord := reformStruct.(*data.Homework)
+		rec.ID = existingRecord.ID
+	case *data.HomeworkQuestion:
+		existingRecord := reformStruct.(*data.HomeworkQuestion)
+		rec.ID = existingRecord.ID
+	case *data.Question:
+		existingRecord := reformStruct.(*data.Question)
+		rec.ID = existingRecord.ID
+	case *authData.User:
+		existingRecord := reformStruct.(*authData.User)
+		rec.ID = existingRecord.ID
+	default:
+		panic("unknown type")
+	}
 }
