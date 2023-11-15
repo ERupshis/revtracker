@@ -52,7 +52,7 @@ func getUniqueFilters(record reform.Record) []utils.Argument {
 	case *data.Homework:
 		return []utils.Argument{utils.CreateArgument(constants.ColName, rec.Name)}
 	case *data.HomeworkQuestion:
-		return []utils.Argument{utils.CreateArgument(constants.ColHomeworkID, rec.HomeworkID), utils.CreateArgument(constants.ColOrder, rec.Order)}
+		return []utils.Argument{utils.CreateArgument(constants.ColHomeworkID, rec.HomeworkID), utils.CreateArgumentAND(constants.ColOrder, rec.Order)}
 	case *data.Question:
 		return []utils.Argument{utils.CreateArgument(constants.ColName, rec.Name)}
 	case *authData.User:

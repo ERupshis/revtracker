@@ -33,7 +33,7 @@ func Insert(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 		}
 
 		if err := storage.InsertHomeworkQuestion(c.Context(), homeworkQuestion); err != nil {
-			if utils.IsForeignKeyConstraint(err) {
+			if utils.IsForeignKeyConstraint(err) || utils.IsUniqueConstraint(err) {
 				c.Status(fiber.StatusConflict)
 			} else {
 				c.Status(fiber.StatusInternalServerError)
