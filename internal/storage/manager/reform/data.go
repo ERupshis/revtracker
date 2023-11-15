@@ -115,12 +115,12 @@ func (r *Reform) insertQuestions(ctx context.Context, tx *reform.TX, questions [
 		question := &questions[i]
 
 		if err := requests.InsertOrUpdate(ctx, r.db, tx, &question.Content); err != nil {
-			return fmt.Errorf("insert/update content")
+			return fmt.Errorf("insert/update content: %w", err)
 		}
 
 		question.ContentID = question.Content.ID
 		if err := requests.InsertOrUpdate(ctx, r.db, tx, question); err != nil {
-			return fmt.Errorf("insert/update question")
+			return fmt.Errorf("insert/update question: %w", err)
 		}
 
 		homeworkQuestion := &data.HomeworkQuestion{
@@ -130,7 +130,7 @@ func (r *Reform) insertQuestions(ctx context.Context, tx *reform.TX, questions [
 		}
 
 		if err := requests.InsertOrUpdate(ctx, r.db, tx, homeworkQuestion); err != nil {
-			return fmt.Errorf("insert/update homework-question link. element's order: %d", i)
+			return fmt.Errorf("insert/update homework-question link. element's order '%d'(%w)", i, err)
 		}
 	}
 	return nil
