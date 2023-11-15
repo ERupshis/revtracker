@@ -9,6 +9,7 @@ CREATE OR REPLACE FUNCTION remove_related_contents()
     RETURNS TRIGGER AS
 $$
 BEGIN
+    --TODO: Need to fix and 'remove' on update.
     IF TG_OP = 'DELETE' THEN
         DELETE FROM contents WHERE id = OLD.content_id;
     END IF;

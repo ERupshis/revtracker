@@ -110,6 +110,7 @@ func (r *Reform) insertOrUpdateData(ctx context.Context, inData *data.Data) erro
 	})
 }
 
+// TODO: need to look for existing elements and ignore creation new ones.
 func (r *Reform) insertQuestions(ctx context.Context, tx *reform.TX, questions []data.Question, homeworkID int64) error {
 	for i := 0; i < len(questions); i++ {
 		question := &questions[i]

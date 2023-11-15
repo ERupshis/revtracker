@@ -7,3 +7,5 @@ CREATE TABLE IF NOT EXISTS homework_questions (
      CONSTRAINT unique_homework_question UNIQUE (homework_id, question_id),
      CONSTRAINT unique_homework_order UNIQUE (homework_id, "order")
 );
+
+--TODO: need to add trigger to validate homework_id - question_id unique.
