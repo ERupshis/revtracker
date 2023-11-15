@@ -18,18 +18,14 @@ func Delete(ctx context.Context, db *reform.DB, tx *reform.TX, filters []utils.A
 
 	deleteFunc := func(tx *reform.TX) error {
 		tail, values := utils.CreateTailAndParams(db, filters, 0)
-		structs, err := tx.SelectAllFrom(table, tail, values...)
+		existingStruct, err := tx.SelectOneFrom(table, utils.AddDeletedCheck(tail, false), values...)
 		if err != nil {
-			return fmt.Errorf("select rows to be deleted in %s by filters '%v': %w", table.Name(), filters, err)
+			return fmt.Errorf("select record to be deleted in %s by filters '%v': %w", table.Name(), filters, err)
 		}
 
-		if len(structs) == 0 {
-			return nil
-		}
-
+		markDeleted(existingStruct)
 		tail, values = utils.CreateTailAndParams(db, filters, 1)
-		markDeleted(structs[0])
-		_, err = tx.UpdateView(structs[0], []string{constants.ColDeleted}, tail, values...)
+		_, err = tx.UpdateView(existingStruct, []string{constants.ColDeleted}, tail, values...)
 
 		if err != nil {
 			return fmt.Errorf("delete %s by filters '%v': %w", table.Name(), filters, err)
