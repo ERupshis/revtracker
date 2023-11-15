@@ -57,8 +57,6 @@ func getUniqueFilters(record reform.Record) []utils.Argument {
 	default:
 		panic("unknown type")
 	}
-
-	return nil
 }
 
 func updateExistingRecord(record reform.Record, reformStruct reform.Struct) {
