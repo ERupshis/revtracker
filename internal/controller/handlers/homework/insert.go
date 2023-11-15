@@ -26,6 +26,7 @@ func Insert(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 			return nil
 		}
 
+		homework.ID = 0
 		if homework.Name == "" {
 			log.Info("%s empty name", fmt.Sprintf(packagePath, constants.Insert))
 			c.Status(fiber.StatusBadRequest)

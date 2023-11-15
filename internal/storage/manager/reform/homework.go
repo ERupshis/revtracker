@@ -16,7 +16,7 @@ func (r *Reform) InsertHomework(ctx context.Context, homework *data.Homework) er
 }
 
 func (r *Reform) UpdateHomework(ctx context.Context, homework *data.Homework) error {
-	return requests.InsertOrUpdate(ctx, r.db, nil, homework)
+	return requests.Update(ctx, r.db, nil, homework)
 }
 
 func (r *Reform) SelectHomeworks(ctx context.Context) ([]data.Homework, error) {

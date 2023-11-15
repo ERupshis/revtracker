@@ -2,6 +2,7 @@ package homework
 
 import (
 	"bytes"
+	"database/sql"
 	"fmt"
 	"io"
 	"net/http"
@@ -29,6 +30,7 @@ func TestUpdate(t *testing.T) {
 		mockStorage.EXPECT().UpdateHomework(gomock.Any(), gomock.Any()).Return(nil),
 		mockStorage.EXPECT().UpdateHomework(gomock.Any(), gomock.Any()).Return(nil),
 		mockStorage.EXPECT().UpdateHomework(gomock.Any(), gomock.Any()).Return(fmt.Errorf("test err")),
+		mockStorage.EXPECT().UpdateHomework(gomock.Any(), gomock.Any()).Return(sql.ErrNoRows),
 	)
 
 	type args struct {
@@ -147,6 +149,19 @@ func TestUpdate(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusInternalServerError,
+				body:       []byte(""),
+			},
+		},
+		{
+			name: "homework is missing in db",
+			args: args{
+				storage:  nil,
+				log:      testLog,
+				paramURI: "/1",
+				body:     []byte(`{"Id":1,"Name":"hw1"}`),
+			},
+			want: want{
+				statusCode: fiber.StatusNoContent,
 				body:       []byte(""),
 			},
 		},

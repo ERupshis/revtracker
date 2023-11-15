@@ -1,7 +1,9 @@
 package homework
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/erupshis/revtracker/internal/controller/handlers/utils"
@@ -41,6 +43,8 @@ func Update(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 		if err := storage.UpdateHomework(c.Context(), homework); err != nil {
 			if utils.IsUniqueConstraint(err) {
 				c.Status(fiber.StatusConflict)
+			} else if errors.Is(err, sql.ErrNoRows) {
+				c.Status(fiber.StatusNoContent)
 			} else {
 				c.Status(fiber.StatusInternalServerError)
 			}
