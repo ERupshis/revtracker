@@ -26,9 +26,10 @@ func InsertOrUpdate(ctx context.Context, db *reform.DB, tx *reform.TX, record re
 
 		if reformStruct != nil && len(uniqueFilters) != 0 {
 			updateExistingRecord(record, reformStruct)
+			return tx.Update(record)
+		} else {
+			return tx.Save(record)
 		}
-
-		return tx.Save(record)
 	}
 
 	var err error

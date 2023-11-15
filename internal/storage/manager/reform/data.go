@@ -110,18 +110,28 @@ func (r *Reform) insertOrUpdateData(ctx context.Context, inData *data.Data) erro
 	})
 }
 
-// TODO: need to look for existing elements and ignore creation new ones.
 func (r *Reform) insertQuestions(ctx context.Context, tx *reform.TX, questions []data.Question, homeworkID int64) error {
 	for i := 0; i < len(questions); i++ {
 		question := &questions[i]
 
-		if err := requests.InsertOrUpdate(ctx, r.db, tx, &question.Content); err != nil {
-			return fmt.Errorf("insert/update content: %w", err)
+		question.ContentID = question.Content.ID
+		existingQuestion, err := r.selectQuestion(ctx, tx, []utils.Argument{utils.CreateArgument(constants.ColName, question.Name)}, false)
+		if err != nil {
+			return fmt.Errorf("select existing question: %w", err)
 		}
 
-		question.ContentID = question.Content.ID
-		if err := requests.InsertOrUpdate(ctx, r.db, tx, question); err != nil {
+		if existingQuestion != nil {
+			question.ID = existingQuestion.ID
+			question.ContentID = existingQuestion.ContentID
+			question.Content.ID = existingQuestion.ContentID
+		}
+
+		if err = requests.InsertOrUpdate(ctx, r.db, tx, question); err != nil {
 			return fmt.Errorf("insert/update question: %w", err)
+		}
+
+		if err = requests.InsertOrUpdate(ctx, r.db, tx, &question.Content); err != nil {
+			return fmt.Errorf("insert/update content: %w", err)
 		}
 
 		homeworkQuestion := &data.HomeworkQuestion{
@@ -163,7 +173,7 @@ func (r *Reform) getQuestions(ctx context.Context, tx *reform.TX, homeworkID int
 
 	var res []data.Question
 	for _, questionID := range questionsOrder {
-		question, err := r.selectQuestion(ctx, tx, []utils.Argument{utils.CreateArgument(constants.ColID, questionID)})
+		question, err := r.selectQuestion(ctx, tx, []utils.Argument{utils.CreateArgument(constants.ColID, questionID)}, false)
 		if err != nil {
 			return nil, fmt.Errorf("get question from db: %w", err)
 		}

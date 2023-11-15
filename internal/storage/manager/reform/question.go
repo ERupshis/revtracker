@@ -24,7 +24,7 @@ func (r *Reform) SelectQuestions(ctx context.Context) ([]data.Question, error) {
 }
 
 func (r *Reform) SelectQuestionByID(ctx context.Context, ID int64) (*data.Question, error) {
-	return r.selectQuestion(ctx, nil, []utils.Argument{utils.CreateArgument(constants.ColID, ID)})
+	return r.selectQuestion(ctx, nil, []utils.Argument{utils.CreateArgument(constants.ColID, ID)}, false)
 }
 
 func (r *Reform) DeleteQuestionByID(ctx context.Context, ID int64) error {
@@ -33,7 +33,7 @@ func (r *Reform) DeleteQuestionByID(ctx context.Context, ID int64) error {
 
 func (r *Reform) insertQuestionAndContent(ctx context.Context, tx *reform.TX, question *data.Question) error {
 	insertOrUpdateFunc := func(tx *reform.TX) error {
-		currentQuestion, err := r.selectQuestion(ctx, nil, []utils.Argument{utils.CreateArgument(constants.ColID, question.ID)})
+		currentQuestion, err := r.selectQuestion(ctx, nil, []utils.Argument{utils.CreateArgument(constants.ColID, question.ID)}, true)
 		if err != nil {
 			return fmt.Errorf("insert question: check question in db: %w", err)
 		}
@@ -100,11 +100,19 @@ func (r *Reform) selectQuestions(ctx context.Context, tx *reform.TX, filters []u
 	return questions, err
 }
 
-func (r *Reform) selectQuestion(ctx context.Context, tx *reform.TX, filters []utils.Argument) (*data.Question, error) {
+// TODO: refactor selectQuestion methods.
+func (r *Reform) selectQuestion(ctx context.Context, tx *reform.TX, filters []utils.Argument, abs bool) (*data.Question, error) {
 	var question *data.Question
 
 	selectFunc := func(tx *reform.TX) error {
-		questionRaw, err := requests.SelectOneAbs(ctx, r.db, tx, filters, data.QuestionTable)
+		var questionRaw reform.Struct
+		var err error
+		if abs {
+			questionRaw, err = requests.SelectOneAbs(ctx, r.db, tx, filters, data.QuestionTable)
+		} else {
+			questionRaw, err = requests.SelectOne(ctx, r.db, tx, filters, data.QuestionTable)
+		}
+
 		if err != nil {
 			return fmt.Errorf("select question by filters '%v': %w", filters, err)
 		}
@@ -114,7 +122,13 @@ func (r *Reform) selectQuestion(ctx context.Context, tx *reform.TX, filters []ut
 		}
 
 		question = questionRaw.(*data.Question)
-		questionContent, err := r.selectContentAbs(ctx, tx, []utils.Argument{utils.CreateArgument(constants.ColID, question.ContentID)})
+		var questionContent *data.Content
+		if abs {
+			questionContent, err = r.selectContentAbs(ctx, tx, []utils.Argument{utils.CreateArgument(constants.ColID, question.ContentID)})
+		} else {
+			questionContent, err = r.selectContent(ctx, tx, []utils.Argument{utils.CreateArgument(constants.ColID, question.ContentID)})
+		}
+
 		if err != nil {
 			return fmt.Errorf("select question by id '%d': %w", question.ContentID, err)
 		}
