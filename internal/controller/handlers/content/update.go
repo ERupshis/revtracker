@@ -1,7 +1,9 @@
 package content
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/erupshis/revtracker/internal/controller/handlers/utils"
@@ -39,8 +41,13 @@ func Update(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 		}
 
 		if err := storage.UpdateContent(c.Context(), content); err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				c.Status(fiber.StatusNoContent)
+			} else {
+				c.Status(fiber.StatusInternalServerError)
+			}
+
 			log.Info("%s failed to update: %v", fmt.Sprintf(packagePath, constants.Update), err)
-			c.Status(fiber.StatusInternalServerError)
 			return nil
 		}
 

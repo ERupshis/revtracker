@@ -2,6 +2,7 @@ package question
 
 import (
 	"bytes"
+	"database/sql"
 	"fmt"
 	"io"
 	"net/http"
@@ -29,6 +30,7 @@ func TestUpdate(t *testing.T) {
 		mockStorage.EXPECT().UpdateQuestion(gomock.Any(), gomock.Any()).Return(nil),
 		mockStorage.EXPECT().UpdateQuestion(gomock.Any(), gomock.Any()).Return(nil),
 		mockStorage.EXPECT().UpdateQuestion(gomock.Any(), gomock.Any()).Return(fmt.Errorf("test err")),
+		mockStorage.EXPECT().UpdateQuestion(gomock.Any(), gomock.Any()).Return(sql.ErrNoRows),
 	)
 
 	type args struct {
@@ -160,6 +162,19 @@ func TestUpdate(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusInternalServerError,
+				body:       []byte(""),
+			},
+		},
+		{
+			name: "missing question in db",
+			args: args{
+				storage:  nil,
+				log:      testLog,
+				paramURI: "/1",
+				body:     []byte(`{"Id":1,"Name":"q1","Content":{"Task":"task1","Answer":"answer1","Solution":"solution1"}}`),
+			},
+			want: want{
+				statusCode: fiber.StatusNoContent,
 				body:       []byte(""),
 			},
 		},

@@ -39,6 +39,8 @@ func Insert(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 			return nil
 		}
 
+		question.ID = 0
+		question.ContentID = 0
 		if err := storage.InsertQuestion(c.Context(), question); err != nil {
 			if utils.IsUniqueConstraint(err) {
 				c.Status(fiber.StatusConflict)

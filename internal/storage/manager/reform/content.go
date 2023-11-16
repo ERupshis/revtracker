@@ -15,7 +15,7 @@ func (r *Reform) InsertContent(ctx context.Context, content *data.Content) error
 }
 
 func (r *Reform) UpdateContent(ctx context.Context, content *data.Content) error {
-	return requests.InsertOrUpdate(ctx, r.db, nil, content)
+	return requests.Update(ctx, r.db, nil, content)
 }
 
 func (r *Reform) SelectContentByID(ctx context.Context, ID int64) (*data.Content, error) {
@@ -28,16 +28,6 @@ func (r *Reform) DeleteContentByID(ctx context.Context, ID int64) error {
 
 func (r *Reform) selectContent(ctx context.Context, tx *reform.TX, filters []utils.Argument) (*data.Content, error) {
 	content, err := requests.SelectOne(ctx, r.db, tx, filters, data.ContentTable)
-
-	if content == nil {
-		return nil, err
-	}
-
-	return content.(*data.Content), err
-}
-
-func (r *Reform) selectContentAbs(ctx context.Context, tx *reform.TX, filters []utils.Argument) (*data.Content, error) {
-	content, err := requests.SelectOneAbs(ctx, r.db, tx, filters, data.ContentTable)
 
 	if content == nil {
 		return nil, err

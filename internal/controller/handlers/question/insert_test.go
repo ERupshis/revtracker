@@ -54,7 +54,7 @@ func TestInsert(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				body:       []byte("Id: 1"),
+				body:       []byte("Id: 0"),
 			},
 		},
 		{

@@ -13,7 +13,7 @@ import (
 func Update(ctx context.Context, db *reform.DB, tx *reform.TX, record reform.Record) error {
 	tail, values := utils.CreateTailAndParams(db, []utils.Argument{utils.CreateArgument(constants.ColID, record.PKValue())}, 0)
 
-	insertOrUpdateFunc := func(tx *reform.TX) error {
+	updateFunc := func(tx *reform.TX) error {
 		reformStruct, err := tx.SelectOneFrom(record.View(), utils.AddDeletedCheck(tail, false), values...)
 		if err != nil {
 			return fmt.Errorf("try to select elem: %w", err)
@@ -25,9 +25,9 @@ func Update(ctx context.Context, db *reform.DB, tx *reform.TX, record reform.Rec
 
 	var err error
 	if tx != nil {
-		err = insertOrUpdateFunc(tx)
+		err = updateFunc(tx)
 	} else {
-		err = db.InTransactionContext(ctx, nil, insertOrUpdateFunc)
+		err = db.InTransactionContext(ctx, nil, updateFunc)
 	}
 
 	if err != nil {

@@ -21,7 +21,7 @@ func SelectOne(ctx context.Context, db *reform.DB, tx *reform.TX, filters []util
 		content, err = db.WithContext(ctx).SelectOneFrom(table, utils.AddDeletedCheck(tail, false), values...)
 	}
 
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+	if err != nil {
 		return nil, fmt.Errorf("select %s by ID: %w", table.Name(), err)
 	}
 

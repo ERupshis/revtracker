@@ -1,7 +1,9 @@
 package question
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/erupshis/revtracker/internal/controller/handlers/utils"
@@ -46,8 +48,8 @@ func Update(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 		}
 
 		if err := storage.UpdateQuestion(c.Context(), question); err != nil {
-			if utils.IsUniqueConstraint(err) {
-				c.Status(fiber.StatusConflict)
+			if errors.Is(err, sql.ErrNoRows) {
+				c.Status(fiber.StatusNoContent)
 			} else {
 				c.Status(fiber.StatusInternalServerError)
 			}
