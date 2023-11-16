@@ -1,6 +1,8 @@
 package homeworkquestion
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/erupshis/revtracker/internal/controller/handlers/utils"
@@ -20,8 +22,13 @@ func Delete(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 		}
 
 		if err = storage.DeleteHomeworkQuestionByID(c.Context(), ID); err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				c.Status(fiber.StatusNoContent)
+			} else {
+				c.Status(fiber.StatusInternalServerError)
+			}
+
 			log.Info("%s failed to delete: %v", fmt.Sprintf(packagePath, constants.Delete), err)
-			c.Status(fiber.StatusInternalServerError)
 			return nil
 		}
 

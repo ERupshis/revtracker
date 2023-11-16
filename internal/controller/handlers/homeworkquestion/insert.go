@@ -32,9 +32,12 @@ func Insert(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 			return nil
 		}
 
+		homeworkQuestion.ID = 0
 		if err := storage.InsertHomeworkQuestion(c.Context(), homeworkQuestion); err != nil {
-			if utils.IsForeignKeyConstraint(err) || utils.IsUniqueConstraint(err) {
+			if utils.IsForeignKeyConstraint(err) || utils.IsUniqueConstraint(err) || utils.IsQuestionAlreadyInHomework(err) {
 				c.Status(fiber.StatusConflict)
+			} else if utils.IsQuestionNotFound(err) {
+				c.Status(fiber.StatusBadRequest)
 			} else {
 				c.Status(fiber.StatusInternalServerError)
 			}

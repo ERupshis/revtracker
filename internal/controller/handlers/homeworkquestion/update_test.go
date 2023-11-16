@@ -2,11 +2,13 @@ package homeworkquestion
 
 import (
 	"bytes"
+	"database/sql"
 	"fmt"
 	"io"
 	"net/http"
 	"testing"
 
+	utilsHandlers "github.com/erupshis/revtracker/internal/controller/handlers/utils"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
 	"github.com/erupshis/revtracker/internal/utils"
@@ -29,6 +31,9 @@ func TestUpdate(t *testing.T) {
 		mockStorage.EXPECT().UpdateHomeworkQuestion(gomock.Any(), gomock.Any()).Return(nil),
 		mockStorage.EXPECT().UpdateHomeworkQuestion(gomock.Any(), gomock.Any()).Return(nil),
 		mockStorage.EXPECT().UpdateHomeworkQuestion(gomock.Any(), gomock.Any()).Return(fmt.Errorf("test err")),
+		mockStorage.EXPECT().UpdateHomeworkQuestion(gomock.Any(), gomock.Any()).Return(utilsHandlers.ErrQuestionAlreadyInHomework),
+		mockStorage.EXPECT().UpdateHomeworkQuestion(gomock.Any(), gomock.Any()).Return(utilsHandlers.ErrQuestionNotFound),
+		mockStorage.EXPECT().UpdateHomeworkQuestion(gomock.Any(), gomock.Any()).Return(sql.ErrNoRows),
 	)
 
 	type args struct {
@@ -173,6 +178,45 @@ func TestUpdate(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusInternalServerError,
+				body:       []byte(""),
+			},
+		},
+		{
+			name: "question already in homework",
+			args: args{
+				storage:  nil,
+				log:      testLog,
+				paramURI: "/1",
+				body:     []byte(`{"Id":1,"Homework_Id":1,"Question_Id":1,"Order":1}`),
+			},
+			want: want{
+				statusCode: fiber.StatusConflict,
+				body:       []byte(""),
+			},
+		},
+		{
+			name: "question is not found",
+			args: args{
+				storage:  nil,
+				log:      testLog,
+				paramURI: "/1",
+				body:     []byte(`{"Id":1,"Homework_Id":1,"Question_Id":1,"Order":1}`),
+			},
+			want: want{
+				statusCode: fiber.StatusBadRequest,
+				body:       []byte(""),
+			},
+		},
+		{
+			name: "homework_question ID is not found",
+			args: args{
+				storage:  nil,
+				log:      testLog,
+				paramURI: "/1",
+				body:     []byte(`{"Id":1,"Homework_Id":1,"Question_Id":1,"Order":1}`),
+			},
+			want: want{
+				statusCode: fiber.StatusNoContent,
 				body:       []byte(""),
 			},
 		},

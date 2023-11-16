@@ -1,6 +1,7 @@
 package homeworkquestion
 
 import (
+	"database/sql"
 	"fmt"
 	"io"
 	"net/http"
@@ -26,6 +27,7 @@ func TestDelete(t *testing.T) {
 	gomock.InOrder(
 		mockStorage.EXPECT().DeleteHomeworkQuestionByID(gomock.Any(), gomock.Any()).Return(nil),
 		mockStorage.EXPECT().DeleteHomeworkQuestionByID(gomock.Any(), gomock.Any()).Return(fmt.Errorf("error")),
+		mockStorage.EXPECT().DeleteHomeworkQuestionByID(gomock.Any(), gomock.Any()).Return(sql.ErrNoRows),
 	)
 
 	type args struct {
@@ -75,6 +77,18 @@ func TestDelete(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusInternalServerError,
+				body:       []byte(""),
+			},
+		},
+		{
+			name: "missing homework_question in db",
+			args: args{
+				storage:  nil,
+				log:      testLog,
+				paramURI: "/1",
+			},
+			want: want{
+				statusCode: fiber.StatusNoContent,
 				body:       []byte(""),
 			},
 		},
