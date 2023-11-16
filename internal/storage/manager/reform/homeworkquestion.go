@@ -2,7 +2,6 @@ package reform
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 
@@ -10,12 +9,13 @@ import (
 	"github.com/erupshis/revtracker/internal/db/constants"
 	"github.com/erupshis/revtracker/internal/db/requests"
 	"github.com/erupshis/revtracker/internal/db/utils"
+	storageErrors "github.com/erupshis/revtracker/internal/storage/errors"
 	"gopkg.in/reform.v1"
 )
 
 func (r *Reform) InsertHomeworkQuestion(ctx context.Context, homeworkQuestion *data.HomeworkQuestion) error {
 	homeworkQuestions, err := r.selectHomeworkQuestions(ctx, nil, []utils.Argument{utils.CreateArgument(constants.ColHomeworkID, homeworkQuestion.HomeworkID)})
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+	if err != nil && !errors.Is(err, storageErrors.ErrNoContent) {
 		return fmt.Errorf("select homework questions by ID '%d'", homeworkQuestion.ID)
 	}
 

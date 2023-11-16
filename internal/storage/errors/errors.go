@@ -1,10 +1,13 @@
 package errors
 
 import (
+	"database/sql"
 	"errors"
 
 	"github.com/jackc/pgconn"
 )
+
+var ErrNoContent = sql.ErrNoRows
 
 func IsLinkBetweenDataProblem(err error) bool {
 	var pgErr *pgconn.PgError

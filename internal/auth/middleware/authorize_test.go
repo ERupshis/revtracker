@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"database/sql"
 	"fmt"
 	"net/http"
 	"testing"
@@ -9,6 +8,7 @@ import (
 	"github.com/erupshis/revtracker/internal/auth/data"
 	"github.com/erupshis/revtracker/internal/auth/jwtgenerator"
 	"github.com/erupshis/revtracker/internal/logger"
+	"github.com/erupshis/revtracker/internal/storage/errors"
 	"github.com/erupshis/revtracker/internal/utils"
 	"github.com/erupshis/revtracker/mocks"
 	"github.com/gofiber/fiber/v2"
@@ -48,7 +48,7 @@ func TestAuthorizeUser(t *testing.T) {
 	gomock.InOrder(
 		mockStorage.EXPECT().SelectUserByID(gomock.Any(), gomock.Any()).Return(&user1, nil),
 		mockStorage.EXPECT().SelectUserByID(gomock.Any(), gomock.Any()).Return(nil, fmt.Errorf("db error")),
-		mockStorage.EXPECT().SelectUserByID(gomock.Any(), gomock.Any()).Return(nil, sql.ErrNoRows),
+		mockStorage.EXPECT().SelectUserByID(gomock.Any(), gomock.Any()).Return(nil, errors.ErrNoContent),
 		mockStorage.EXPECT().SelectUserByID(gomock.Any(), gomock.Any()).Return(&user1, nil),
 	)
 

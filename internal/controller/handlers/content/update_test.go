@@ -2,7 +2,6 @@ package content
 
 import (
 	"bytes"
-	"database/sql"
 	"fmt"
 	"io"
 	"net/http"
@@ -10,6 +9,7 @@ import (
 
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
+	"github.com/erupshis/revtracker/internal/storage/errors"
 	"github.com/erupshis/revtracker/internal/utils"
 	"github.com/erupshis/revtracker/mocks"
 	"github.com/gofiber/fiber/v2"
@@ -29,7 +29,7 @@ func TestUpdate(t *testing.T) {
 		mockStorage.EXPECT().UpdateContent(gomock.Any(), gomock.Any()).Return(nil),
 		mockStorage.EXPECT().UpdateContent(gomock.Any(), gomock.Any()).Return(nil),
 		mockStorage.EXPECT().UpdateContent(gomock.Any(), gomock.Any()).Return(fmt.Errorf("test err")),
-		mockStorage.EXPECT().UpdateContent(gomock.Any(), gomock.Any()).Return(sql.ErrNoRows),
+		mockStorage.EXPECT().UpdateContent(gomock.Any(), gomock.Any()).Return(errors.ErrNoContent),
 	)
 
 	type args struct {

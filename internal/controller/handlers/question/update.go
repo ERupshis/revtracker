@@ -1,7 +1,6 @@
 package question
 
 import (
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,6 +11,7 @@ import (
 	"github.com/erupshis/revtracker/internal/db/constants"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
+	storageErrors "github.com/erupshis/revtracker/internal/storage/errors"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -48,7 +48,7 @@ func Update(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 		}
 
 		if err := storage.UpdateQuestion(c.Context(), question); err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
+			if errors.Is(err, storageErrors.ErrNoContent) {
 				c.Status(fiber.StatusNoContent)
 			} else {
 				c.Status(fiber.StatusInternalServerError)

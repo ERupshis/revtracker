@@ -1,7 +1,6 @@
 package homeworkquestion
 
 import (
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -44,7 +43,7 @@ func Update(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 		if err := storage.UpdateHomeworkQuestion(c.Context(), homeworkQuestion); err != nil {
 			if storageErrors.IsLinkBetweenDataProblem(err) || storageErrors.IsQuestionAlreadyInHomework(err) {
 				c.Status(fiber.StatusConflict)
-			} else if errors.Is(err, sql.ErrNoRows) {
+			} else if errors.Is(err, storageErrors.ErrNoContent) {
 				c.Status(fiber.StatusNoContent)
 			} else if storageErrors.IsQuestionNotFound(err) {
 				c.Status(fiber.StatusBadRequest)

@@ -2,7 +2,6 @@ package homeworkquestion
 
 import (
 	"bytes"
-	"database/sql"
 	"fmt"
 	"io"
 	"net/http"
@@ -33,7 +32,7 @@ func TestUpdate(t *testing.T) {
 		mockStorage.EXPECT().UpdateHomeworkQuestion(gomock.Any(), gomock.Any()).Return(fmt.Errorf("test err")),
 		mockStorage.EXPECT().UpdateHomeworkQuestion(gomock.Any(), gomock.Any()).Return(errors.ErrQuestionAlreadyInHomework),
 		mockStorage.EXPECT().UpdateHomeworkQuestion(gomock.Any(), gomock.Any()).Return(errors.ErrQuestionNotFound),
-		mockStorage.EXPECT().UpdateHomeworkQuestion(gomock.Any(), gomock.Any()).Return(sql.ErrNoRows),
+		mockStorage.EXPECT().UpdateHomeworkQuestion(gomock.Any(), gomock.Any()).Return(errors.ErrNoContent),
 	)
 
 	type args struct {
