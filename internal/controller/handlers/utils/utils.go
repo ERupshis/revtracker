@@ -33,18 +33,7 @@ func GetIDFromParams(c *fiber.Ctx) (int64, error) {
 	return int64(ID), nil
 }
 
-func IsUniqueConstraint(err error) bool {
-	var pgErr *pgconn.PgError
-	if errors.As(err, &pgErr) {
-		if pgErr.Code == "23505" {
-			return true
-		}
-	}
-
-	return false
-}
-
-func IsForeignKeyConstraint(err error) bool {
+func IsLinkBetweenDataProblem(err error) bool {
 	var pgErr *pgconn.PgError
 	if errors.As(err, &pgErr) {
 		if pgErr.Code == "23503" {

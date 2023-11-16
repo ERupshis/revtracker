@@ -47,12 +47,7 @@ func Update(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 		}
 
 		if err := storage.UpdateData(c.Context(), homeworkData); err != nil {
-			if utils.IsUniqueConstraint(err) {
-				c.Status(fiber.StatusConflict)
-			} else {
-				c.Status(fiber.StatusInternalServerError)
-			}
-
+			c.Status(fiber.StatusInternalServerError)
 			log.Info("%s failed to add: %v", fmt.Sprintf(packagePath, constants.Update), err)
 			return nil
 		}

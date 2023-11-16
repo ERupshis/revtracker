@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/erupshis/revtracker/internal/controller/handlers/utils"
 	"github.com/erupshis/revtracker/internal/data"
 	utilsData "github.com/erupshis/revtracker/internal/data/utils"
 	"github.com/erupshis/revtracker/internal/db/constants"
@@ -42,12 +41,7 @@ func Insert(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 		question.ID = 0
 		question.ContentID = 0
 		if err := storage.InsertQuestion(c.Context(), question); err != nil {
-			if utils.IsUniqueConstraint(err) {
-				c.Status(fiber.StatusConflict)
-			} else {
-				c.Status(fiber.StatusInternalServerError)
-			}
-
+			c.Status(fiber.StatusInternalServerError)
 			log.Info("%s failed to add: %v", fmt.Sprintf(packagePath, constants.Insert), err)
 			return nil
 		}

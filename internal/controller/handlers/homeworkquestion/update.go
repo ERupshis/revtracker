@@ -41,7 +41,7 @@ func Update(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 		}
 
 		if err := storage.UpdateHomeworkQuestion(c.Context(), homeworkQuestion); err != nil {
-			if utils.IsForeignKeyConstraint(err) || utils.IsQuestionAlreadyInHomework(err) {
+			if utils.IsLinkBetweenDataProblem(err) || utils.IsQuestionAlreadyInHomework(err) {
 				c.Status(fiber.StatusConflict)
 			} else if errors.Is(err, sql.ErrNoRows) {
 				c.Status(fiber.StatusNoContent)
