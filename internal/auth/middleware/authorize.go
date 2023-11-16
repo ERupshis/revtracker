@@ -2,6 +2,8 @@ package middleware
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -34,14 +36,14 @@ func AuthorizeUser(userRoleRequirement int, usersStorage storage.BaseUsersStorag
 		userID := jwt.GetUserID(token[1])
 		userData, err := usersStorage.SelectUserByID(c.Context(), userID)
 		if err != nil {
-			log.Info("[auth:middleware:Authorize] failed to search user in system: %v", err)
-			c.Status(http.StatusInternalServerError)
-			return nil
-		}
+			if errors.Is(err, sql.ErrNoRows) {
+				c.Status(http.StatusUnauthorized)
+				log.Info("[auth:middleware:Authorize] user is not registered in system")
+			} else {
+				c.Status(http.StatusInternalServerError)
+				log.Info("[auth:middleware:Authorize] failed to search user in system: %v", err)
+			}
 
-		if userData == nil {
-			log.Info("[auth:middleware:Authorize] user is not registered in system")
-			c.Status(http.StatusUnauthorized)
 			return nil
 		}
 

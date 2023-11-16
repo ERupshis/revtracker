@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
 	"testing"
@@ -47,7 +48,7 @@ func TestAuthorizeUser(t *testing.T) {
 	gomock.InOrder(
 		mockStorage.EXPECT().SelectUserByID(gomock.Any(), gomock.Any()).Return(&user1, nil),
 		mockStorage.EXPECT().SelectUserByID(gomock.Any(), gomock.Any()).Return(nil, fmt.Errorf("db error")),
-		mockStorage.EXPECT().SelectUserByID(gomock.Any(), gomock.Any()).Return(nil, nil),
+		mockStorage.EXPECT().SelectUserByID(gomock.Any(), gomock.Any()).Return(nil, sql.ErrNoRows),
 		mockStorage.EXPECT().SelectUserByID(gomock.Any(), gomock.Any()).Return(&user1, nil),
 	)
 
