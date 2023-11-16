@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"testing"
 
-	utilsHandlers "github.com/erupshis/revtracker/internal/controller/handlers/utils"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
+	"github.com/erupshis/revtracker/internal/storage/errors"
 	"github.com/erupshis/revtracker/internal/utils"
 	"github.com/erupshis/revtracker/mocks"
 	"github.com/gofiber/fiber/v2"
@@ -31,8 +31,8 @@ func TestUpdate(t *testing.T) {
 		mockStorage.EXPECT().UpdateHomeworkQuestion(gomock.Any(), gomock.Any()).Return(nil),
 		mockStorage.EXPECT().UpdateHomeworkQuestion(gomock.Any(), gomock.Any()).Return(nil),
 		mockStorage.EXPECT().UpdateHomeworkQuestion(gomock.Any(), gomock.Any()).Return(fmt.Errorf("test err")),
-		mockStorage.EXPECT().UpdateHomeworkQuestion(gomock.Any(), gomock.Any()).Return(utilsHandlers.ErrQuestionAlreadyInHomework),
-		mockStorage.EXPECT().UpdateHomeworkQuestion(gomock.Any(), gomock.Any()).Return(utilsHandlers.ErrQuestionNotFound),
+		mockStorage.EXPECT().UpdateHomeworkQuestion(gomock.Any(), gomock.Any()).Return(errors.ErrQuestionAlreadyInHomework),
+		mockStorage.EXPECT().UpdateHomeworkQuestion(gomock.Any(), gomock.Any()).Return(errors.ErrQuestionNotFound),
 		mockStorage.EXPECT().UpdateHomeworkQuestion(gomock.Any(), gomock.Any()).Return(sql.ErrNoRows),
 	)
 

@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"testing"
 
-	utilsHandlers "github.com/erupshis/revtracker/internal/controller/handlers/utils"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
+	"github.com/erupshis/revtracker/internal/storage/errors"
 	"github.com/erupshis/revtracker/internal/utils"
 	"github.com/erupshis/revtracker/mocks"
 	"github.com/gofiber/fiber/v2"
@@ -28,8 +28,8 @@ func TestInsert(t *testing.T) {
 	gomock.InOrder(
 		mockStorage.EXPECT().InsertHomeworkQuestion(gomock.Any(), gomock.Any()).Return(nil),
 		mockStorage.EXPECT().InsertHomeworkQuestion(gomock.Any(), gomock.Any()).Return(fmt.Errorf("test err")),
-		mockStorage.EXPECT().InsertHomeworkQuestion(gomock.Any(), gomock.Any()).Return(utilsHandlers.ErrQuestionAlreadyInHomework),
-		mockStorage.EXPECT().InsertHomeworkQuestion(gomock.Any(), gomock.Any()).Return(utilsHandlers.ErrQuestionNotFound),
+		mockStorage.EXPECT().InsertHomeworkQuestion(gomock.Any(), gomock.Any()).Return(errors.ErrQuestionAlreadyInHomework),
+		mockStorage.EXPECT().InsertHomeworkQuestion(gomock.Any(), gomock.Any()).Return(errors.ErrQuestionNotFound),
 	)
 
 	type args struct {
