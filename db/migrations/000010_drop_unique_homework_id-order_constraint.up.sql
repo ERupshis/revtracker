@@ -37,7 +37,7 @@ $$
 BEGIN
     IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
         IF EXISTS(SELECT true FROM homework_questions
-                  WHERE homework_id = NEW.homework_id AND question_id = NEW.question_id AND deleted = false) THEN
+                  WHERE homework_id = NEW.homework_id AND question_id = NEW.question_id AND deleted = false AND NEW.deleted = false) THEN
             RAISE EXCEPTION 'same question already has been added in homework';
         ELSEIF NOT EXISTS(SELECT true FROM questions WHERE id = NEW.question_id AND deleted = false) THEN
             RAISE EXCEPTION 'question is not found';

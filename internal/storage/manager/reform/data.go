@@ -13,16 +13,16 @@ import (
 )
 
 func (r *Reform) InsertData(ctx context.Context, inData *data.Data) error {
-	return r.insertOrUpdateData(ctx, inData)
+	return r.insertData(ctx, inData)
 }
 
 func (r *Reform) UpdateData(ctx context.Context, inData *data.Data) error {
-	return r.insertOrUpdateData(ctx, inData)
+	return r.updateData(ctx, inData)
 }
 
 func (r *Reform) SelectDataAll(ctx context.Context) ([]data.Data, error) {
 	var res []data.Data
-	err := r.db.InTransactionContext(ctx, nil, func(tx *reform.TX) error {
+	selectAllDataFunc := func(tx *reform.TX) error {
 		homeworks, err := r.selectHomeworks(ctx, tx, nil)
 		if err != nil {
 			return fmt.Errorf("select all homewrokData: %w", err)
@@ -34,45 +34,36 @@ func (r *Reform) SelectDataAll(ctx context.Context) ([]data.Data, error) {
 				return fmt.Errorf("select all homewrokData: %w", err)
 			}
 
-			if homeworkData != nil {
-				res = append(res,
-					data.Data{
-						Homework: *homeworkData,
-					},
-				)
-			}
+			res = append(res, data.Data{Homework: *homeworkData})
 		}
 
 		return nil
-	})
+	}
 
+	err := r.db.InTransactionContext(ctx, nil, selectAllDataFunc)
 	return res, err
 }
 
 func (r *Reform) SelectDataByHomeworkID(ctx context.Context, ID int64) (*data.Data, error) {
 	var res *data.Data
-	err := r.db.InTransactionContext(ctx, nil, func(tx *reform.TX) error {
+	selectDataFunc := func(tx *reform.TX) error {
 		homeworkData, err := r.selectDataHomeworkByID(ctx, tx, ID)
 		if err != nil {
 			return fmt.Errorf("select homeworkData: %w", err)
 		}
 
-		if homeworkData != nil {
-			res = &data.Data{
-				Homework: *homeworkData,
-			}
-		}
-
+		res = &data.Data{Homework: *homeworkData}
 		return nil
-	})
+	}
 
+	err := r.db.InTransactionContext(ctx, nil, selectDataFunc)
 	return res, err
 }
 
 func (r *Reform) DeleteDataByHomeworkID(ctx context.Context, ID int64) error {
 	return r.db.InTransactionContext(ctx, nil, func(tx *reform.TX) error {
 		if err := requests.Delete(ctx, r.db, tx, []utils.Argument{utils.CreateArgument(constants.ColHomeworkID, ID)}, data.HomeworkQuestionTable); err != nil {
-			return fmt.Errorf("delete links in homework_question: %w", err)
+			return fmt.Errorf("delete links in homework_questions: %w", err)
 		}
 
 		if err := requests.Delete(ctx, r.db, tx, []utils.Argument{utils.CreateArgument(constants.ColID, ID)}, data.HomeworkTable); err != nil {
@@ -83,23 +74,18 @@ func (r *Reform) DeleteDataByHomeworkID(ctx context.Context, ID int64) error {
 	})
 }
 
-func (r *Reform) insertOrUpdateData(ctx context.Context, inData *data.Data) error {
-	homework := &data.Homework{
-		ID:   inData.Homework.ID,
-		Name: inData.Homework.Name,
-	}
-	questions := inData.Homework.Questions
-
+func (r *Reform) insertData(ctx context.Context, inData *data.Data) error {
 	return r.db.InTransactionContext(ctx, nil, func(tx *reform.TX) error {
+		homework := &data.Homework{
+			ID:   inData.Homework.ID,
+			Name: inData.Homework.Name,
+		}
+
 		if err := requests.InsertOrUpdate(ctx, r.db, tx, homework); err != nil {
-			return fmt.Errorf("insert/update homework: %w", err)
+			return fmt.Errorf("insert homework: %w", err)
 		}
 
-		if err := requests.Delete(ctx, r.db, tx, []utils.Argument{utils.CreateArgument(constants.ColHomeworkID, homework.ID)}, data.HomeworkQuestionTable); err != nil {
-			return fmt.Errorf("delete links in homework_question: %w", err)
-		}
-
-		if err := r.insertQuestions(ctx, tx, questions, homework.ID); err != nil {
+		if err := r.insertQuestions(ctx, tx, inData.Homework.Questions, homework.ID); err != nil {
 			return fmt.Errorf("insert/update questions: %w", err)
 		}
 
@@ -112,39 +98,49 @@ func (r *Reform) insertOrUpdateData(ctx context.Context, inData *data.Data) erro
 
 func (r *Reform) insertQuestions(ctx context.Context, tx *reform.TX, questions []data.Question, homeworkID int64) error {
 	for i := 0; i < len(questions); i++ {
-		question := &questions[i]
-
-		question.ContentID = question.Content.ID
-		existingQuestion, err := r.selectQuestion(ctx, tx, []utils.Argument{utils.CreateArgument(constants.ColName, question.Name)}, false)
-		if err != nil {
-			return fmt.Errorf("select existing question: %w", err)
-		}
-
-		if existingQuestion != nil {
-			question.ID = existingQuestion.ID
-			question.ContentID = existingQuestion.ContentID
-			question.Content.ID = existingQuestion.ContentID
-		}
-
-		if err = requests.InsertOrUpdate(ctx, r.db, tx, question); err != nil {
-			return fmt.Errorf("insert/update question: %w", err)
-		}
-
-		if err = requests.InsertOrUpdate(ctx, r.db, tx, &question.Content); err != nil {
-			return fmt.Errorf("insert/update content: %w", err)
+		questions[i].ID = 0
+		if err := r.insertQuestionAndContent(ctx, tx, &questions[i]); err != nil {
+			return fmt.Errorf("insert question: %w", err)
 		}
 
 		homeworkQuestion := &data.HomeworkQuestion{
 			HomeworkID: homeworkID,
-			QuestionID: question.ID,
+			QuestionID: questions[i].ID,
 			Order:      int64(i),
 		}
 
 		if err := requests.InsertOrUpdate(ctx, r.db, tx, homeworkQuestion); err != nil {
-			return fmt.Errorf("insert/update homework-question link. element's order '%d'(%w)", i, err)
+			return fmt.Errorf("insert homework-question link. element's order '%d'(%w)", i, err)
 		}
 	}
 	return nil
+}
+
+func (r *Reform) updateData(ctx context.Context, inData *data.Data) error {
+	homework := &data.Homework{
+		ID:   inData.Homework.ID,
+		Name: inData.Homework.Name,
+	}
+	questions := inData.Homework.Questions
+
+	return r.db.InTransactionContext(ctx, nil, func(tx *reform.TX) error {
+		if err := requests.Update(ctx, r.db, tx, homework); err != nil {
+			return fmt.Errorf("insert/update homework: %w", err)
+		}
+
+		if err := requests.Delete(ctx, r.db, tx, []utils.Argument{utils.CreateArgument(constants.ColHomeworkID, homework.ID)}, data.HomeworkQuestionTable); err != nil {
+			return fmt.Errorf("delete links in homework_question: %w", err)
+		}
+
+		if err := r.insertQuestions(ctx, tx, questions, homework.ID); err != nil {
+			return fmt.Errorf("update questions: %w", err)
+		}
+
+		inData.Homework.ID = homework.ID
+		inData.Homework.Name = homework.Name
+
+		return nil
+	})
 }
 
 func (r *Reform) getOrderedQuestionIDs(ctx context.Context, tx *reform.TX, homeworkID int64) ([]int64, error) {
@@ -153,9 +149,7 @@ func (r *Reform) getOrderedQuestionIDs(ctx context.Context, tx *reform.TX, homew
 		return nil, fmt.Errorf("select questions: %w", err)
 	}
 
-	sort.Slice(homeworkQuestions, func(l, r int) bool {
-		return homeworkQuestions[l].Order < homeworkQuestions[r].Order
-	})
+	sort.Slice(homeworkQuestions, func(l, r int) bool { return homeworkQuestions[l].Order < homeworkQuestions[r].Order })
 
 	var res []int64
 	for _, hq := range homeworkQuestions {
@@ -173,7 +167,7 @@ func (r *Reform) getQuestions(ctx context.Context, tx *reform.TX, homeworkID int
 
 	var res []data.Question
 	for _, questionID := range questionsOrder {
-		question, err := r.selectQuestion(ctx, tx, []utils.Argument{utils.CreateArgument(constants.ColID, questionID)}, false)
+		question, err := r.selectQuestion(ctx, tx, []utils.Argument{utils.CreateArgument(constants.ColID, questionID)})
 		if err != nil {
 			return nil, fmt.Errorf("get question from db: %w", err)
 		}
@@ -188,10 +182,6 @@ func (r *Reform) selectDataHomeworkByID(ctx context.Context, tx *reform.TX, ID i
 	homework, err := r.selectHomework(ctx, tx, []utils.Argument{utils.CreateArgument(constants.ColID, ID)})
 	if err != nil {
 		return nil, fmt.Errorf("select homework: %w", err)
-	}
-
-	if homework == nil {
-		return nil, nil
 	}
 
 	questions, err := r.getQuestions(ctx, tx, homework.ID)
