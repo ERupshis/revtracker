@@ -8,6 +8,7 @@ import (
 
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
+	"github.com/erupshis/revtracker/internal/storage/errors"
 	"github.com/erupshis/revtracker/internal/utils"
 	"github.com/erupshis/revtracker/mocks"
 	"github.com/gofiber/fiber/v2"
@@ -26,6 +27,7 @@ func TestDelete(t *testing.T) {
 	gomock.InOrder(
 		mockStorage.EXPECT().DeleteDataByHomeworkID(gomock.Any(), gomock.Any()).Return(nil),
 		mockStorage.EXPECT().DeleteDataByHomeworkID(gomock.Any(), gomock.Any()).Return(fmt.Errorf("error")),
+		mockStorage.EXPECT().DeleteDataByHomeworkID(gomock.Any(), gomock.Any()).Return(errors.ErrNoContent),
 	)
 
 	type args struct {
@@ -75,6 +77,18 @@ func TestDelete(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusInternalServerError,
+				body:       []byte(""),
+			},
+		},
+		{
+			name: "missing data with given id",
+			args: args{
+				storage:  nil,
+				log:      testLog,
+				paramURI: "/1",
+			},
+			want: want{
+				statusCode: fiber.StatusNoContent,
 				body:       []byte(""),
 			},
 		},

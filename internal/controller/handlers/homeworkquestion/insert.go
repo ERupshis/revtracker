@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/erupshis/revtracker/internal/controller/handlers/utils"
 	"github.com/erupshis/revtracker/internal/data"
 	"github.com/erupshis/revtracker/internal/db/constants"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
+	"github.com/erupshis/revtracker/internal/storage/errors"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -32,9 +32,12 @@ func Insert(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 			return nil
 		}
 
+		homeworkQuestion.ID = 0
 		if err := storage.InsertHomeworkQuestion(c.Context(), homeworkQuestion); err != nil {
-			if utils.IsForeignKeyConstraint(err) || utils.IsUniqueConstraint(err) {
+			if errors.IsLinkBetweenDataProblem(err) || errors.IsQuestionAlreadyInHomework(err) {
 				c.Status(fiber.StatusConflict)
+			} else if errors.IsQuestionNotFound(err) {
+				c.Status(fiber.StatusBadRequest)
 			} else {
 				c.Status(fiber.StatusInternalServerError)
 			}

@@ -1,7 +1,6 @@
 package content
 
 import (
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -10,6 +9,7 @@ import (
 	"github.com/erupshis/revtracker/internal/db/constants"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
+	storageErrors "github.com/erupshis/revtracker/internal/storage/errors"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -24,7 +24,7 @@ func Select(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 
 		content, err := storage.SelectContentByID(c.Context(), ID)
 		if err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
+			if errors.Is(err, storageErrors.ErrNoContent) {
 				log.Info("%s couldn't find: %v", fmt.Sprintf(packagePath, constants.Select), err)
 				c.Status(fiber.StatusNoContent)
 				return nil

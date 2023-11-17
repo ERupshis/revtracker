@@ -31,6 +31,7 @@ func Insert(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 			return nil
 		}
 
+		content.ID = 0
 		if err := storage.InsertContent(c.Context(), content); err != nil {
 			log.Info("%s failed to add: %v", fmt.Sprintf(packagePath, constants.Insert), err)
 			c.Status(fiber.StatusInternalServerError)

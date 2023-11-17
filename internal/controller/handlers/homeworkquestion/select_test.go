@@ -1,7 +1,6 @@
 package homeworkquestion
 
 import (
-	"database/sql"
 	"fmt"
 	"io"
 	"net/http"
@@ -10,6 +9,7 @@ import (
 	"github.com/erupshis/revtracker/internal/data"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
+	"github.com/erupshis/revtracker/internal/storage/errors"
 	"github.com/erupshis/revtracker/internal/utils"
 	"github.com/erupshis/revtracker/mocks"
 	"github.com/gofiber/fiber/v2"
@@ -34,7 +34,7 @@ func TestSelect(t *testing.T) {
 	mockStorage := mocks.NewMockBaseStorage(ctrl)
 	gomock.InOrder(
 		mockStorage.EXPECT().SelectHomeworkQuestionsByHomeworkID(gomock.Any(), gomock.Any()).Return([]data.HomeworkQuestion{*question}, nil),
-		mockStorage.EXPECT().SelectHomeworkQuestionsByHomeworkID(gomock.Any(), gomock.Any()).Return(nil, sql.ErrNoRows),
+		mockStorage.EXPECT().SelectHomeworkQuestionsByHomeworkID(gomock.Any(), gomock.Any()).Return(nil, errors.ErrNoContent),
 		mockStorage.EXPECT().SelectHomeworkQuestionsByHomeworkID(gomock.Any(), gomock.Any()).Return(nil, fmt.Errorf("test err")),
 		mockStorage.EXPECT().SelectHomeworkQuestions(gomock.Any()).Return([]data.HomeworkQuestion{*question}, nil),
 	)

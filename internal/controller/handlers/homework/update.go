@@ -2,6 +2,7 @@ package homework
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/erupshis/revtracker/internal/controller/handlers/utils"
@@ -9,6 +10,7 @@ import (
 	"github.com/erupshis/revtracker/internal/db/constants"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
+	storageErrors "github.com/erupshis/revtracker/internal/storage/errors"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -39,8 +41,8 @@ func Update(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 		}
 
 		if err := storage.UpdateHomework(c.Context(), homework); err != nil {
-			if utils.IsUniqueConstraint(err) {
-				c.Status(fiber.StatusConflict)
+			if errors.Is(err, storageErrors.ErrNoContent) {
+				c.Status(fiber.StatusNoContent)
 			} else {
 				c.Status(fiber.StatusInternalServerError)
 			}

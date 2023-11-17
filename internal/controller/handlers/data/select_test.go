@@ -1,7 +1,6 @@
 package data
 
 import (
-	"database/sql"
 	"fmt"
 	"io"
 	"net/http"
@@ -10,6 +9,7 @@ import (
 	"github.com/erupshis/revtracker/internal/data"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
+	"github.com/erupshis/revtracker/internal/storage/errors"
 	"github.com/erupshis/revtracker/internal/utils"
 	"github.com/erupshis/revtracker/mocks"
 	"github.com/gofiber/fiber/v2"
@@ -50,7 +50,7 @@ func TestSelect(t *testing.T) {
 	mockStorage := mocks.NewMockBaseStorage(ctrl)
 	gomock.InOrder(
 		mockStorage.EXPECT().SelectDataByHomeworkID(gomock.Any(), gomock.Any()).Return(inData, nil),
-		mockStorage.EXPECT().SelectDataByHomeworkID(gomock.Any(), gomock.Any()).Return(nil, sql.ErrNoRows),
+		mockStorage.EXPECT().SelectDataByHomeworkID(gomock.Any(), gomock.Any()).Return(nil, errors.ErrNoContent),
 		mockStorage.EXPECT().SelectDataByHomeworkID(gomock.Any(), gomock.Any()).Return(nil, fmt.Errorf("test err")),
 	)
 

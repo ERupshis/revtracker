@@ -1,7 +1,6 @@
 package data
 
 import (
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -11,6 +10,7 @@ import (
 	"github.com/erupshis/revtracker/internal/db/constants"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
+	storageErrors "github.com/erupshis/revtracker/internal/storage/errors"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -31,9 +31,14 @@ func Select(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 			homeworksData, err = storage.SelectDataAll(c.Context())
 		}
 
-		if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		if err != nil {
+			if errors.Is(err, storageErrors.ErrNoContent) {
+				c.Status(fiber.StatusNoContent)
+			} else {
+				c.Status(fiber.StatusInternalServerError)
+			}
+
 			log.Info("%s failed to find: %v", fmt.Sprintf(packagePath, constants.Select), err)
-			c.Status(fiber.StatusInternalServerError)
 			return nil
 		}
 
@@ -42,10 +47,6 @@ func Select(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 			response, err = json.Marshal(homeworkData)
 		} else if homeworksData != nil {
 			response, err = json.Marshal(homeworksData)
-		} else {
-			log.Info("%s data wasn't found for id '%d'", fmt.Sprintf(packagePath, constants.Select), ID)
-			c.Status(fiber.StatusNoContent)
-			return nil
 		}
 
 		if err != nil {

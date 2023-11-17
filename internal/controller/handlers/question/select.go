@@ -1,7 +1,6 @@
 package question
 
 import (
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -11,6 +10,7 @@ import (
 	"github.com/erupshis/revtracker/internal/db/constants"
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
+	storageErrors "github.com/erupshis/revtracker/internal/storage/errors"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -31,7 +31,7 @@ func Select(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 			questions, err = storage.SelectQuestions(c.Context())
 		}
 
-		if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		if err != nil && !errors.Is(err, storageErrors.ErrNoContent) {
 			log.Info("%s failed to find: %v", fmt.Sprintf(packagePath, constants.Select), err)
 			c.Status(fiber.StatusInternalServerError)
 			return nil

@@ -16,7 +16,7 @@ func (r *Reform) InsertQuestion(ctx context.Context, question *data.Question) er
 }
 
 func (r *Reform) UpdateQuestion(ctx context.Context, question *data.Question) error {
-	return r.insertQuestionAndContent(ctx, nil, question)
+	return r.updateQuestionAndContent(ctx, nil, question)
 }
 
 func (r *Reform) SelectQuestions(ctx context.Context) ([]data.Question, error) {
@@ -24,7 +24,7 @@ func (r *Reform) SelectQuestions(ctx context.Context) ([]data.Question, error) {
 }
 
 func (r *Reform) SelectQuestionByID(ctx context.Context, ID int64) (*data.Question, error) {
-	return r.selectQuestion(ctx, nil, []utils.Argument{utils.CreateArgument(constants.ColID, ID)}, false)
+	return r.selectQuestion(ctx, nil, []utils.Argument{utils.CreateArgument(constants.ColID, ID)})
 }
 
 func (r *Reform) DeleteQuestionByID(ctx context.Context, ID int64) error {
@@ -32,24 +32,14 @@ func (r *Reform) DeleteQuestionByID(ctx context.Context, ID int64) error {
 }
 
 func (r *Reform) insertQuestionAndContent(ctx context.Context, tx *reform.TX, question *data.Question) error {
-	insertOrUpdateFunc := func(tx *reform.TX) error {
-		currentQuestion, err := r.selectQuestion(ctx, nil, []utils.Argument{utils.CreateArgument(constants.ColID, question.ID)}, true)
-		if err != nil {
-			return fmt.Errorf("insert question: check question in db: %w", err)
-		}
-
-		if currentQuestion != nil {
-			question.ContentID = currentQuestion.ContentID
-			question.Content.ID = currentQuestion.ContentID
-		}
-
-		if err = requests.InsertOrUpdate(ctx, r.db, tx, &question.Content); err != nil {
+	insertFunc := func(tx *reform.TX) error {
+		if err := requests.InsertOrUpdate(ctx, r.db, tx, &question.Content); err != nil {
 			return fmt.Errorf("insert question: add content: %w", err)
 		}
 
 		question.ContentID = question.Content.ID
 
-		if err = requests.InsertOrUpdate(ctx, r.db, tx, question); err != nil {
+		if err := requests.InsertOrUpdate(ctx, r.db, tx, question); err != nil {
 			return fmt.Errorf("insert question: add question: %w", err)
 		}
 
@@ -57,13 +47,43 @@ func (r *Reform) insertQuestionAndContent(ctx context.Context, tx *reform.TX, qu
 	}
 
 	if tx != nil {
-		return insertOrUpdateFunc(tx)
+		return insertFunc(tx)
 	}
 
-	return r.db.InTransactionContext(ctx, nil, insertOrUpdateFunc)
+	return r.db.InTransactionContext(ctx, nil, insertFunc)
 }
 
-// TODO: need to add custom query.
+func (r *Reform) updateQuestionAndContent(ctx context.Context, tx *reform.TX, question *data.Question) error {
+	updateFunc := func(tx *reform.TX) error {
+		currentQuestion, err := r.selectQuestion(ctx, nil, []utils.Argument{utils.CreateArgument(constants.ColID, question.ID)})
+		if err != nil {
+			return fmt.Errorf("update question: check question in db: %w", err)
+		}
+
+		if currentQuestion != nil {
+			question.ContentID = currentQuestion.ContentID
+			question.Content.ID = currentQuestion.ContentID
+		}
+
+		if err = requests.Update(ctx, r.db, tx, &question.Content); err != nil {
+			return fmt.Errorf("update question's content: %w", err)
+		}
+
+		question.ContentID = question.Content.ID
+		if err = requests.Update(ctx, r.db, tx, question); err != nil {
+			return fmt.Errorf("update question: %w", err)
+		}
+
+		return nil
+	}
+
+	if tx != nil {
+		return updateFunc(tx)
+	}
+
+	return r.db.InTransactionContext(ctx, nil, updateFunc)
+}
+
 func (r *Reform) selectQuestions(ctx context.Context, tx *reform.TX, filters []utils.Argument) ([]data.Question, error) {
 	var questions []data.Question
 
@@ -71,10 +91,6 @@ func (r *Reform) selectQuestions(ctx context.Context, tx *reform.TX, filters []u
 		questionsRaw, err := requests.SelectAll(ctx, r.db, tx, filters, constants.ColID, data.QuestionTable)
 		if err != nil {
 			return fmt.Errorf("select question by filters '%v': %w", filters, err)
-		}
-
-		if questionsRaw == nil {
-			return nil
 		}
 
 		for _, q := range questionsRaw {
@@ -91,58 +107,42 @@ func (r *Reform) selectQuestions(ctx context.Context, tx *reform.TX, filters []u
 		return nil
 	}
 
+	var err error
 	if tx != nil {
-		err := selectFunc(tx)
-		return questions, err
+		err = selectFunc(tx)
+	} else {
+		err = r.db.InTransactionContext(ctx, nil, selectFunc)
 	}
 
-	err := r.db.InTransactionContext(ctx, nil, selectFunc)
 	return questions, err
 }
 
-// TODO: refactor selectQuestion methods.
-func (r *Reform) selectQuestion(ctx context.Context, tx *reform.TX, filters []utils.Argument, abs bool) (*data.Question, error) {
+func (r *Reform) selectQuestion(ctx context.Context, tx *reform.TX, filters []utils.Argument) (*data.Question, error) {
 	var question *data.Question
 
 	selectFunc := func(tx *reform.TX) error {
-		var questionRaw reform.Struct
-		var err error
-		if abs {
-			questionRaw, err = requests.SelectOneAbs(ctx, r.db, tx, filters, data.QuestionTable)
-		} else {
-			questionRaw, err = requests.SelectOne(ctx, r.db, tx, filters, data.QuestionTable)
-		}
-
+		questionRaw, err := requests.SelectOne(ctx, r.db, tx, filters, data.QuestionTable)
 		if err != nil {
 			return fmt.Errorf("select question by filters '%v': %w", filters, err)
 		}
 
-		if questionRaw == nil {
-			return nil
-		}
-
 		question = questionRaw.(*data.Question)
 		var questionContent *data.Content
-		if abs {
-			questionContent, err = r.selectContentAbs(ctx, tx, []utils.Argument{utils.CreateArgument(constants.ColID, question.ContentID)})
-		} else {
-			questionContent, err = r.selectContent(ctx, tx, []utils.Argument{utils.CreateArgument(constants.ColID, question.ContentID)})
-		}
-
+		questionContent, err = r.selectContent(ctx, tx, []utils.Argument{utils.CreateArgument(constants.ColID, question.ContentID)})
 		if err != nil {
-			return fmt.Errorf("select question by id '%d': %w", question.ContentID, err)
+			return fmt.Errorf("select condent by id '%d': %w", question.ContentID, err)
 		}
 
 		question.Content = *questionContent
-
 		return nil
 	}
 
+	var err error
 	if tx != nil {
-		err := selectFunc(tx)
-		return question, err
+		err = selectFunc(tx)
+	} else {
+		err = r.db.InTransactionContext(ctx, nil, selectFunc)
 	}
 
-	err := r.db.InTransactionContext(ctx, nil, selectFunc)
 	return question, err
 }

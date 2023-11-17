@@ -2,9 +2,6 @@ package requests
 
 import (
 	"context"
-	"database/sql"
-	"errors"
-	"fmt"
 
 	"github.com/erupshis/revtracker/internal/db/utils"
 	"gopkg.in/reform.v1"
@@ -21,34 +18,8 @@ func SelectOne(ctx context.Context, db *reform.DB, tx *reform.TX, filters []util
 		content, err = db.WithContext(ctx).SelectOneFrom(table, utils.AddDeletedCheck(tail, false), values...)
 	}
 
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return nil, fmt.Errorf("select %s by ID: %w", table.Name(), err)
-	}
-
-	if content == nil {
-		return nil, nil
-	}
-
-	return content, nil
-}
-
-func SelectOneAbs(ctx context.Context, db *reform.DB, tx *reform.TX, filters []utils.Argument, table reform.Table) (reform.Struct, error) {
-	tail, values := utils.CreateTailAndParams(db, filters, 0)
-
-	var content reform.Struct
-	var err error
-	if tx != nil {
-		content, err = tx.SelectOneFrom(table, tail, values...)
-	} else {
-		content, err = db.WithContext(ctx).SelectOneFrom(table, utils.AddDeletedCheck(tail, false), values...)
-	}
-
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return nil, fmt.Errorf("select %s by ID: %w", table.Name(), err)
-	}
-
-	if content == nil {
-		return nil, nil
+	if err != nil {
+		return nil, err
 	}
 
 	return content, nil
@@ -69,12 +40,8 @@ func SelectAll(ctx context.Context, db *reform.DB, tx *reform.TX, filters []util
 		content, err = db.WithContext(ctx).SelectAllFrom(table, tail, values...)
 	}
 
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return nil, fmt.Errorf("select %s by ID: %w", table.Name(), err)
-	}
-
-	if content == nil {
-		return nil, nil
+	if err != nil {
+		return nil, err
 	}
 
 	return content, nil

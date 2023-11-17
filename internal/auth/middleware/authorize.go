@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -10,6 +11,7 @@ import (
 	"github.com/erupshis/revtracker/internal/auth/jwtgenerator"
 	"github.com/erupshis/revtracker/internal/auth/users/storage"
 	"github.com/erupshis/revtracker/internal/logger"
+	storageErrors "github.com/erupshis/revtracker/internal/storage/errors"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -34,14 +36,14 @@ func AuthorizeUser(userRoleRequirement int, usersStorage storage.BaseUsersStorag
 		userID := jwt.GetUserID(token[1])
 		userData, err := usersStorage.SelectUserByID(c.Context(), userID)
 		if err != nil {
-			log.Info("[auth:middleware:Authorize] failed to search user in system: %v", err)
-			c.Status(http.StatusInternalServerError)
-			return nil
-		}
+			if errors.Is(err, storageErrors.ErrNoContent) {
+				c.Status(http.StatusUnauthorized)
+				log.Info("[auth:middleware:Authorize] user is not registered in system")
+			} else {
+				c.Status(http.StatusInternalServerError)
+				log.Info("[auth:middleware:Authorize] failed to search user in system: %v", err)
+			}
 
-		if userData == nil {
-			log.Info("[auth:middleware:Authorize] user is not registered in system")
-			c.Status(http.StatusUnauthorized)
 			return nil
 		}
 

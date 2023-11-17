@@ -1,7 +1,8 @@
-package db
+package errors
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/jackc/pgerrcode"
 )
@@ -17,3 +18,5 @@ var DatabaseErrorsToRetry = []error{
 	errors.New(pgerrcode.TransactionResolutionUnknown),
 	errors.New(pgerrcode.ProtocolViolation),
 }
+
+var ErrRecordNotFound = fmt.Errorf("record wasn't found in db")

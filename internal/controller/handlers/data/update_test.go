@@ -9,6 +9,7 @@ import (
 
 	"github.com/erupshis/revtracker/internal/logger"
 	"github.com/erupshis/revtracker/internal/storage"
+	"github.com/erupshis/revtracker/internal/storage/errors"
 	"github.com/erupshis/revtracker/internal/utils"
 	"github.com/erupshis/revtracker/mocks"
 	"github.com/gofiber/fiber/v2"
@@ -29,6 +30,7 @@ func TestUpdate(t *testing.T) {
 		mockStorage.EXPECT().UpdateData(gomock.Any(), gomock.Any()).Return(nil),
 		mockStorage.EXPECT().UpdateData(gomock.Any(), gomock.Any()).Return(nil),
 		mockStorage.EXPECT().UpdateData(gomock.Any(), gomock.Any()).Return(fmt.Errorf("test err")),
+		mockStorage.EXPECT().UpdateData(gomock.Any(), gomock.Any()).Return(errors.ErrNoContent),
 	)
 
 	type args struct {
@@ -314,6 +316,35 @@ func TestUpdate(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusInternalServerError,
+				body:       []byte(""),
+			},
+		},
+		{
+			name: "missing given id",
+			args: args{
+				storage:  nil,
+				log:      testLog,
+				paramURI: "",
+				body: []byte(`{
+									"Homework": {
+										"Id": 1,
+										"Name": "hw_name",
+										"Questions": [
+											{
+												"Id": 1,
+												"Name": "q1_name",
+												"Content": {
+													"Task": "task1",
+													"Answer": "answer1",
+													"Solution": "solution1"
+												}
+											}
+										]
+									}
+								}`),
+			},
+			want: want{
+				statusCode: fiber.StatusNoContent,
 				body:       []byte(""),
 			},
 		},
