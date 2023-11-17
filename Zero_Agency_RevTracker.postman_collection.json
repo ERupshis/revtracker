@@ -1,0 +1,871 @@
+{
+	"info": {
+		"_postman_id": "b9edba99-3b8c-40a7-87c9-c1cd9f5bbf8a",
+		"name": "Zero Agency RevTracker",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28808105"
+	},
+	"item": [
+		{
+			"name": "homework",
+			"item": [
+				{
+					"name": "common",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDAwMDUxNDQsIlVzZXJJRCI6MX0.YJwqMagONwfehkqMTiT3jKjMTBpq4gZ21p2pzlaEbD0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"hw_1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/homework",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"homework"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "id in URI",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDAwMDUxNDQsIlVzZXJJRCI6MX0.YJwqMagONwfehkqMTiT3jKjMTBpq4gZ21p2pzlaEbD0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"hw_3\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/homework/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"homework",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "id in body",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Id\": 1,\r\n    \"Name\": \"hw_4\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/homework",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"homework"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDAwMDUxNDQsIlVzZXJJRCI6MX0.YJwqMagONwfehkqMTiT3jKjMTBpq4gZ21p2pzlaEbD0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"hw_1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/homework/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"homework",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDAwMDUxNDQsIlVzZXJJRCI6MX0.YJwqMagONwfehkqMTiT3jKjMTBpq4gZ21p2pzlaEbD0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"hw_1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/homework/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"homework",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "common",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDAwMDUxNDQsIlVzZXJJRCI6MX0.YJwqMagONwfehkqMTiT3jKjMTBpq4gZ21p2pzlaEbD0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"hw_1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/homework/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"homework",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "question",
+			"item": [
+				{
+					"name": "common",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"q2\",\r\n    \"Content\": {\r\n        \"Task\": \"q1_t\",\r\n        \"Answer\": \"q1_a\",\r\n        \"Solution\": \"q1_s\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/question",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"question"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"q1\",\r\n    \"Content\": {\r\n        \"Task\": \"q1_t\",\r\n        \"Answer\": \"q1_a\",\r\n        \"Solution\": \"q1_s\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/question/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"question",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"q1\",\r\n    \"Content\": {\r\n        \"Task\": \"q1_t\",\r\n        \"Answer\": \"q1_a\",\r\n        \"Solution\": \"q1_s\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/question/7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"question",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "id in URI",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"q1\",\r\n    \"Content\": {\r\n        \"Task\": \"q1_t\",\r\n        \"Answer\": \"q1_a\",\r\n        \"Solution\": \"q1_s\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/question/7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"question",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "id in body",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Id\": 9,\r\n    \"Name\": \"q3\",\r\n    \"Content\": {\r\n        \"Task\": \"q1_t\",\r\n        \"Answer\": \"q1_a\",\r\n        \"Solution\": \"q1_s\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/question/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"question",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "common",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"q1\",\r\n    \"Content\": {\r\n        \"Task\": \"q1_t\",\r\n        \"Answer\": \"q1_a\",\r\n        \"Solution\": \"q1_s\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/question/9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"question",
+								"9"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "homewrok_question",
+			"item": [
+				{
+					"name": "common",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Homework_Id\": 1,\r\n    \"Question_Id\": 7,\r\n    \"Order\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/homework_question",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"homework_question"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "id in URI",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Homework_Id\": 1,\r\n    \"Question_Id\": 10,\r\n    \"Order\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/homework_question/9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"homework_question",
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "id in body",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Id\": 9,\r\n    \"Homework_Id\": 1,\r\n    \"Question_Id\": 7,\r\n    \"Order\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/homework_question/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"homework_question",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all by homework_id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Homework_Id\": 1,\r\n    \"Question_Id\": 9,\r\n    \"Order\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/homework_question/1000",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"homework_question",
+								"1000"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Homework_Id\": 1,\r\n    \"Question_Id\": 9,\r\n    \"Order\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/homework_question/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"homework_question",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "by id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Homework_Id\": 1,\r\n    \"Question_Id\": 9,\r\n    \"Order\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/homework_question/7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"homework_question",
+								"7"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "data",
+			"item": [
+				{
+					"name": "common",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Homework\": {\r\n        \"Name\": \"hw_5\",\r\n        \"Questions\": [\r\n            {\r\n                \"Name\": \"hw5_q1\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            },\r\n            {\r\n                \"Name\": \"hw5_q2\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            },\r\n            {\r\n                \"Name\": \"hw5_q3\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            },\r\n            {\r\n                \"Name\": \"hw5_q4\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            }\r\n        ]\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/data/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"data",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "id in URI",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Homework\": {\r\n        \"Name\": \"hw_5\",\r\n        \"Questions\": [\r\n            {\r\n                \"Id\": 10,\r\n                \"Name\": \"hw5_q1\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            },\r\n            {\r\n                \"Id\": 11,\r\n                \"Name\": \"hw5_q2\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            },\r\n            {\r\n                \"Id\": 12,\r\n                \"Name\": \"hw5_q3\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            },\r\n            {\r\n                \"Id\": 13,\r\n                \"Name\": \"hw5_q4\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            },\r\n            {\r\n                \"Name\": \"hw5_q5\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            }\r\n        ]\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/data/9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"data",
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "id in body",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Homework\": {\r\n        \"Id\": 9,\r\n        \"Name\": \"hw_5\",\r\n        \"Questions\": [\r\n            {\r\n                \"Id\": 10,\r\n                \"Name\": \"hw5_q1\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            },\r\n            {\r\n                \"Id\": 11,\r\n                \"Name\": \"hw5_q2\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            },\r\n            {\r\n                \"Id\": 12,\r\n                \"Name\": \"hw5_q3\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            },\r\n            {\r\n                \"Id\": 13,\r\n                \"Name\": \"hw5_q4\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            },\r\n            {\r\n                \"Id\": 16,\r\n                \"Name\": \"hw5_q5\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            }\r\n        ]\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/data/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"data",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Homework\": {\r\n        \"Name\": \"hw_5\",\r\n        \"Questions\": [\r\n            {\r\n                \"Name\": \"hw5_q1\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            },\r\n            {\r\n                \"Name\": \"hw5_q2\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            },\r\n            {\r\n                \"Name\": \"hw5_q3\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            },\r\n            {\r\n                \"Name\": \"hw5_q4\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            }\r\n        ]\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/data/9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"data",
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTk5ODg0MjksIlVzZXJJRCI6MX0.aBgGy0EylhMYzHyo0LksaOksDJIitSnfAyqrPem_IsY",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Homework\": {\r\n        \"Name\": \"hw_5\",\r\n        \"Questions\": [\r\n            {\r\n                \"Name\": \"hw5_q1\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            },\r\n            {\r\n                \"Name\": \"hw5_q2\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            },\r\n            {\r\n                \"Name\": \"hw5_q3\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            },\r\n            {\r\n                \"Name\": \"hw5_q4\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            }\r\n        ]\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/data/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"data",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "common",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Homework\": {\r\n        \"Name\": \"hw_5\",\r\n        \"Questions\": [\r\n            {\r\n                \"Name\": \"hw5_q1\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            },\r\n            {\r\n                \"Name\": \"hw5_q2\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            },\r\n            {\r\n                \"Name\": \"hw5_q3\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            },\r\n            {\r\n                \"Name\": \"hw5_q4\",\r\n                \"Content\": {\r\n                    \"Task\": \"q1_t\",\r\n                    \"Answer\": \"q1_a\",\r\n                    \"Solution\": \"q1_s\"\r\n                }\r\n            }\r\n        ]\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/data/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"data",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Login\": \"admin\",\r\n    \"Password\": \"pwd\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/user/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Login\": \"user\",\r\n    \"Password\": \"pwd\",\r\n    \"Name\": \"user_name\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/user/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"user",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
