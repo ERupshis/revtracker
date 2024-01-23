@@ -12,6 +12,19 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// Delete func.
+// @Description Delete godoc
+// @Tags homework
+// @Summary deletes existing homework
+// @ID homework-delete
+// @Success 200
+// @Success 204
+// @Failure 400
+// @Failure 401
+// @Failure 500
+// @Param id path int true "homework id"
+// @Router /homework/{id} [delete]
+// @Security ApiKeyAuth
 func Delete(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		ID, err := utils.GetIDFromParams(c)

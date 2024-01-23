@@ -1,0 +1,214 @@
+basePath: /api
+definitions:
+  data.Homework:
+    properties:
+      Id:
+        type: integer
+      Name:
+        type: string
+    type: object
+  data.User:
+    properties:
+      Login:
+        type: string
+      Name:
+        type: string
+      Password:
+        type: string
+    type: object
+info:
+  contact:
+    email: e.rupshis@gmail.com
+    name: erupshis
+  description: Swagger API for rev tracker.
+  termsOfService: http://swagger.io/terms/
+  title: RevTracker server Swagger API
+  version: "1.0"
+paths:
+  /homework:
+    post:
+      consumes:
+      - application/json
+      description: Insert godoc
+      operationId: homework-insert
+      parameters:
+      - description: homework config
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/data.Homework'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: 'Id: ''homework number'''
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
+      summary: adds new homework
+      tags:
+      - homework
+  /homework/{id}:
+    delete:
+      description: Delete godoc
+      operationId: homework-delete
+      parameters:
+      - description: homework id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
+      summary: deletes existing homework
+      tags:
+      - homework
+    get:
+      description: Select godoc
+      operationId: homework-select
+      parameters:
+      - description: homework id
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/data.Homework'
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
+      summary: adds new homework
+      tags:
+      - homework
+    put:
+      consumes:
+      - application/json
+      description: Update godoc
+      operationId: homework-update
+      parameters:
+      - description: updated homework
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/data.Homework'
+      - description: homework id
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/data.Homework'
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+      security:
+      - ApiKeyAuth: []
+      summary: updates homework
+      tags:
+      - homework
+  /user/login:
+    post:
+      consumes:
+      - application/json
+      description: Login godoc
+      operationId: Login
+      parameters:
+      - description: user info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/data.User'
+      responses:
+        "200":
+          description: OK
+          headers:
+            Authorization:
+              description: Bearer {token}
+              type: string
+        "400":
+          description: Bad Request
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal Server Error
+      summary: user authentication
+      tags:
+      - authentication
+  /user/register:
+    post:
+      consumes:
+      - application/json
+      description: Register godoc
+      operationId: Register
+      parameters:
+      - description: user info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/data.User'
+      responses:
+        "200":
+          description: OK
+          headers:
+            Authorization:
+              description: Bearer {token}
+              type: string
+        "400":
+          description: Bad Request
+        "403":
+          description: Forbidden
+        "409":
+          description: Conflict
+        "500":
+          description: Internal Server Error
+      summary: new user registering
+      tags:
+      - authentication
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

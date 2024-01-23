@@ -15,7 +15,7 @@ func GetIDFromParams(c *fiber.Ctx) (int64, error) {
 	}
 
 	rawID := c.Params("ID")
-	if rawID == "" {
+	if rawID == "" || rawID == "undefined" {
 		return -1, ErrMissingIDinURI
 	}
 
