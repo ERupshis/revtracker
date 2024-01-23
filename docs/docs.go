@@ -19,6 +19,196 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/data": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Insert godoc",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "homework_data"
+                ],
+                "summary": "adds new homework data",
+                "operationId": "data-insert",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/data.Data"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/data.Data"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/data/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Select godoc",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "homework_data"
+                ],
+                "summary": "select new data",
+                "operationId": "data-select",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "homework id",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/data.Data"
+                        }
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update godoc",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "homework_data"
+                ],
+                "summary": "updates homework data",
+                "operationId": "data-update",
+                "parameters": [
+                    {
+                        "description": "updated homework data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/data.Data"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "homework id",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/data.Data"
+                        }
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete godoc",
+                "tags": [
+                    "homework_data"
+                ],
+                "summary": "deletes existing data",
+                "operationId": "data-delete",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "homework id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/homework": {
             "post": {
                 "security": [
@@ -82,7 +272,7 @@ const docTemplate = `{
                 "tags": [
                     "homework"
                 ],
-                "summary": "adds new homework",
+                "summary": "select homework",
                 "operationId": "homework-select",
                 "parameters": [
                     {
@@ -209,6 +399,386 @@ const docTemplate = `{
                 }
             }
         },
+        "/homework_question": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Insert godoc",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "homework_question"
+                ],
+                "summary": "adds new homework_question",
+                "operationId": "hw-question-insert",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/data.HomeworkQuestion"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Id: 'homework question number'",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/homework_question/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Select godoc",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "homework_question"
+                ],
+                "summary": "select homework question",
+                "operationId": "hw-question-select",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "homework question id",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/data.HomeworkQuestion"
+                        }
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update godoc",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "homework_question"
+                ],
+                "summary": "updates homework question",
+                "operationId": "hw-question-update",
+                "parameters": [
+                    {
+                        "description": "updated homework question",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/data.HomeworkQuestion"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "homework id",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/data.HomeworkQuestion"
+                        }
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete godoc",
+                "tags": [
+                    "homework_question"
+                ],
+                "summary": "deletes existing homework_question",
+                "operationId": "hw-question-delete",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "homework id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/question": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Insert godoc",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "question"
+                ],
+                "summary": "adds new question",
+                "operationId": "question-insert",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/data.Question"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Id: 'question number'",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/question/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Select godoc",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "question"
+                ],
+                "summary": "select question",
+                "operationId": "question-select",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "question id",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/data.Question"
+                        }
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update godoc",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "question"
+                ],
+                "summary": "updates question",
+                "operationId": "question-update",
+                "parameters": [
+                    {
+                        "description": "updated question",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/data.Question"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "question id",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/data.Question"
+                        }
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete godoc",
+                "tags": [
+                    "question"
+                ],
+                "summary": "deletes existing question",
+                "operationId": "question-delete",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "question id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/user/login": {
             "post": {
                 "description": "Login godoc",
@@ -302,9 +872,79 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "data.Content": {
+            "type": "object",
+            "properties": {
+                "Answer": {
+                    "type": "string"
+                },
+                "Solution": {
+                    "type": "string"
+                },
+                "Task": {
+                    "type": "string"
+                }
+            }
+        },
+        "data.Data": {
+            "type": "object",
+            "properties": {
+                "Homework": {
+                    "$ref": "#/definitions/data.HomeworkData"
+                }
+            }
+        },
         "data.Homework": {
             "type": "object",
             "properties": {
+                "Id": {
+                    "type": "integer"
+                },
+                "Name": {
+                    "type": "string"
+                }
+            }
+        },
+        "data.HomeworkData": {
+            "type": "object",
+            "properties": {
+                "Id": {
+                    "type": "integer"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Questions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/data.Question"
+                    }
+                }
+            }
+        },
+        "data.HomeworkQuestion": {
+            "type": "object",
+            "properties": {
+                "Homework_Id": {
+                    "type": "integer"
+                },
+                "Id": {
+                    "type": "integer"
+                },
+                "Order": {
+                    "type": "integer"
+                },
+                "Question_Id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "data.Question": {
+            "type": "object",
+            "properties": {
+                "Content": {
+                    "$ref": "#/definitions/data.Content"
+                },
                 "Id": {
                     "type": "integer"
                 },

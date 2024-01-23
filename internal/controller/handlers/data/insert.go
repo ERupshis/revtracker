@@ -16,6 +16,20 @@ const (
 	packagePath = "[controller:handlers:data:%s]"
 )
 
+// Insert func.
+// @Description Insert godoc
+// @Tags homework_data
+// @Summary adds new homework data
+// @ID data-insert
+// @Accept json
+// @Produce json
+// @Param input body data.Data true "data"
+// @Success 200 {object} data.Data
+// @Failure 400
+// @Failure 401
+// @Failure 500
+// @Router /data [post]
+// @Security ApiKeyAuth
 func Insert(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		homeworkData := &data.Data{}

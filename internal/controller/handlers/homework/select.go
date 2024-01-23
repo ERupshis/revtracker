@@ -17,7 +17,7 @@ import (
 // Select func.
 // @Description Select godoc
 // @Tags homework
-// @Summary adds new homework
+// @Summary select homework
 // @ID homework-select
 // @Produce json
 // @Param id path string false "homework id"
