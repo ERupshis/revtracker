@@ -11,6 +11,19 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// Login func.
+// @Description Login godoc
+// @Tags authentication
+// @Summary user authentication
+// @ID Login
+// @Accept json
+// @Param input body data.User true "user info"
+// @Success 200
+// @Header 200 {string} Authorization "Bearer {token}"
+// @Failure 400
+// @Failure 403
+// @Failure 500
+// @Router /user/login [post]
 func Login(usersStorage storage.BaseUsersStorage, jwt jwtgenerator.JwtGenerator, log logger.BaseLogger) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		var user data.User

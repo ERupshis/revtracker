@@ -16,6 +16,20 @@ const (
 	packagePath = "[controller:handlers:question:%s]"
 )
 
+// Insert func.
+// @Description Insert godoc
+// @Tags question
+// @Summary adds new question
+// @ID question-insert
+// @Accept json
+// @Produce plain
+// @Param input body data.Question true "data"
+// @Success 200 {string} plain "Id: 'question number'"
+// @Failure 400
+// @Failure 401
+// @Failure 500
+// @Router /question [post]
+// @Security ApiKeyAuth
 func Insert(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		question := &data.Question{}

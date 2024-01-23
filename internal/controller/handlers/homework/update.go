@@ -14,6 +14,22 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// Update func.
+// @Description Update godoc
+// @Tags homework
+// @Summary updates homework
+// @ID homework-update
+// @Accept json
+// @Produce json
+// @Param request body data.Homework true "updated homework"
+// @Param id path string false "homework id"
+// @Success 200 {object} data.Homework
+// @Success 204
+// @Failure 400
+// @Failure 401
+// @Failure 500
+// @Router /homework/{id} [put]
+// @Security ApiKeyAuth
 func Update(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		homework := &data.Homework{}

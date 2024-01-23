@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 
 	"github.com/erupshis/revtracker/internal/auth/data"
 	"github.com/erupshis/revtracker/internal/auth/jwtgenerator"
@@ -11,6 +13,20 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// Register func.
+// @Description Register godoc
+// @Tags authentication
+// @Summary new user registering
+// @ID Register
+// @Accept json
+// @Param input body data.User true "user info"
+// @Success 200
+// @Header 200 {string} Authorization "Bearer {token}"
+// @Failure 400
+// @Failure 403
+// @Failure 409
+// @Failure 500
+// @Router /user/register [post]
 func Register(usersStorage storage.BaseUsersStorage, jwt jwtgenerator.JwtGenerator, log logger.BaseLogger) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		var user data.User
@@ -22,7 +38,7 @@ func Register(usersStorage storage.BaseUsersStorage, jwt jwtgenerator.JwtGenerat
 		}
 
 		userInStorage, err := usersStorage.SelectUserByLoginOrName(c.Context(), user.Login, user.Name)
-		if err != nil {
+		if err != nil && !errors.Is(sql.ErrNoRows, err) {
 			c.Status(fiber.StatusInternalServerError)
 			log.Info("[auth:handlers:Register] failed to check user in database: %v", err)
 			return nil

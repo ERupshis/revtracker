@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	_ "github.com/erupshis/revtracker/docs"
 	"github.com/erupshis/revtracker/internal/auth"
 	"github.com/erupshis/revtracker/internal/auth/data"
 	"github.com/erupshis/revtracker/internal/auth/jwtgenerator"
@@ -18,10 +19,24 @@ import (
 	"github.com/erupshis/revtracker/internal/storage"
 	reformManager "github.com/erupshis/revtracker/internal/storage/manager/reform"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/swagger"
 	"gopkg.in/reform.v1"
 	"gopkg.in/reform.v1/dialects/postgresql"
 )
 
+// @title RevTracker server Swagger API
+// @version 1.0
+// @description Swagger API for rev tracker.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name erupshis
+// @contact.email e.rupshis@gmail.com
+
+// @BasePath /api
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	// config.
 	cfg := config.Parse()
@@ -58,6 +73,7 @@ func main() {
 	server.Use(log.LogHandler)
 
 	server.Mount("/api/user", authController.Route())
+	server.Get("/swagger/*", swagger.HandlerDefault)
 
 	serverData := server.Group("/api")
 	serverData.Use(authController.AuthorizeUser(data.RoleUser))

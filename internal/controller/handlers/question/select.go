@@ -14,6 +14,20 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// Select func.
+// @Description Select godoc
+// @Tags question
+// @Summary select question
+// @ID question-select
+// @Produce json
+// @Param id path string false "question id"
+// @Success 200 {object} data.Question
+// @Success 204
+// @Failure 400
+// @Failure 401
+// @Failure 500
+// @Router /question/{id} [get]
+// @Security ApiKeyAuth
 func Select(storage storage.BaseStorage, log logger.BaseLogger) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		ID, err := utils.GetIDFromParams(c)
